@@ -19,24 +19,36 @@ public class CustomerService {
     }
 
     public Customer updateCustomer(Long customerId, Customer customer) {
+        //Check if the customer with the given ID exists
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
 
+        //Update customer properties
         existingCustomer.setName(customer.getName());
         existingCustomer.setPhonenumber(customer.getPhonenumber());
 
+        //Save the updated customer
         return customerRepository.save(existingCustomer);
     }
 
     public void deleteCustomer(Long customerId) {
+        //Check if the customer with the given ID exists
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RuntimeException("Cusotmer not found with this id: " + customerId));
 
-
+        //Delete the customer
         customerRepository.delete(existingCustomer);
     }
 
+    public Customer getCustomerById(Long customerId) {
+        //Retrieve customer by ID
+        return customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id" + customerId));
+    }
+
+
     public List<Customer> getAllCustomers() {
+        // Retrieve all customers
         return customerRepository.findAll();
     }
 }
