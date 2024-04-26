@@ -1,7 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
-import org.apache.catalina.util.CustomObjectInputStream;
+
 
 import java.util.Date;
 import java.util.List;
