@@ -1,9 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "dogs")
@@ -18,8 +15,14 @@ public class Dog {
     private String breed;
     private int age;
 
-    public Dog(Long id, String name, String breed, int age) {
-        this.id = id;
+    @ManyToOne
+    private Customer customer;
+
+    public Dog() {
+
+    }
+
+    public Dog(String name, String breed, int age) {
         this.name = name;
         this.breed = breed;
         this.age = age;
