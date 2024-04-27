@@ -1,9 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 
 import java.util.List;
 
@@ -11,7 +8,7 @@ import java.util.List;
 public class Receipt {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToMany

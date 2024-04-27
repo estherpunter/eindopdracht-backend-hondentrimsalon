@@ -9,10 +9,10 @@ import java.util.List;
 public class Customer {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String phonenumber;
+    private String phoneNumber;
 
     @OneToMany(mappedBy = "customer")
     private List<Dog> dogs;
@@ -20,9 +20,9 @@ public class Customer {
     public Customer(){
 
     }
-    public Customer(String name, String phonenumber) {
+    public Customer(String name, String phoneNumber) {
         this.name = name;
-        this.phonenumber = phonenumber;
+        this.phoneNumber = phoneNumber;
     }
 
     public Long getId() {
@@ -42,11 +42,11 @@ public class Customer {
     }
 
     public String getPhonenumber() {
-        return phonenumber;
+        return phoneNumber;
     }
 
-    public void setPhonenumber(String phonenumber) {
-        this.phonenumber = phonenumber;
+    public void setPhonenumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public List<Dog> getDogs() {

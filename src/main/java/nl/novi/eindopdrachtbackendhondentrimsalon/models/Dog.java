@@ -8,7 +8,7 @@ public class Dog {
 
 
     @Id
-    @GeneratedValue
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
@@ -16,6 +16,7 @@ public class Dog {
     private int age;
 
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     public Dog() {
@@ -60,6 +61,11 @@ public class Dog {
         this.age = age;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
 
-
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
 }

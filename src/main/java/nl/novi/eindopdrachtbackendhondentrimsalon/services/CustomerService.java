@@ -1,7 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.DogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,12 +12,40 @@ import java.util.List;
 @Service
 public class CustomerService {
 
+    private final CustomerRepository customerRepository;
+    private final DogRepository dogRepository;
+
     @Autowired
-    private CustomerRepository customerRepository;
+    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository) {
+        this.customerRepository = customerRepository;
+        this.dogRepository = dogRepository;
+    }
 
 
     public Customer createCustomer(Customer customer) {
-        return customerRepository.save(customer);
+        // Check if customer already exists
+        Customer existingCustomer = customerRepository.findByName(customer.getName());
+
+        if (existingCustomer != null) {
+            // Customer already exists, check if dog also exists for this customer
+            List<Dog> existingDogs = dogRepository.findByCustomer(existingCustomer);
+
+            for (Dog existingDog : existingDogs) {
+                if (existingDog.getName().equals(customer.getDogs().getName())) {
+                    //Both customer and dog already exist
+                    throw new RuntimeException("This customer and dog are already registered");
+                }
+            }
+
+            //Dog does not exist, add the new dog to the existing customer
+            customer.setCustomer(existingCustomer);
+            existingDogs.add(customer.getDogs()); //Add the new dog to the list of existing dogs
+            existingCustomer.setDogs(existingDogs); //Update the list of dogs for the existing customer
+            return customerRepository.save(existingCustomer);
+        } else {
+            //Customer does not exist, save the new customer
+            return customerRepository.save(customer);
+        }
     }
 
     public Customer updateCustomer(Long customerId, Customer customer) {
@@ -34,7 +64,7 @@ public class CustomerService {
     public void deleteCustomer(Long customerId) {
         //Check if the customer with the given ID exists
         Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Cusotmer not found with this id: " + customerId));
+                .orElseThrow(() -> new RuntimeException("Customer not found with this id: " + customerId));
 
         //Delete the customer
         customerRepository.delete(existingCustomer);
