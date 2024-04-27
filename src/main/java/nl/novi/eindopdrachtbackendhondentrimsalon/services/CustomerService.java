@@ -28,7 +28,8 @@ public class CustomerService {
 
         if (existingCustomer != null) {
             // Customer already exists, check if dog also exists for this customer
-            List<Dog> existingDogs = dogRepository.findByCustomer(existingCustomer);
+            List<Dog> existingDogs = existingCustomer.getDogs();
+            boolean dogExists = false;
 
             for (Dog existingDog : existingDogs) {
                 if (existingDog.getName().equals(customer.getDogs().getName())) {
@@ -38,8 +39,9 @@ public class CustomerService {
             }
 
             //Dog does not exist, add the new dog to the existing customer
-            customer.setCustomer(existingCustomer);
-            existingDogs.add(customer.getDogs()); //Add the new dog to the list of existing dogs
+            Dog newDog = customer.getDogs().get(0); //Assuming only one dog is being added
+            newDog.setCustomer(existingCustomer); //Associate the dog with the existing custoemr
+            existingDogs.add(newDog); //Add the new dog to the list of existing dogs
             existingCustomer.setDogs(existingDogs); //Update the list of dogs for the existing customer
             return customerRepository.save(existingCustomer);
         } else {
