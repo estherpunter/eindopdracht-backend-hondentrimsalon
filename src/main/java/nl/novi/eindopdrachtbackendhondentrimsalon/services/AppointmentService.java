@@ -15,6 +15,16 @@ public class AppointmentService {
         this.appointmentRepository = appointmentRepository;
     }
 
+
+    //Planning and scheduling appointments for customers
+
+    //Adding treatments and products to appointments
+
+    //Managing appointment status (e.g. confirming, rescheduling, canceling)
+
+    //Retrieving appointment details
+
+
     public Appointment createAppointment(Appointment appointment) {
         // Perform any necessary business logic/validation before saving
         return appointmentRepository.save(appointment);

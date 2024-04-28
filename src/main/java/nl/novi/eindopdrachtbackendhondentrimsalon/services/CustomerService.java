@@ -21,8 +21,8 @@ public class CustomerService {
         this.dogRepository = dogRepository;
     }
 
-
-    public Customer createCustomer(Customer customer) {
+    //Adding new customers to the system
+    public Customer addCustomer(Customer customer) {
         // Check if customer already exists
         Customer existingCustomer = customerRepository.findByName(customer.getName());
 
@@ -50,6 +50,7 @@ public class CustomerService {
         }
     }
 
+    //Updating customer information
     public Customer updateCustomer(Long customerId, Customer customer) {
         //Check if the customer with the given ID exists
         Customer existingCustomer = customerRepository.findById(customerId)
@@ -72,6 +73,7 @@ public class CustomerService {
         customerRepository.delete(existingCustomer);
     }
 
+    //Retrieving customer details
     public Customer getCustomerById(Long customerId) {
         //Retrieve customer by ID
         return customerRepository.findById(customerId)
@@ -83,4 +85,7 @@ public class CustomerService {
         // Retrieve all customers
         return customerRepository.findAll();
     }
+
+    //Managing relationships with dogs (e.g. adding, updating, or removing dogs for a customer)
+
 }

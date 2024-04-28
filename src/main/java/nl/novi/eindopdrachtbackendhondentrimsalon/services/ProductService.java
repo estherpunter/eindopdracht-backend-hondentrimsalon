@@ -18,6 +18,14 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+
+    //Adding new products to the system
+    //Updating product information (e.g. name, price, stock)
+    //Retrieving product details
+    //Managing product inventory (e.g. adjusting stock levels)
+    //Associating treatments with appointments
+
+
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
