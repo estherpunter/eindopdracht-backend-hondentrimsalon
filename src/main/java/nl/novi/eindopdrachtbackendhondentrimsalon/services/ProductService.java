@@ -35,18 +35,24 @@ public class ProductService {
         return productOptional.orElse(null);
     }
 
-    public Product createProduct(Product product) {
+    public Product addProduct(Product product) {
         //Perform any additional validation or business logic before saving the product
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Long productId, Product product) {
+    public void updateProduct(Long productId, Product updatedProduct) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
-            updatedProduct.setId(productId); //Ensure the updated product has the correct ID
-            return productRepository.save(updateProduct);
+            Product existingProduct = productOptional.get();
+
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setStock(updatedProduct.getStock());
+
+            productRepository.save(existingProduct);
+        } else {
+            throw new RuntimeException("Product not found with id: " + productId); //Product not found
         }
-        return null; //Product not found
     }
 
     public boolean deleteProduct(Long productId) {

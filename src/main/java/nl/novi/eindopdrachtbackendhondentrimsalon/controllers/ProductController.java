@@ -43,20 +43,20 @@ public class ProductController {
     //Adding a new product
     @PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product newProduct = productService.createProduct(product);
+        Product newProduct = productService.addProduct(product);
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
     //Update an existing product
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(productId, product);
-        if (updatedProduct != null) {
-            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
+//        Product updatedProduct = productService.updateProduct(productId, product);
+//        if (updatedProduct != null) {
+//            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 
     //Delete a product by ID
     @DeleteMapping("/{productId}")
