@@ -13,41 +13,54 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
-    private final DogRepository dogRepository;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository) {
+    public CustomerService(CustomerRepository customerRepository) {
         this.customerRepository = customerRepository;
-        this.dogRepository = dogRepository;
     }
 
     //Adding new customers to the system
-    public Customer addCustomer(Customer customer) {
+    public void addCustomer(String customerName, String phoneNumber, String dogName, String breed, int age) {
         // Check if customer already exists
-        Customer existingCustomer = customerRepository.findByName(customer.getName());
+        Customer existingCustomer = customerRepository.findByName(customerName);
 
         if (existingCustomer != null) {
-            // Customer already exists, check if dog also exists for this customer
-            List<Dog> existingDogs = existingCustomer.getDogs();
-            boolean dogExists = false;
-
-            for (Dog existingDog : existingDogs) {
-                if (existingDog.getName().equals(customer.getDogs().getName())) {
-                    //Both customer and dog already exist
-                    throw new RuntimeException("This customer and dog are already registered");
-                }
+            // Customer already exists
+            Dog existingDog = findDogInCustomer(existingCustomer, dogName);
+            if (existingDog != null) {
+                // Dog already exists for this customer
+                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customerName + "'.");
+            } else {
+                // Add new dog to existing customer
+                Dog newDog = new Dog();
+                newDog.setName(dogName);
+                newDog.setBreed(breed);
+                newDog.setAge(age);
+                newDog.setCustomer(existingCustomer); // Set the customer for the new dog
+                existingCustomer.getDogs().add(newDog); // Add dog to the existing customer's list of dogs
+                customerRepository.save(existingCustomer); // Update the customer in repository
             }
-
-            //Dog does not exist, add the new dog to the existing customer
-            Dog newDog = customer.getDogs().get(0); //Assuming only one dog is being added
-            newDog.setCustomer(existingCustomer); //Associate the dog with the existing custoemr
-            existingDogs.add(newDog); //Add the new dog to the list of existing dogs
-            existingCustomer.setDogs(existingDogs); //Update the list of dogs for the existing customer
-            return customerRepository.save(existingCustomer);
         } else {
-            //Customer does not exist, save the new customer
-            return customerRepository.save(customer);
+            // Customer does not exist, create new customer and dog
+            Customer newCustomer = new Customer(customerName, phoneNumber);
+            Dog newDog = new Dog();
+            newDog.setName(dogName);
+            newDog.setBreed(breed);
+            newDog.setAge(age);
+            newDog.setCustomer(newCustomer); // Set the customer for the new dog
+            newCustomer.getDogs().add(newDog); // Add dog to the new customer's list of dogs
+            customerRepository.save(newCustomer); // Add the new customer to repository
         }
+    }
+
+    private Dog findDogInCustomer(Customer customer, String dogName) {
+        List<Dog> dogs = customer.getDogs();
+        for (Dog dog : dogs) {
+            if (dog.getName().equals(dogName)) {
+                return dog;
+            }
+        }
+        return null; // Dog not found
     }
 
     //Updating customer information
@@ -59,6 +72,7 @@ public class CustomerService {
         //Update customer properties
         existingCustomer.setName(customer.getName());
         existingCustomer.setPhonenumber(customer.getPhonenumber());
+        existingCustomer.setDogs(customer.getDogs());
 
         //Save the updated customer
         return customerRepository.save(existingCustomer);
@@ -66,11 +80,11 @@ public class CustomerService {
 
     public void deleteCustomer(Long customerId) {
         //Check if the customer with the given ID exists
-        Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("Customer not found with this id: " + customerId));
-
-        //Delete the customer
-        customerRepository.delete(existingCustomer);
+        if (customerRepository.findById(customerId).isPresent()) {
+            throw new RuntimeException("Customer not found with this id: " + customerId);
+        } else {
+            customerRepository.deleteById(customerId);
+        }
     }
 
     //Retrieving customer details
@@ -80,12 +94,52 @@ public class CustomerService {
                 .orElseThrow(() -> new RuntimeException("Customer not found with id" + customerId));
     }
 
-
+    //Retrieve all customers
     public List<Customer> getAllCustomers() {
         // Retrieve all customers
         return customerRepository.findAll();
     }
 
     //Managing relationships with dogs (e.g. adding, updating, or removing dogs for a customer)
+
+    public void addDogForCustomer(Long customerId, String dogName, String breed, int age) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
+
+        //Create new dog and associate it with the customer
+        Dog newDog = new Dog(dogName, breed, age);
+        newDog.setCustomer(customer);
+        customer.getDogs().add(newDog);
+
+        customerRepository.save(customer);
+    }
+
+    public void updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
+
+        //Find the existingDog associated with the customer
+        Dog existingDog = customer.getDogs().stream()
+                .filter(dog -> dog.getId().equals(dogId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Dog not found with id: " + dogId));
+
+        //Update the dog's attributes
+        existingDog.setName(dogName);
+        existingDog.setBreed(breed);
+        existingDog.setAge(age);
+
+        customerRepository.save(customer);
+    }
+
+    public void removeDogFromCustomer(Long customerId, Long dogId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("Customer not found with id: " + customerId));
+
+        //Find and remove the dog associated with the customer
+        customer.getDogs().removeIf(dog -> dog.getId().equals(dogId));
+
+        customerRepository.save(customer);
+    }
 
 }

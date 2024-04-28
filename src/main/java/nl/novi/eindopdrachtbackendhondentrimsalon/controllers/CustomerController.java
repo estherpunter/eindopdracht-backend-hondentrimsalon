@@ -16,11 +16,11 @@ public class CustomerController {
 
 
     // Creating a new customer
-    @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        Customer createdCustomer = customerService.addCustomer(customer);
-        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
-    }
+//    @PostMapping
+//    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+//        Customer createdCustomer = customerService.addCustomer(Customer);
+//        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
+//    }
 
     // Updating an existing customer
     @PutMapping("/{customerId}")
