@@ -19,13 +19,7 @@ public class ProductService {
     }
 
 
-    //Adding new products to the system
-    //Updating product information (e.g. name, price, stock)
     //Retrieving product details
-    //Managing product inventory (e.g. adjusting stock levels)
-    //Associating treatments with appointments
-
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -35,11 +29,14 @@ public class ProductService {
         return productOptional.orElse(null);
     }
 
+
+    //Adding new products to the system
     public Product addProduct(Product product) {
         //Perform any additional validation or business logic before saving the product
         return productRepository.save(product);
     }
 
+    //Updating product information (e.g. name, price, stock)
     public void updateProduct(Long productId, Product updatedProduct) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
@@ -63,4 +60,8 @@ public class ProductService {
         }
         return false; //Product not found
     }
+
+    //Managing product inventory (e.g. adjusting stock levels)
+    //Associating treatments with appointments
+
 }
