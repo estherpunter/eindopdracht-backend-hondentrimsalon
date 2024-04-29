@@ -55,14 +55,16 @@ public class ProductController {
 
     //Endpoint to update an existing product
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product updatedProduct) {
+    public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
+                                                 @RequestBody Product updatedProduct) {
         Product product = productService.updateProduct(productId, updatedProduct);
         return ResponseEntity.ok(product);
     }
 
     //Endpoint to update only the stock of a product
     @PatchMapping("/{productId}/stock")
-    public ResponseEntity<Product> updateProductStock(@PathVariable Long productId, @RequestParam int newStock) {
+    public ResponseEntity<Product> updateProductStock(@PathVariable Long productId,
+                                                      @RequestParam int newStock) {
         Product product = productService.updateProductStock(productId, newStock);
         return ResponseEntity.ok(product);
     }

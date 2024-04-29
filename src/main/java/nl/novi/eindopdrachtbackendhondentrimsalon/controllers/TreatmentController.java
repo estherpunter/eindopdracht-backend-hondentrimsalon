@@ -55,7 +55,8 @@ public class TreatmentController {
 
     //Endpoint to update an existing treatment
     @PutMapping("/{treatmentId}")
-    public ResponseEntity<Treatment> updateTreatment(@PathVariable Long treatmentId, @RequestBody Treatment updatedTreatment) {
+    public ResponseEntity<Treatment> updateTreatment(@PathVariable Long treatmentId,
+                                                     @RequestBody Treatment updatedTreatment) {
         Treatment treatment = treatmentService.updateTreatment(treatmentId, updatedTreatment);
         return ResponseEntity.ok(treatment);
     }
