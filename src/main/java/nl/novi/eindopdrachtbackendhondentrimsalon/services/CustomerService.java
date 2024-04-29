@@ -14,32 +14,35 @@ import java.util.List;
 public class CustomerService {
 
     private final CustomerRepository customerRepository;
+    private final DogRepository dogRepository;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository) {
+    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository) {
         this.customerRepository = customerRepository;
+        this.dogRepository = dogRepository;
     }
 
     //Adding new customers to the system
     public void addCustomer(String customerName, String phoneNumber, String dogName, String breed, int age) {
         // Check if customer already exists
-        Customer existingCustomer = customerRepository.findByName(customerName);
+        Customer customer = customerRepository.findByName(customerName);
 
-        if (existingCustomer != null) {
+        if (customer != null) {
             // Customer already exists
-            Dog existingDog = findDogInCustomer(existingCustomer, dogName);
-            if (existingDog != null) {
-                // Dog already exists for this customer
-                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customerName + "'.");
-            } else {
-                // Add new dog to existing customer
-                Dog newDog = new Dog();
-                newDog.setName(dogName);
-                newDog.setBreed(breed);
-                newDog.setAge(age);
-                newDog.setCustomer(existingCustomer); // Set the customer for the new dog
-                existingCustomer.getDogs().add(newDog); // Add dog to the existing customer's list of dogs
-                customerRepository.save(existingCustomer); // Update the customer in repository
+            List<Dog> dogs = dogRepository.findByCustomer(customer);
+            for (Dog dog : dogs) {
+                if (dog.getName().equalsIgnoreCase(dogName)) {
+                    throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customerName + "'.");
+                } else {
+                    // Add new dog to existing customer
+                    Dog newDog = new Dog();
+                    newDog.setName(dogName);
+                    newDog.setBreed(breed);
+                    newDog.setAge(age);
+                    newDog.setCustomer(customer); // Set the customer for the new dog
+                    customer.getDogs().add(newDog); // Add dog to the existing customer's list of dogs
+                    customerRepository.save(customer); // Update the customer in repository
+                }
             }
         } else {
             // Customer does not exist, create new customer and dog
@@ -52,16 +55,6 @@ public class CustomerService {
             newCustomer.getDogs().add(newDog); // Add dog to the new customer's list of dogs
             customerRepository.save(newCustomer); // Add the new customer to repository
         }
-    }
-
-    private Dog findDogInCustomer(Customer customer, String dogName) {
-        List<Dog> dogs = customer.getDogs();
-        for (Dog dog : dogs) {
-            if (dog.getName().equals(dogName)) {
-                return dog;
-            }
-        }
-        return null; // Dog not found
     }
 
     //Updating customer information
@@ -103,9 +96,16 @@ public class CustomerService {
 
     //Managing relationships with dogs (e.g. adding, updating, or removing dogs for a customer)
 
-    public void addDogForCustomer(Long customerId, String dogName, String breed, int age) {
+    public void addDogToCustomer(Long customerId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+
+        List<Dog> dogs = dogRepository.findByCustomer(customer);
+        for (Dog dog : dogs) {
+            if (dog.getName().equalsIgnoreCase(dogName)) {
+                throw new RuntimeException("Dog '" + dogName + "' already exists for customer.");
+            }
+        }
 
         //Create new dog and associate it with the customer
         Dog newDog = new Dog(dogName, breed, age);

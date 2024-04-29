@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.helpers.PriceCalculator;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,7 +117,7 @@ public class AppointmentService {
         receipt.setProducts(products);
         receipt.setTreatments(treatments);
 
-        double totalPrice = calculateTotalPrice(products, treatments);
+        double totalPrice = PriceCalculator.calculateTotalPrice(products, treatments);
         receipt.setTotalPrice(totalPrice);
 
         return receiptRepository.save(receipt);
