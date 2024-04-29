@@ -5,6 +5,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.AppointmentRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.DogRepository;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.TreatmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,14 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final CustomerRepository customerRepository;
     private final DogRepository dogRepository;
+    private final TreatmentRepository treatmentRepository;
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
+        this.treatmentRepository = treatmentRepository;
     }
 
 
@@ -50,13 +53,14 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public Appointment updateAppointment(Long appointmentId, LocalDateTime newDate) {
+    public Appointment updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
         //Check if the appointment with the given ID exists
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
 
         //Update appointment properties
         appointment.setDate(newDate);
+        appointment.setStatus(newStatus);
 
         //Save the updated appointment
         return appointmentRepository.save(appointment);
@@ -85,6 +89,19 @@ public class AppointmentService {
 
         appointment.getTreatments().add(treatment);
         appointmentRepository.save(appointment);
+    }
+
+    public Appointment addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+
+        Treatment customTreatment = new Treatment();
+        customTreatment.setName("Other");
+        customTreatment.setPrice(customPrice);
+
+        appointment.getTreatments().add(customTreatment);
+
+        return appointmentRepository.save(appointment);
     }
 
 }
