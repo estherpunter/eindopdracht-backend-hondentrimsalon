@@ -19,23 +19,17 @@ public class AppointmentService {
     private final TreatmentRepository treatmentRepository;
     private final ReceiptRepository receiptRepository;
 
+    private final ProductRepository productRepository;
+
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository, ReceiptRepository receiptRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository, ReceiptRepository receiptRepository, ProductRepository productRepository) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
         this.treatmentRepository = treatmentRepository;
         this.receiptRepository = receiptRepository;
+        this.productRepository = productRepository;
     }
-
-
-    //Planning and scheduling appointments for customers
-
-    //Adding treatments and products to appointments
-
-    //Managing appointment status (e.g. confirming, rescheduling, canceling)
-
-    //Retrieving appointment details
 
 
     public Appointment scheduleAppointment(Long customerId, Long dogId, LocalDateTime appointmentDate) {
@@ -54,7 +48,7 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public Appointment updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
+    public void updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
         //Check if the appointment with the given ID exists
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
@@ -64,7 +58,7 @@ public class AppointmentService {
         appointment.setStatus(newStatus);
 
         //Save the updated appointment
-        return appointmentRepository.save(appointment);
+        appointmentRepository.save(appointment);
     }
 
     public void cancelAppointment(Long appointmentId) {
@@ -76,17 +70,23 @@ public class AppointmentService {
         appointmentRepository.delete(existingAppointment);
     }
 
-    public void addProductToAppointment(Long appointmentId, Product product) {
+    public void addProductToAppointment(Long appointmentId, Long productId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
 
         appointment.getProducts().add(product);
         appointmentRepository.save(appointment);
     }
 
-    public void addTreatmentToAppointment(Long appointmentId, Treatment treatment) {
+    public void addTreatmentToAppointment(Long appointmentId, Long treatmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+
+        Treatment treatment = treatmentRepository.findById(treatmentId)
+                .orElseThrow(() -> new RecordNotFoundException("Treatment not found with id: " + treatmentId));
 
         appointment.getTreatments().add(treatment);
         appointmentRepository.save(appointment);

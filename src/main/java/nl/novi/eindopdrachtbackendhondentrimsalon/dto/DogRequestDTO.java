@@ -5,6 +5,7 @@ public class DogRequestDTO {
     private String breed;
     private int age;
 
+
     public String getName() {
         return name;
     }

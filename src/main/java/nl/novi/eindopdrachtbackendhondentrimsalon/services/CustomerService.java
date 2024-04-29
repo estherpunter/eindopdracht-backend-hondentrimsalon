@@ -131,7 +131,7 @@ public class CustomerService {
         existingDog.setBreed(breed);
         existingDog.setAge(age);
 
-        customerRepository.save(customer);
+        dogRepository.save(existingDog);
     }
 
     public void removeDogFromCustomer(Long customerId, Long dogId) {
