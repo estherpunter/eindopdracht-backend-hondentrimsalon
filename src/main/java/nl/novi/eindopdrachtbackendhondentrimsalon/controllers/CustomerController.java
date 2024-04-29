@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/customers")
 public class CustomerController {
@@ -15,26 +17,60 @@ public class CustomerController {
     private CustomerService customerService;
 
 
-    // Creating a new customer
-//    @PostMapping
-//    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-//        Customer createdCustomer = customerService.addCustomer(Customer);
-//        return new ResponseEntity<>(createdCustomer, HttpStatus.CREATED);
-//    }
-
-    // Updating an existing customer
-    @PutMapping("/{customerId}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId, @RequestBody Customer customer) {
-        Customer updatedCustomer = customerService.updateCustomer(customerId, customer);
-        return new ResponseEntity<>(updatedCustomer, HttpStatus.OK);
+    //Endpoint to retrieve all customers
+    @GetMapping
+    public ResponseEntity<List<Customer>> getAllCustomers() {
+        List<Customer> customers = customerService.getAllCustomers();
+        return ResponseEntity.ok(customers);
     }
 
-    // Delete a customer by ID
+    //Endpoint to retrieve a customer by ID
+
+
+    //Endpoint to adding a new customer
+    @PostMapping("/add")
+    public ResponseEntity<Customer> addCustomer(@RequestParam String name,
+                                                @RequestParam String phoneNumber,
+                                                @RequestParam String dogName,
+                                                @RequestParam String breed,
+                                                @RequestParam int age) {
+        Customer newCustomer = customerService.addCustomer(name, phoneNumber, dogName, breed, age);
+        return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
+    }
+
+    //Endpoint to update an existing customer
+    @PutMapping("/{customerId}")
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId,
+                                                   @RequestBody Customer updatedCustomer) {
+        Customer customer = customerService.updateCustomer(customerId, updatedCustomer);
+        return ResponseEntity.ok(customer);
+    }
+
+    //Endpoint to delete a customer by ID
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.noContent().build();
     }
+
+    //Endpoint to adding a dog to a customer
+    @PostMapping("/{customerId}/dogs/add")
+    public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
+                                                     @RequestParam String dogName,
+                                                     @RequestParam String breed,
+                                                     @RequestParam int age) {
+        Customer updatedCustomer = customerService.addDogToCustomer(customerId, dogName, breed, age);
+        return ResponseEntity.ok(updatedCustomer);
+    }
+
+    //Endpoint to updating a dog for a customer
+
+
+
+    //Endpoint to removing a dog for a customer
+
+
+
 
 
 

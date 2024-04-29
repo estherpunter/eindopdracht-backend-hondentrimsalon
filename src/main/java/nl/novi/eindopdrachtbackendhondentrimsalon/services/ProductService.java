@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,42 +20,53 @@ public class ProductService {
     }
 
 
-    //Adding new products to the system
-    //Updating product information (e.g. name, price, stock)
     //Retrieving product details
-    //Managing product inventory (e.g. adjusting stock levels)
-    //Associating treatments with appointments
-
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
     public Product getProductById(Long productId) {
-        Optional<Product> productOptional = productRepository.findById(productId);
-        return productOptional.orElse(null);
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new RecordNotFoundException("Product not found with ID: " + productId));
     }
 
-    public Product createProduct(Product product) {
+    public List<Product> findProductByName(String name) {
+        return productRepository.findByNameIgnoreCase(name);
+    }
+
+    //Adding new products to the system
+    public Product addProduct(Product product) {
         //Perform any additional validation or business logic before saving the product
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Long productId, Product product) {
-        Optional<Product> productOptional = productRepository.findById(productId);
-        if (productOptional.isPresent()) {
-            updatedProduct.setId(productId); //Ensure the updated product has the correct ID
-            return productRepository.save(updateProduct);
-        }
-        return null; //Product not found
+    //Updating product information (e.g. name, price, stock)
+    public Product updateProduct(Long productId, Product updatedProduct) {
+        Product existingProduct = productRepository.findById(productId)
+                        .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+
+            existingProduct.setName(updatedProduct.getName());
+            existingProduct.setPrice(updatedProduct.getPrice());
+            existingProduct.setStock(updatedProduct.getStock());
+
+            return productRepository.save(existingProduct);
     }
 
-    public boolean deleteProduct(Long productId) {
+    public Product updateProductStock(Long productId, int newStock) {
+        Product existingProduct = productRepository.findById(productId)
+                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+
+        existingProduct.setStock(newStock);
+        return productRepository.save(existingProduct);
+
+    }
+
+    public void deleteProduct(Long productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             productRepository.deleteById(productId);
-            return true; //Product successfully deleted
+        } else {
+            throw new RecordNotFoundException("Product not wound with id: " + productId);
         }
-        return false; //Product not found
     }
 }

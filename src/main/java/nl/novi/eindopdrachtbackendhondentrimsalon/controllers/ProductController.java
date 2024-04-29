@@ -13,7 +13,6 @@ import java.util.List;
 @RequestMapping("/api/products")
 public class ProductController {
 
-
     private final ProductService productService;
 
     @Autowired
@@ -29,9 +28,9 @@ public class ProductController {
     }
 
     //Endpoint to retrieve a product by ID
-    @GetMapping("/{productid}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long productid) {
-        Product product = productService.getProductById(productid);
+    @GetMapping("/{productId}")
+    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
+        Product product = productService.getProductById(productId);
         if (product != null) {
             return new ResponseEntity<>(product, HttpStatus.OK);
         } else {
@@ -39,34 +38,43 @@ public class ProductController {
         }
     }
 
+    //Endpoint to retrieve products by name
+    @GetMapping
+    public ResponseEntity<List<Product>> findProductByName(@RequestParam String name) {
+        List<Product> products = productService.findProductByName(name);
+        return ResponseEntity.ok(products);
+    }
 
-    //Adding a new product
+
+    //Endpoint to adding a new product
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        Product newProduct = productService.createProduct(product);
+    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
+        Product newProduct = productService.addProduct(product);
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
-    //Update an existing product
+    //Endpoint to update an existing product
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(productId, product);
-        if (updatedProduct != null) {
-            return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
+                                                 @RequestBody Product updatedProduct) {
+        Product product = productService.updateProduct(productId, updatedProduct);
+        return ResponseEntity.ok(product);
     }
 
-    //Delete a product by ID
+    //Endpoint to update only the stock of a product
+    @PatchMapping("/{productId}/stock")
+    public ResponseEntity<Product> updateProductStock(@PathVariable Long productId,
+                                                      @RequestParam int newStock) {
+        Product product = productService.updateProductStock(productId, newStock);
+        return ResponseEntity.ok(product);
+    }
+
+    //Endpoint to delete a product by ID
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
-        boolean deleted = productService.deleteProduct(productId);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        productService.deleteProduct(productId);
+        return ResponseEntity.noContent().build();
     }
+
 
 }

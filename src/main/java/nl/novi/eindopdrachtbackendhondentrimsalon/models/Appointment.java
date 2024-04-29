@@ -3,7 +3,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 import jakarta.persistence.*;
 
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -12,11 +12,20 @@ public class Appointment {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
-    private Date date;
+
     @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
+
     @ManyToOne
+    @JoinColumn(name = "dog_id")
     private Dog dog;
+
+    @Column(name = "appointment_date")
+    private LocalDateTime date;
+
+    @Column(name = "status")
+    private String status;
 
     @OneToMany
     private List<Product> products;
@@ -28,10 +37,30 @@ public class Appointment {
 
     }
 
-    public Appointment(Date date, Customer customer, Dog dog) {
-        this.date = date;
+    public Appointment(Long id, Customer customer, Dog dog, LocalDateTime date, String status, List<Product> products, List<Treatment> treatments) {
+        this.id = id;
         this.customer = customer;
         this.dog = dog;
+        this.date = date;
+        this.status = status;
+        this.products = products;
+        this.treatments = treatments;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Long getId() {
@@ -42,13 +71,6 @@ public class Appointment {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
-    }
 
     public Customer getCustomer() {
         return customer;
