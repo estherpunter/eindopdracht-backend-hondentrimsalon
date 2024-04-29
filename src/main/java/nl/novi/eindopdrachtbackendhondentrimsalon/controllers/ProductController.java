@@ -60,13 +60,13 @@ public class ProductController {
 
     //Delete a product by ID
     @DeleteMapping("/{productId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
-        boolean deleted = productService.deleteProduct(productId);
-        if (deleted) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
+//    public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
+//        boolean deleted = productService.deleteProduct(productId);
+//        if (deleted) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        } else {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
+//    }
 
 }

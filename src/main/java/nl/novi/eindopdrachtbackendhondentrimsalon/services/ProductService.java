@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class ProductService {
     }
 
     public Product getProductById(Long productId) {
-        Optional<Product> productOptional = productRepository.findById(productId);
-        return productOptional.orElse(null);
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new RecordNotFoundException("Product not found with ID: " + productId));
     }
 
 
@@ -48,20 +49,19 @@ public class ProductService {
 
             productRepository.save(existingProduct);
         } else {
-            throw new RuntimeException("Product not found with id: " + productId); //Product not found
+            throw new RecordNotFoundException("Product not found with id: " + productId); //Product not found
         }
     }
 
-    public boolean deleteProduct(Long productId) {
+    public void deleteProduct(Long productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
         if (productOptional.isPresent()) {
             productRepository.deleteById(productId);
-            return true; //Product successfully deleted
+        } else {
+            throw new RecordNotFoundException("Product not wound with id: " + productId);
         }
-        return false; //Product not found
+
+        //Managing product inventory (e.g. adjusting stock levels)
+        //Associating treatments with appointments
     }
-
-    //Managing product inventory (e.g. adjusting stock levels)
-    //Associating treatments with appointments
-
 }

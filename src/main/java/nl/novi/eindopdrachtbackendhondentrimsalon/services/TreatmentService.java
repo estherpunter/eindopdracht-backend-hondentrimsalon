@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Treatment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.TreatmentRepository;
@@ -25,10 +26,9 @@ public class TreatmentService {
     }
 
     public Treatment getTreatmentById(Long treatmentId) {
-        Optional<Treatment> treatmentOptional = treatmentRepository.findById(treatmentId);
-        return treatmentOptional.orElse(null);
+        return treatmentRepository.findById(treatmentId)
+                .orElseThrow(() -> new RecordNotFoundException("Treatment not found with ID: " + treatmentId));
     }
-
 
     //Adding new treatments to the system
     public Treatment addTreatment(Treatment treatment) {
@@ -47,19 +47,18 @@ public class TreatmentService {
 
             treatmentRepository.save(existingTreatment);
         } else {
-            throw new RuntimeException("Treatment not found with id: " + treatmentId); //Treatment not found
+            throw new RecordNotFoundException("Treatment not found with id: " + treatmentId); //Treatment not found
         }
     }
 
-    public boolean deleteTreatment(Long treatmentId) {
+    public void deleteTreatment(Long treatmentId) {
         Optional<Treatment> treatmentOptional = treatmentRepository.findById(treatmentId);
         if (treatmentOptional.isPresent()) {
             treatmentRepository.deleteById(treatmentId);
-            return true; //Treatment successfully deleted
+        } else {
+            throw new RecordNotFoundException("Treatment not found with id: " + treatmentId);
         }
-        return false; //Treatment not found
+
+        //Associating treatments with appointments
     }
-
-    //Associating treatments with appointments
-
 }

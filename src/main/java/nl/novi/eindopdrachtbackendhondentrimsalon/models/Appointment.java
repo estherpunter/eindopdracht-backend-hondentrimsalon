@@ -3,6 +3,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 import jakarta.persistence.*;
 
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -46,7 +47,7 @@ public class Appointment {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
