@@ -2,14 +2,12 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
-import nl.novi.eindopdrachtbackendhondentrimsalon.repository.AppointmentRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.repository.DogRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.repository.TreatmentRepository;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class AppointmentService {
@@ -18,15 +16,15 @@ public class AppointmentService {
     private final CustomerRepository customerRepository;
     private final DogRepository dogRepository;
     private final TreatmentRepository treatmentRepository;
-
     private final ReceiptRepository receiptRepository;
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository, ReceiptRepository receiptRepository) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
         this.treatmentRepository = treatmentRepository;
+        this.receiptRepository = receiptRepository;
     }
 
 
@@ -106,4 +104,21 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
+    public Receipt generateReceipt(Long appointmentId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+
+        Receipt receipt = new Receipt();
+
+        List<Product> products = appointment.getProducts();
+        List<Treatment> treatments = appointment.getTreatments();
+
+        receipt.setProducts(products);
+        receipt.setTreatments(treatments);
+
+        double totalPrice = calculateTotalPrice(products, treatments);
+        receipt.setTotalPrice(totalPrice);
+
+        return receiptRepository.save(receipt);
+    }
 }

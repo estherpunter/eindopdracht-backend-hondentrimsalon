@@ -1,4 +1,11 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.repository;
 
-public class ReceiptRepository {
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface ReceiptRepository extends JpaRepository<Receipt, Long> {
+
+
 }

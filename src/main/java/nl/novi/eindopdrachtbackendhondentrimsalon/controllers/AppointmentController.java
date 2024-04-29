@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Appointment;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class AppointmentController {
     public ResponseEntity<Appointment> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
         Appointment updatedAppointment = appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice);
         return ResponseEntity.ok(updatedAppointment);
+    }
+
+    @PostMapping("/{appointmentId}/generate-receipt")
+    public ResponseEntity<Receipt> generateReceipt(@PathVariable Long appointmentId) {
+        Receipt receipt = appointmentService.generateReceipt(appointmentId);
+        return ResponseEntity.ok(receipt);
     }
 
 }
