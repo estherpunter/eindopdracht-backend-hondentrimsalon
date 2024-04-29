@@ -19,6 +19,8 @@ public class AppointmentService {
     private final DogRepository dogRepository;
     private final TreatmentRepository treatmentRepository;
 
+    private final ReceiptRepository receiptRepository;
+
     @Autowired
     public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository) {
         this.appointmentRepository = appointmentRepository;

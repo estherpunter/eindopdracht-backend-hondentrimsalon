@@ -62,6 +62,6 @@ public class ProductService {
         }
 
         //Managing product inventory (e.g. adjusting stock levels)
-        //Associating treatments with appointments
+        //Associating products with appointments
     }
 }
