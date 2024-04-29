@@ -38,7 +38,6 @@ public class TreatmentController {
         }
     }
 
-
     //Endpoint to retrieve a treatment by name
     @GetMapping
     public ResponseEntity<List<Treatment>> findTreatmentByName(@RequestParam String name) {
