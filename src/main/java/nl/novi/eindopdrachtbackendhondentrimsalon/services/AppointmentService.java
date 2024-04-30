@@ -18,7 +18,6 @@ public class AppointmentService {
     private final DogRepository dogRepository;
     private final TreatmentRepository treatmentRepository;
     private final ReceiptRepository receiptRepository;
-
     private final ProductRepository productRepository;
 
     @Autowired
@@ -30,7 +29,6 @@ public class AppointmentService {
         this.receiptRepository = receiptRepository;
         this.productRepository = productRepository;
     }
-
 
     public Appointment scheduleAppointment(Long customerId, Long dogId, LocalDateTime appointmentDate) {
         Customer customer = customerRepository.findById(customerId)
@@ -46,29 +44,23 @@ public class AppointmentService {
 
         customer.getAppointments().add(appointment);
 
-        // Perform any necessary business logic/validation before saving
         return appointmentRepository.save(appointment);
     }
 
     public void updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
-        //Check if the appointment with the given ID exists
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
 
-        //Update appointment properties
         appointment.setDate(newDate);
         appointment.setStatus(newStatus);
 
-        //Save the updated appointment
         appointmentRepository.save(appointment);
     }
 
     public void cancelAppointment(Long appointmentId) {
-        //Retrieve appointment by ID
         Appointment existingAppointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
 
-        //Cancel the appointment
         appointmentRepository.delete(existingAppointment);
     }
 

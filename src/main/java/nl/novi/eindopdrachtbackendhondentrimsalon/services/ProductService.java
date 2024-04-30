@@ -19,8 +19,6 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-
-    //Retrieving product details
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
@@ -34,22 +32,27 @@ public class ProductService {
         return productRepository.findByNameIgnoreCase(name);
     }
 
-    //Adding new products to the system
     public Product addProduct(Product product) {
-        //Perform any additional validation or business logic before saving the product
+        Optional<Product> existingProduct = productRepository.findById(product.getId());
+        if (existingProduct.isPresent()) {
+            throw new RuntimeException("Product with ID " + product.getId() + " already exists.");
+        }
+        if (product.getName() == null || product.getPrice() <= 0) {
+            throw new IllegalArgumentException("Product name and price are required.");
+        }
         return productRepository.save(product);
     }
 
-    //Updating product information (e.g. name, price, stock)
+
     public Product updateProduct(Long productId, Product updatedProduct) {
         Product existingProduct = productRepository.findById(productId)
-                        .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
 
-            existingProduct.setName(updatedProduct.getName());
-            existingProduct.setPrice(updatedProduct.getPrice());
-            existingProduct.setStock(updatedProduct.getStock());
+        existingProduct.setName(updatedProduct.getName());
+        existingProduct.setPrice(updatedProduct.getPrice());
+        existingProduct.setStock(updatedProduct.getStock());
 
-            return productRepository.save(existingProduct);
+        return productRepository.save(existingProduct);
     }
 
     public Product updateProductStock(Long productId, int newStock) {
