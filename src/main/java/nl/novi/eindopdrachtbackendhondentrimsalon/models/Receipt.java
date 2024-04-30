@@ -9,7 +9,7 @@ import java.util.List;
 public class Receipt {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToMany
@@ -24,10 +24,22 @@ public class Receipt {
             inverseJoinColumns = @JoinColumn(name = "treatment_id"))
     private List<Treatment> treatments;
 
+    @OneToOne
+    @JoinColumn(name = "appointment_id", unique = true)
+    private Appointment appointment;
+
     private double totalPrice;
 
     public Receipt() {
 
+    }
+
+    public Receipt(Long id, List<Product> products, List<Treatment> treatments, Appointment appointment, double totalPrice) {
+        this.id = id;
+        this.products = products;
+        this.treatments = treatments;
+        this.appointment = appointment;
+        this.totalPrice = totalPrice;
     }
 
     public Long getId() {
@@ -60,5 +72,13 @@ public class Receipt {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public Appointment getAppointment() {
+        return appointment;
+    }
+
+    public void setAppointment(Appointment appointment) {
+        this.appointment = appointment;
     }
 }

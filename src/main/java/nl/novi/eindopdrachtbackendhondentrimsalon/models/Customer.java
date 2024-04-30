@@ -5,21 +5,27 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table (name = "customers")
+@Table(name = "customers")
 public class Customer {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
+
     private String phoneNumber;
 
     @OneToMany(mappedBy = "customer")
     private List<Dog> dogs;
 
-    public Customer(){
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    private List<Appointment> appointments;
+
+    public Customer() {
 
     }
+
     public Customer(String name, String phoneNumber) {
         this.name = name;
         this.phoneNumber = phoneNumber;
@@ -41,11 +47,11 @@ public class Customer {
         this.name = name;
     }
 
-    public String getPhonenumber() {
+    public String getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhonenumber(String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -55,5 +61,13 @@ public class Customer {
 
     public void setDogs(List<Dog> dogs) {
         this.dogs = dogs;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
     }
 }

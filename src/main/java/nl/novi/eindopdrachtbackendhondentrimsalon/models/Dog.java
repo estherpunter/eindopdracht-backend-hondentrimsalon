@@ -6,13 +6,14 @@ import jakarta.persistence.*;
 @Table(name = "dogs")
 public class Dog {
 
-
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;
+
     private String breed;
+
     private int age;
 
     @ManyToOne(fetch = FetchType.LAZY)

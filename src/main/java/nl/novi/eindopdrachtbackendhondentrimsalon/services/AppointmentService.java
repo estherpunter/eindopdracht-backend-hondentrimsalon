@@ -44,6 +44,8 @@ public class AppointmentService {
         appointment.setDog(dog);
         appointment.setDate(appointmentDate);
 
+        customer.getAppointments().add(appointment);
+
         // Perform any necessary business logic/validation before saving
         return appointmentRepository.save(appointment);
     }

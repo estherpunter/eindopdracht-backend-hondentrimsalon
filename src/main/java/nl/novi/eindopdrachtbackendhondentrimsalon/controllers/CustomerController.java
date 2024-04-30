@@ -29,7 +29,15 @@ public class CustomerController {
     }
 
     //Endpoint to retrieve a customer by ID
-
+    @GetMapping("/{customerId}")
+    public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
+        Customer customer = customerService.getCustomerById(customerId);
+        if (customer != null) {
+            return new ResponseEntity<>(customer, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 
     //Endpoint to adding a new customer
     @PostMapping("/add")

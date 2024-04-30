@@ -36,7 +36,6 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-
     //Adding new customers to the system
     public Customer addCustomer(String customerName, String phoneNumber, String dogName, String breed, int age) {
         // Check if customer already exists
@@ -50,14 +49,14 @@ public class CustomerService {
                     throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customerName + "'.");
                 }
             }
-                    // Add new dog to existing customer
-                    Dog newDog = new Dog();
-                    newDog.setName(dogName);
-                    newDog.setBreed(breed);
-                    newDog.setAge(age);
-                    newDog.setCustomer(customer); // Set the customer for the new dog
-                    customer.getDogs().add(newDog); // Add dog to the existing customer's list of dogs
-                    return customerRepository.save(customer); // Update the customer in repository
+            // Add new dog to existing customer
+            Dog newDog = new Dog();
+            newDog.setName(dogName);
+            newDog.setBreed(breed);
+            newDog.setAge(age);
+            newDog.setCustomer(customer); // Set the customer for the new dog
+            customer.getDogs().add(newDog); // Add dog to the existing customer's list of dogs
+            return customerRepository.save(customer); // Update the customer in repository
         } else {
             // Customer does not exist, create new customer and dog
             Customer newCustomer = new Customer(customerName, phoneNumber);
@@ -79,7 +78,7 @@ public class CustomerService {
 
         //Update customer properties
         existingCustomer.setName(customer.getName());
-        existingCustomer.setPhonenumber(customer.getPhonenumber());
+        existingCustomer.setPhoneNumber(customer.getPhoneNumber());
         existingCustomer.setDogs(customer.getDogs());
 
         //Save the updated customer
@@ -95,8 +94,6 @@ public class CustomerService {
         }
     }
 
-    //Managing relationships with dogs (e.g. adding, updating, or removing dogs for a customer)
-
     public Customer addDogToCustomer(Long customerId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
@@ -108,7 +105,6 @@ public class CustomerService {
             }
         }
 
-        //Create new dog and associate it with the customer
         Dog newDog = new Dog(dogName, breed, age);
         newDog.setCustomer(customer);
         customer.getDogs().add(newDog);
