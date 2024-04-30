@@ -17,18 +17,16 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @Autowired
-    private CustomerController (CustomerService customerService) {
+    private CustomerController(CustomerService customerService) {
         this.customerService = customerService;
     }
 
-    //Endpoint to retrieve all customers
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {
         List<Customer> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
-    //Endpoint to retrieve a customer by ID
     @GetMapping("/{customerId}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
         Customer customer = customerService.getCustomerById(customerId);
@@ -39,7 +37,6 @@ public class CustomerController {
         }
     }
 
-    //Endpoint to adding a new customer
     @PostMapping("/add")
     public ResponseEntity<Customer> addCustomer(@RequestParam String name,
                                                 @RequestParam String phoneNumber,
@@ -50,7 +47,6 @@ public class CustomerController {
         return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
     }
 
-    //Endpoint to update an existing customer
     @PutMapping("/{customerId}")
     public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId,
                                                    @RequestBody Customer updatedCustomer) {
@@ -58,14 +54,12 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
-    //Endpoint to delete a customer by ID
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
     }
 
-    //Endpoint to adding a dog to a customer
     @PostMapping("/{customerId}/dogs/add")
     public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
                                                      @RequestParam String dogName,
@@ -75,7 +69,6 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-    //Endpoint to updating a dog for a customer
     @PutMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Customer> updateDogForCustomer(@PathVariable Long customerId,
                                                          @PathVariable Long dogId,
@@ -90,8 +83,6 @@ public class CustomerController {
         }
     }
 
-
-//Endpoint to removing a dog for a customer
     @DeleteMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Void> removeDogFromCustomer(@PathVariable Long customerId,
                                                       @PathVariable Long dogId) {
@@ -102,6 +93,4 @@ public class CustomerController {
             return ResponseEntity.notFound().build();
         }
     }
-
-
 }

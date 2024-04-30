@@ -20,14 +20,12 @@ public class TreatmentController {
         this.treatmentService = treatmentService;
     }
 
-    //Endpoint to retrieve all treatments
     @GetMapping
     public ResponseEntity<List<Treatment>> getAllTreatments() {
         List<Treatment> treatments = treatmentService.getAllTreatments();
         return new ResponseEntity<>(treatments, HttpStatus.OK);
     }
 
-    //Endpoint to retrieve a treatment by ID
     @GetMapping("/{treatmentId}")
     public ResponseEntity<Treatment> getTreatmentById(@PathVariable Long treatmentId) {
         Treatment treatment = treatmentService.getTreatmentById(treatmentId);
@@ -38,21 +36,18 @@ public class TreatmentController {
         }
     }
 
-    //Endpoint to retrieve a treatment by name
     @GetMapping
     public ResponseEntity<List<Treatment>> findTreatmentByName(@RequestParam String name) {
         List<Treatment> treatments = treatmentService.findTreatmentByName(name);
         return ResponseEntity.ok(treatments);
     }
 
-    //Endpoint to adding a new treatment
     @PostMapping
     public ResponseEntity<Treatment> addTreatment(@RequestBody Treatment treatment) {
         Treatment newTreatment = treatmentService.addTreatment(treatment);
         return new ResponseEntity<>(newTreatment, HttpStatus.CREATED);
     }
 
-    //Endpoint to update an existing treatment
     @PutMapping("/{treatmentId}")
     public ResponseEntity<Treatment> updateTreatment(@PathVariable Long treatmentId,
                                                      @RequestBody Treatment updatedTreatment) {
@@ -60,11 +55,9 @@ public class TreatmentController {
         return ResponseEntity.ok(treatment);
     }
 
-    //Endpoint to delete a treatment by ID
     @DeleteMapping("/{treatmentId}")
     public ResponseEntity<Void> deleteTreatment(@PathVariable Long treatmentId) {
         treatmentService.deleteTreatment(treatmentId);
         return ResponseEntity.noContent().build();
     }
-
 }

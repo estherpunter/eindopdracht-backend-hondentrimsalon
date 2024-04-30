@@ -17,7 +17,6 @@ public class AppointmentController {
 
     private final AppointmentService appointmentService;
 
-
     @Autowired
     public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
@@ -62,7 +61,6 @@ public class AppointmentController {
             @RequestParam Long productId
     ) {
         try {
-            // Add a product to an appointment
             appointmentService.addProductToAppointment(appointmentId, productId);
             return ResponseEntity.ok().build();
         } catch (RecordNotFoundException e) {
@@ -76,7 +74,6 @@ public class AppointmentController {
             @RequestParam Long treatmentId
     ) {
         try {
-            // Add a treatment to an appointment
             appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
             return ResponseEntity.ok().build();
         } catch (RecordNotFoundException e) {
@@ -95,5 +92,4 @@ public class AppointmentController {
         Receipt receipt = appointmentService.generateReceipt(appointmentId);
         return ResponseEntity.ok(receipt);
     }
-
 }

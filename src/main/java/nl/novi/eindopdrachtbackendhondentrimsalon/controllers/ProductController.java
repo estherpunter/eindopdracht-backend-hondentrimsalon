@@ -20,14 +20,12 @@ public class ProductController {
         this.productService = productService;
     }
 
-    //Endpoint to retrieve all products
     @GetMapping
     public ResponseEntity<List<Product>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
-    //Endpoint to retrieve a product by ID
     @GetMapping("/{productId}")
     public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
         Product product = productService.getProductById(productId);
@@ -38,22 +36,18 @@ public class ProductController {
         }
     }
 
-    //Endpoint to retrieve products by name
     @GetMapping
     public ResponseEntity<List<Product>> findProductByName(@RequestParam String name) {
         List<Product> products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
     }
 
-
-    //Endpoint to adding a new product
     @PostMapping
     public ResponseEntity<Product> addProduct(@RequestBody Product product) {
         Product newProduct = productService.addProduct(product);
         return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
     }
 
-    //Endpoint to update an existing product
     @PutMapping("/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
                                                  @RequestBody Product updatedProduct) {
@@ -61,7 +55,6 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    //Endpoint to update only the stock of a product
     @PatchMapping("/{productId}/stock")
     public ResponseEntity<Product> updateProductStock(@PathVariable Long productId,
                                                       @RequestParam int newStock) {
@@ -69,7 +62,6 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    //Endpoint to delete a product by ID
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
