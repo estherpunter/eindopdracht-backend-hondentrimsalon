@@ -24,6 +24,13 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
+    @Column
+    private boolean enabled = true;
+
+    @Column
+    private String apikey;
+
+
     public String getUsername() {
         return username;
     }
@@ -49,5 +56,21 @@ public class User {
     }
     public void removeRole(Role role) {
         this.roles.remove(role);
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public String getApikey() {
+        return apikey;
+    }
+
+    public void setApikey(String apikey) {
+        this.apikey = apikey;
     }
 }
