@@ -22,7 +22,7 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-    @PostMapping("/schedule")
+    @PostMapping
     public ResponseEntity<Appointment> scheduleAppointment(@RequestParam Long customerId,
                                                            @RequestParam Long dogId,
                                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDate) {

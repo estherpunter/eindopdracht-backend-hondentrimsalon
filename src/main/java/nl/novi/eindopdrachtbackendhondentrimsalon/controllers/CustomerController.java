@@ -37,7 +37,7 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/add")
+    @PostMapping
     public ResponseEntity<Customer> addCustomer(@RequestParam String name,
                                                 @RequestParam String phoneNumber,
                                                 @RequestParam String dogName,
