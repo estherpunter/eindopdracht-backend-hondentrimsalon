@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.ProductNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.ProductRepository;
@@ -46,7 +47,7 @@ public class ProductService {
 
     public Product updateProduct(Long productId, Product updatedProduct) {
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setPrice(updatedProduct.getPrice());
@@ -57,7 +58,7 @@ public class ProductService {
 
     public Product updateProductStock(Long productId, int newStock) {
         Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         existingProduct.setStock(newStock);
         return productRepository.save(existingProduct);
@@ -69,7 +70,7 @@ public class ProductService {
         if (productOptional.isPresent()) {
             productRepository.deleteById(productId);
         } else {
-            throw new RecordNotFoundException("Product not wound with id: " + productId);
+            throw new ProductNotFoundException(productId);
         }
     }
 }

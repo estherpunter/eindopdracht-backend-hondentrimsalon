@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.DogRepository;
@@ -17,7 +18,7 @@ public class DogService {
 
     public Dog updateDogCharacteristics(Long dogId, String name, String breed, int age) {
         Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new RecordNotFoundException("Dog not found with id: " + dogId));
+                .orElseThrow(() -> new DogNotFoundException(dogId));
 
         dog.setName(name);
         dog.setBreed(breed);

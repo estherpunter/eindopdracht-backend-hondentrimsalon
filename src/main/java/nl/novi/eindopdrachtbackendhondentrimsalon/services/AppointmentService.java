@@ -1,6 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.helpers.PriceCalculator;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
@@ -32,10 +32,10 @@ public class AppointmentService {
 
     public Appointment scheduleAppointment(Long customerId, Long dogId, LocalDateTime appointmentDate) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new RecordNotFoundException("Dog not found with id: " + dogId));
+                .orElseThrow(() -> new DogNotFoundException(dogId));
 
         Appointment appointment = new Appointment();
         appointment.setCustomer(customer);
@@ -49,7 +49,7 @@ public class AppointmentService {
 
     public void updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         appointment.setDate(newDate);
         appointment.setStatus(newStatus);
@@ -59,17 +59,17 @@ public class AppointmentService {
 
     public void cancelAppointment(Long appointmentId) {
         Appointment existingAppointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         appointmentRepository.delete(existingAppointment);
     }
 
     public void addProductToAppointment(Long appointmentId, Long productId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RecordNotFoundException("Product not found with id: " + productId));
+                .orElseThrow(() -> new ProductNotFoundException(productId));
 
         appointment.getProducts().add(product);
         appointmentRepository.save(appointment);
@@ -77,10 +77,10 @@ public class AppointmentService {
 
     public void addTreatmentToAppointment(Long appointmentId, Long treatmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Treatment treatment = treatmentRepository.findById(treatmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Treatment not found with id: " + treatmentId));
+                .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
         appointment.getTreatments().add(treatment);
         appointmentRepository.save(appointment);
@@ -88,7 +88,7 @@ public class AppointmentService {
 
     public Appointment addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Treatment customTreatment = new Treatment();
         customTreatment.setName("Other");
@@ -101,7 +101,7 @@ public class AppointmentService {
 
     public Receipt generateReceipt(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Appointment not found with id: " + appointmentId));
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Receipt receipt = new Receipt();
 
