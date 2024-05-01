@@ -81,7 +81,11 @@ public class CustomerService {
             }
         }
 
-        Dog newDog = new Dog(dogName, breed, age);
+        Dog newDog = new Dog();
+        newDog.setName(dogName);
+        newDog.setBreed(breed);
+        newDog.setAge(age);
+
         newDog.setCustomer(customer);
         customer.getDogs().add(newDog);
 

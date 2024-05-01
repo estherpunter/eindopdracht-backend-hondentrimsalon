@@ -58,7 +58,7 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{customerId}/dogs/add")
+    @PostMapping("/{customerId}/dogs")
     public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
                                                      @RequestParam String dogName,
                                                      @RequestParam String breed,
