@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "appointments")
 public class Appointment {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -33,11 +34,14 @@ public class Appointment {
     @OneToMany
     private List<Treatment> treatments;
 
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+    private Receipt receipt;
+
     public Appointment() {
 
     }
 
-    public Appointment(Long id, Customer customer, Dog dog, LocalDateTime date, String status, List<Product> products, List<Treatment> treatments) {
+    public Appointment(Long id, Customer customer, Dog dog, LocalDateTime date, String status, List<Product> products, List<Treatment> treatments, Receipt receipt) {
         this.id = id;
         this.customer = customer;
         this.dog = dog;
@@ -45,6 +49,7 @@ public class Appointment {
         this.status = status;
         this.products = products;
         this.treatments = treatments;
+        this.receipt = receipt;
     }
 
     public LocalDateTime getDate() {
@@ -70,7 +75,6 @@ public class Appointment {
     public void setId(Long id) {
         this.id = id;
     }
-
 
     public Customer getCustomer() {
         return customer;
@@ -102,5 +106,13 @@ public class Appointment {
 
     public void setTreatments(List<Treatment> treatments) {
         this.treatments = treatments;
+    }
+
+    public Receipt getReceipt() {
+        return receipt;
+    }
+
+    public void setReceipt(Receipt receipt) {
+        this.receipt = receipt;
     }
 }

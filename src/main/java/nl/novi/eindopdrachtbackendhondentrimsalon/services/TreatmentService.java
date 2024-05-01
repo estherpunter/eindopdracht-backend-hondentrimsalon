@@ -19,7 +19,6 @@ public class TreatmentService {
         this.treatmentRepository = treatmentRepository;
     }
 
-    //Retrieving treatment details
     public List<Treatment> getAllTreatments() {
         return treatmentRepository.findAll();
     }
@@ -31,15 +30,21 @@ public class TreatmentService {
 
     public List<Treatment> findTreatmentByName(String name) {
         return treatmentRepository.findByNameIgnoreCase(name);
-   }
+    }
 
-    //Adding new treatments to the system
     public Treatment addTreatment(Treatment treatment) {
-        //Perform any additional validation or business logic before saving the product
+        Optional<Treatment> existingTreatment = treatmentRepository.findById(treatment.getId());
+        if (existingTreatment.isPresent()) {
+            throw new RuntimeException("Treatment with ID " + treatment.getId() + " already exists.");
+        }
+        if (treatment.getName() == null || treatment.getPrice() <= 0) {
+            throw new IllegalArgumentException("Treatment name and price are required.");
+        }
+
         return treatmentRepository.save(treatment);
     }
 
-    //Updating treatment information (e.g. name, price)
+
     public Treatment updateTreatment(Long treatmentId, Treatment updatedTreatment) {
         Treatment existingTreatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new RecordNotFoundException("Treatment not found with id: " + treatmentId));
