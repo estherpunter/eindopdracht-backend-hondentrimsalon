@@ -17,9 +17,6 @@ public class CustomerService {
     private final DogRepository dogRepository;
 
     @Autowired
-    private DogService dogService;
-
-    @Autowired
     public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository) {
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
@@ -34,33 +31,25 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public Customer addCustomer(String customerName, String phoneNumber, String dogName, String breed, int age) {
-        Customer customer = customerRepository.findByName(customerName);
+    public Customer addCustomer(String customerName, String phoneNumber) {
+        Customer exisitingCustomer = customerRepository.findByName(customerName);
 
-        if (customer != null) {
-            checkIfDogExistsForCustomer(customer, dogName);
-
-            Dog newDog = dogService.addDog(dogName, breed, age, customer);
-            customer.getDogs().add(newDog);
-
-            return customerRepository.save(customer);
+        if (exisitingCustomer != null) {
+            throw new RuntimeException("Customer with name: " + customerName + " already exists.");
         } else {
             Customer newCustomer = new Customer(customerName, phoneNumber);
-            Dog newDog = dogService.addDog(dogName, breed, age, newCustomer);
-            newCustomer.getDogs().add(newDog);
-
             return customerRepository.save(newCustomer);
         }
     }
 
-    private void checkIfDogExistsForCustomer(Customer customer, String dogName) {
-        List<Dog> dogs = customer.getDogs();
-        for (Dog dog : dogs) {
-            if (dog.getName().equalsIgnoreCase(dogName)) {
-                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customer.getName() + "'.");
-            }
-        }
-    }
+//    private void checkIfDogExistsForCustomer(Customer customer, String dogName) {
+//        List<Dog> dogs = customer.getDogs();
+//        for (Dog dog : dogs) {
+//            if (dog.getName().equalsIgnoreCase(dogName)) {
+//                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customer.getName() + "'.");
+//            }
+//        }
+//    }
 
     public Customer updateCustomer(Long customerId, Customer customer) {
         Customer existingCustomer = customerRepository.findById(customerId)
@@ -92,7 +81,11 @@ public class CustomerService {
             }
         }
 
-        Dog newDog = new Dog(dogName, breed, age);
+        Dog newDog = new Dog();
+        newDog.setName(dogName);
+        newDog.setBreed(breed);
+        newDog.setAge(age);
+
         newDog.setCustomer(customer);
         customer.getDogs().add(newDog);
 

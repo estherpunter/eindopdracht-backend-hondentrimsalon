@@ -38,12 +38,9 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Customer> addCustomer(@RequestParam String name,
-                                                @RequestParam String phoneNumber,
-                                                @RequestParam String dogName,
-                                                @RequestParam String breed,
-                                                @RequestParam int age) {
-        Customer newCustomer = customerService.addCustomer(name, phoneNumber, dogName, breed, age);
+    public ResponseEntity<Customer> addCustomer(@RequestParam String customerName,
+                                                @RequestParam String phoneNumber) {
+        Customer newCustomer = customerService.addCustomer(customerName, phoneNumber);
         return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
     }
 
@@ -61,7 +58,7 @@ public class CustomerController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{customerId}/dogs/add")
+    @PostMapping("/{customerId}/dogs")
     public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
                                                      @RequestParam String dogName,
                                                      @RequestParam String breed,
