@@ -14,6 +14,8 @@ public class Appointment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private LocalDateTime date;
+
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;
@@ -22,16 +24,12 @@ public class Appointment {
     @JoinColumn(name = "dog_id")
     private Dog dog;
 
-    @Column(name = "appointment_date")
-    private LocalDateTime date;
-
-    @Column(name = "status")
     private String status;
 
-    @OneToMany
+    @OneToMany (mappedBy = "appointment", cascade = CascadeType.ALL)
     private List<Product> products;
 
-    @OneToMany
+    @OneToMany (mappedBy = "appointment", cascade = CascadeType.ALL)
     private List<Treatment> treatments;
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)

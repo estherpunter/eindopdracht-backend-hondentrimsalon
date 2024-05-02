@@ -16,7 +16,7 @@ public class Customer {
 
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
     private List<Dog> dogs;
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)

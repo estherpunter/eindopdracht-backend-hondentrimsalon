@@ -32,14 +32,9 @@ public class UserService {
     }
 
     public UserDto getUser(String username) {
-        UserDto dto = new UserDto();
-        Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            dto = fromUser(user.get());
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-        return dto;
+        Optional<User> userOptional = userRepository.findById(username);
+        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException(username));
+    return fromUser(user);
     }
 
     public boolean userExists(String username) {
@@ -87,7 +82,7 @@ public class UserService {
     }
 
     public static UserDto fromUser(User user) {
-        var dto = new UserDto();
+        UserDto dto = new UserDto();
 
         dto.username = user.getUsername();
         dto.password = user.getPassword();

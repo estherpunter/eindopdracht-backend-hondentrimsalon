@@ -2,6 +2,8 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -15,6 +17,10 @@ public class Product {
     private double price;
 
     private int stock;
+
+    @ManyToOne
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
     public Product() {
 

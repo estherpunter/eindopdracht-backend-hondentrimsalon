@@ -14,6 +14,10 @@ public class Treatment {
 
     private double price;
 
+    @ManyToOne
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
     public Treatment() {
 
     }

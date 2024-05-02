@@ -25,7 +25,7 @@ public class Receipt {
     private List<Treatment> treatments;
 
     @OneToOne
-    @JoinColumn(name = "appointment_id", unique = true)
+    @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 
     private double totalPrice;
