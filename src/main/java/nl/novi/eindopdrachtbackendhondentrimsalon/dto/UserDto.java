@@ -51,4 +51,5 @@ public class UserDto {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+
 }
