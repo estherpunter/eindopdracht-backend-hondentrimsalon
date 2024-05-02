@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.TreatmentNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Treatment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.TreatmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class TreatmentService {
 
     public Treatment getTreatmentById(Long treatmentId) {
         return treatmentRepository.findById(treatmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Treatment not found with ID: " + treatmentId));
+                .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
     }
 
     public List<Treatment> findTreatmentByName(String name) {
@@ -47,7 +48,7 @@ public class TreatmentService {
 
     public Treatment updateTreatment(Long treatmentId, Treatment updatedTreatment) {
         Treatment existingTreatment = treatmentRepository.findById(treatmentId)
-                .orElseThrow(() -> new RecordNotFoundException("Treatment not found with id: " + treatmentId));
+                .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
         existingTreatment.setName(updatedTreatment.getName());
         existingTreatment.setPrice(updatedTreatment.getPrice());
@@ -60,7 +61,7 @@ public class TreatmentService {
         if (treatmentOptional.isPresent()) {
             treatmentRepository.deleteById(treatmentId);
         } else {
-            throw new RecordNotFoundException("Treatment not found with id: " + treatmentId);
+            throw new TreatmentNotFoundException(treatmentId);
         }
     }
 }

@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
@@ -24,7 +25,7 @@ public class CustomerService {
 
     public Customer getCustomerById(Long customerId) {
         return customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id" + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
     }
 
     public List<Customer> getAllCustomers() {
@@ -53,7 +54,7 @@ public class CustomerService {
 
     public Customer updateCustomer(Long customerId, Customer customer) {
         Customer existingCustomer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         existingCustomer.setName(customer.getName());
         existingCustomer.setPhoneNumber(customer.getPhoneNumber());
@@ -64,7 +65,7 @@ public class CustomerService {
 
     public void deleteCustomer(Long customerId) {
         if (customerRepository.findById(customerId).isPresent()) {
-            throw new RecordNotFoundException("Customer not found with id: " + customerId);
+            throw new CustomerNotFoundException(customerId);
         } else {
             customerRepository.deleteById(customerId);
         }
@@ -72,7 +73,7 @@ public class CustomerService {
 
     public Customer addDogToCustomer(Long customerId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         List<Dog> dogs = dogRepository.findByCustomer(customer);
         for (Dog dog : dogs) {
@@ -94,12 +95,12 @@ public class CustomerService {
 
     public void updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         Dog existingDog = customer.getDogs().stream()
                 .filter(dog -> dog.getId().equals(dogId))
                 .findFirst()
-                .orElseThrow(() -> new RecordNotFoundException("Dog not found with id: " + dogId));
+                .orElseThrow(() -> new DogNotFoundException(dogId));
 
         existingDog.setName(dogName);
         existingDog.setBreed(breed);
@@ -110,7 +111,7 @@ public class CustomerService {
 
     public void removeDogFromCustomer(Long customerId, Long dogId) {
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RecordNotFoundException("Customer not found with id: " + customerId));
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         customer.getDogs().removeIf(dog -> dog.getId().equals(dogId));
 

@@ -6,6 +6,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,17 @@ public class AppointmentController {
     public AppointmentController(AppointmentService appointmentService) {
         this.appointmentService = appointmentService;
     }
+
+    @GetMapping("/{appointmentId}")
+    public ResponseEntity<Appointment> getAppointmentByCustomer(@PathVariable Long appointmentId) {
+            Appointment appointment = appointmentService.getAppointmentById(appointmentId);
+            if (appointment != null) {
+                return new ResponseEntity<>(appointment, HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+    }
+
 
     @PostMapping
     public ResponseEntity<Appointment> scheduleAppointment(@RequestParam Long customerId,
