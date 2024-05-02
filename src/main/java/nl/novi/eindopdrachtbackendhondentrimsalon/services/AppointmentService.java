@@ -30,6 +30,11 @@ public class AppointmentService {
         this.productRepository = productRepository;
     }
 
+    public Appointment getAppointmentById(Long appointmentId) {
+        return appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
+    }
+
     public Appointment scheduleAppointment(Long customerId, Long dogId, LocalDateTime appointmentDate) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));

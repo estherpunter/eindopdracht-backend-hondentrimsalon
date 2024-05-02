@@ -4,15 +4,18 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.filters.JwtRequestFilter;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -41,19 +44,29 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    protected SecurityFilterChain filter (HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
 
         http
                 .csrf(csrf -> csrf.disable())
                 .httpBasic(basic -> basic.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers());
 
-
-
+                        .requestMatchers("/api/customers/**", "/api/appointments/**", "api/dogs/**", "api/treatments/**", "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasRole("CASHIER")
+                        .requestMatchers(HttpMethod.GET, "api/appointments/{appointmentId}").hasRole("CASHIER")
+                        .requestMatchers(HttpMethod.POST, "api/appointments").hasRole("DOGGROOMER")
+                        .requestMatchers(HttpMethod.GET, "api/customers/{customerId}").hasRole("DOGGROOMER")
+                        .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/products").hasRole("DOGGROOMER")
+                        .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/treatments").hasRole("DOGGROOMER")
+                        .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/custom-treatment").hasRole("DOGGROOMER")
+                        .requestMatchers("/authenticated").hasRole("ADMIN")
+                        .requestMatchers("/authenticated").hasRole("ADMIN")
+                        .anyRequest().denyAll()
+                )
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
+        return http.build();
     }
-
-
 
 }
