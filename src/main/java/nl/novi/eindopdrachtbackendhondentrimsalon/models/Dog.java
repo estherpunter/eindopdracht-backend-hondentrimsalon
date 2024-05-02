@@ -16,7 +16,7 @@ public class Dog {
 
     private int age;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
