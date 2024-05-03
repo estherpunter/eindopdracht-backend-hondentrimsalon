@@ -34,10 +34,3 @@ CREATE TABLE Users
     enabled  BOOLEAN DEFAULT true
 );
 
-INSERT INTO users (username, password, enabled) VALUES ('admin', 'admin_password', true);
-INSERT INTO users (username, password, enabled) VALUES ('cashier', 'cashier_password', true);
-INSERT INTO users (username, password, enabled) VALUES ('doggroomer', 'doggroomer_password', true);
-
-INSERT INTO roles (username, role) VALUES ('admin', 'ADMIN');
-INSERT INTO roles (username, role) VALUES ('cashier', 'CASHIER');
-INSERT INTO roles (username, role) VALUES ('DOGGROOMER', 'DOGGROOMER');
