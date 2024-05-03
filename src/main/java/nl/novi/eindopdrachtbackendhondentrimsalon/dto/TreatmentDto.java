@@ -1,11 +1,10 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
-public class ProductDto {
+public class TreatmentDto {
 
     private Long id;
     private String name;
     private double price;
-    private int stock;
 
 
     public Long getId() {
@@ -30,13 +29,5 @@ public class ProductDto {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
     }
 }

@@ -22,22 +22,27 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+
     @GetMapping("/allAppointments")
     public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
         List<AppointmentDto> appointmentDtos = appointmentService.getAllAppointments();
         return ResponseEntity.ok(appointmentDtos);
     }
+
+
     @GetMapping("/{appointmentId}")
     public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable Long appointmentId) {
         AppointmentDto appointmentDto = appointmentService.getAppointmentById(appointmentId);
         return ResponseEntity.ok(appointmentDto);
     }
 
+
     @PostMapping("")
     public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestBody AppointmentDto appointmentDto) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(appointmentDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduledAppointmentDto);
     }
+
 
     @PutMapping("/{appointmentId}")
     public ResponseEntity<Void> updateAppointment(@PathVariable Long appointmentId, @RequestBody AppointmentDto appointmentDto) {
@@ -60,17 +65,20 @@ public class AppointmentController {
         return ResponseEntity.ok().build();
     }
 
+
     @PostMapping("/{appointmentId}/treatments/{treatmentId}")
     public ResponseEntity<Void> addTreatmentToAppointment(@PathVariable Long appointmentId, @PathVariable Long treatmentId) {
         appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
         return ResponseEntity.ok().build();
     }
 
+
     @PostMapping("/{appointmentId}/custom-treatment")
     public ResponseEntity<Appointment> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
         Appointment updatedAppointment = appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice);
         return ResponseEntity.ok(updatedAppointment);
     }
+
 
     @PostMapping("/{appointmentId}/generate-receipt")
     public ResponseEntity<Receipt> generateReceipt(@PathVariable Long appointmentId) {

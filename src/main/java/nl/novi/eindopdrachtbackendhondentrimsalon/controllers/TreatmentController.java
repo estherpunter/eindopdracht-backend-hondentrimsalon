@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Treatment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,38 +22,38 @@ public class TreatmentController {
     }
 
     @GetMapping("/alltreatments")
-    public ResponseEntity<List<Treatment>> getAllTreatments() {
-        List<Treatment> treatments = treatmentService.getAllTreatments();
+    public ResponseEntity<List<TreatmentDto>> getAllTreatments() {
+        List<TreatmentDto> treatments = treatmentService.getAllTreatments();
         return new ResponseEntity<>(treatments, HttpStatus.OK);
     }
 
     @GetMapping("/{treatmentId}")
-    public ResponseEntity<Treatment> getTreatmentById(@PathVariable Long treatmentId) {
-        Treatment treatment = treatmentService.getTreatmentById(treatmentId);
-        if (treatment != null) {
-            return new ResponseEntity<>(treatment, HttpStatus.OK);
+    public ResponseEntity<TreatmentDto> getTreatmentById(@PathVariable Long treatmentId) {
+        TreatmentDto treatmentDto = treatmentService.getTreatmentById(treatmentId);
+        if (treatmentDto != null) {
+            return new ResponseEntity<>(treatmentDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @GetMapping
-    public ResponseEntity<List<Treatment>> findTreatmentByName(@RequestParam String name) {
-        List<Treatment> treatments = treatmentService.findTreatmentByName(name);
+    @GetMapping("")
+    public ResponseEntity<List<TreatmentDto>> findTreatmentByName(@RequestParam String name) {
+        List<TreatmentDto> treatments = treatmentService.findTreatmentByName(name);
         return ResponseEntity.ok(treatments);
     }
 
-    @PostMapping
-    public ResponseEntity<Treatment> addTreatment(@RequestBody Treatment treatment) {
-        Treatment newTreatment = treatmentService.addTreatment(treatment);
-        return new ResponseEntity<>(newTreatment, HttpStatus.CREATED);
+    @PostMapping("")
+    public ResponseEntity<TreatmentDto> addTreatment(@RequestBody TreatmentDto treatmentDto) {
+        TreatmentDto newTreatmentDto = treatmentService.addTreatment(treatmentDto);
+        return new ResponseEntity<>(newTreatmentDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{treatmentId}")
-    public ResponseEntity<Treatment> updateTreatment(@PathVariable Long treatmentId,
-                                                     @RequestBody Treatment updatedTreatment) {
-        Treatment treatment = treatmentService.updateTreatment(treatmentId, updatedTreatment);
-        return ResponseEntity.ok(treatment);
+    public ResponseEntity<TreatmentDto> updateTreatment(@PathVariable Long treatmentId,
+                                                        @RequestBody TreatmentDto updatedTreatmentDto) {
+        TreatmentDto treatmentDto = treatmentService.updateTreatment(treatmentId, updatedTreatmentDto);
+        return ResponseEntity.ok(treatmentDto);
     }
 
     @DeleteMapping("/{treatmentId}")

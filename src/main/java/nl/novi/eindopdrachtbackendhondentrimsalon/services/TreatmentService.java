@@ -1,67 +1,71 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.TreatmentNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.TreatmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Treatment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.TreatmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
-
 @Service
 public class TreatmentService {
 
     private final TreatmentRepository treatmentRepository;
+    private final TreatmentMapper treatmentMapper;
 
     @Autowired
-    public TreatmentService(TreatmentRepository treatmentRepository) {
+    public TreatmentService(TreatmentRepository treatmentRepository, TreatmentMapper treatmentMapper) {
         this.treatmentRepository = treatmentRepository;
+        this.treatmentMapper = treatmentMapper;
     }
 
-    public List<Treatment> getAllTreatments() {
-        return treatmentRepository.findAll();
+    public List<TreatmentDto> getAllTreatments() {
+        List<Treatment> treatments = treatmentRepository.findAll();
+        return treatmentMapper.treatmentsToTreatmentDtos(treatments);
     }
 
-    public Treatment getTreatmentById(Long treatmentId) {
-        return treatmentRepository.findById(treatmentId)
+    public TreatmentDto getTreatmentById(Long treatmentId) {
+        Treatment treatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
+        return treatmentMapper.treatmentToTreatmentDto(treatment);
     }
 
-    public List<Treatment> findTreatmentByName(String name) {
-        return treatmentRepository.findByNameIgnoreCase(name);
+    public List<TreatmentDto> findTreatmentByName(String name) {
+        List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(name);
+        return treatmentMapper.treatmentsToTreatmentDtos(treatments);
     }
 
-    public Treatment addTreatment(Treatment treatment) {
-        Optional<Treatment> existingTreatment = treatmentRepository.findById(treatment.getId());
-        if (existingTreatment.isPresent()) {
-            throw new RuntimeException("Treatment with ID " + treatment.getId() + " already exists.");
+
+    public TreatmentDto addTreatment(TreatmentDto treatmentDto) {
+        if (treatmentDto.getId() != null && treatmentRepository.existsById(treatmentDto.getId())) {
+            throw new RuntimeException("Treatment with ID " + treatmentDto.getId() + " already exists.");
         }
-        if (treatment.getName() == null || treatment.getPrice() <= 0) {
+        if (treatmentDto.getName() == null || treatmentDto.getPrice() <= 0) {
             throw new IllegalArgumentException("Treatment name and price are required.");
         }
-
-        return treatmentRepository.save(treatment);
+        Treatment treatment = treatmentMapper.treatmentDtoToTreatment(treatmentDto);
+        Treatment savedTreatment = treatmentRepository.save(treatment);
+        return treatmentMapper.treatmentToTreatmentDto(savedTreatment);
     }
 
 
-    public Treatment updateTreatment(Long treatmentId, Treatment updatedTreatment) {
+    public TreatmentDto updateTreatment(Long treatmentId, TreatmentDto updatedTreatmentDto) {
         Treatment existingTreatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
-        existingTreatment.setName(updatedTreatment.getName());
-        existingTreatment.setPrice(updatedTreatment.getPrice());
+        existingTreatment.setName(updatedTreatmentDto.getName());
+        existingTreatment.setPrice(updatedTreatmentDto.getPrice());
 
-        return treatmentRepository.save(existingTreatment);
+        Treatment savedTreatment = treatmentRepository.save(existingTreatment);
+        return treatmentMapper.treatmentToTreatmentDto(savedTreatment);
     }
 
     public void deleteTreatment(Long treatmentId) {
-        Optional<Treatment> treatmentOptional = treatmentRepository.findById(treatmentId);
-        if (treatmentOptional.isPresent()) {
-            treatmentRepository.deleteById(treatmentId);
-        } else {
+        if (!treatmentRepository.existsById(treatmentId)) {
             throw new TreatmentNotFoundException(treatmentId);
         }
+        treatmentRepository.deleteById(treatmentId);
     }
 }
