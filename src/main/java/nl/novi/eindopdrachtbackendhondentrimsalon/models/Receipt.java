@@ -12,19 +12,19 @@ public class Receipt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "receipt_products",
             joinColumns = @JoinColumn(name = "receipt_id"),
             inverseJoinColumns = @JoinColumn(name = "product_id"))
     private List<Product> products;
 
-    @ManyToMany (fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "receipt_treatments",
             joinColumns = @JoinColumn(name = "receipt_id"),
             inverseJoinColumns = @JoinColumn(name = "treatment_id"))
     private List<Treatment> treatments;
 
-    @OneToOne (fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
 

@@ -17,7 +17,7 @@ public class Role implements Serializable {
     @Column(nullable = false)
     private String role;
 
-    public Role(){
+    public Role() {
 
     }
 

@@ -40,6 +40,7 @@ public class AppointmentService {
                 .map(appointmentMapper::appointmentToAppointmentDto)
                 .collect(Collectors.toList());
     }
+
     public AppointmentDto getAppointmentById(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));

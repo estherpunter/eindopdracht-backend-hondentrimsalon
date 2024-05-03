@@ -43,15 +43,6 @@ public class CustomerService {
         }
     }
 
-//    private void checkIfDogExistsForCustomer(Customer customer, String dogName) {
-//        List<Dog> dogs = customer.getDogs();
-//        for (Dog dog : dogs) {
-//            if (dog.getName().equalsIgnoreCase(dogName)) {
-//                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customer.getName() + "'.");
-//            }
-//        }
-//    }
-
     public Customer updateCustomer(Long customerId, Customer customer) {
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));

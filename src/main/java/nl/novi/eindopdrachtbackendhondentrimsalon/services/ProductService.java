@@ -41,6 +41,7 @@ public class ProductService {
                 .map(productMapper::productToProductDto)
                 .collect(Collectors.toList());
     }
+
     public ProductDto addProduct(ProductDto productDto) {
         if (productDto.getId() != null && productRepository.existsById(productDto.getId())) {
             throw new RuntimeException("Product with ID " + productDto.getId() + " already exists.");

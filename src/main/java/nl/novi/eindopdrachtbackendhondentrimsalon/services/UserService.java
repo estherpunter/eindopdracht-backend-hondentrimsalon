@@ -2,7 +2,6 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.RoleMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.UserMapper;
@@ -38,11 +37,7 @@ public class UserService {
     public UserDto getUser(String username) {
         Optional<User> userOptional = userRepository.findById(username);
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException(username));
-    return userMapper.userToUserDto(user);
-    }
-
-    public boolean userExists(String username) {
-        return userRepository.existsById(username);
+        return userMapper.userToUserDto(user);
     }
 
     public String createUser(UserDto userDto) {
@@ -57,9 +52,6 @@ public class UserService {
     }
 
     public void updateUser(String username, UserDto newUserDto) {
-        if (!userRepository.existsById(username)) {
-            throw new RecordNotFoundException();
-        }
         User userToUpdate = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
         userToUpdate.setPassword(newUserDto.getPassword());

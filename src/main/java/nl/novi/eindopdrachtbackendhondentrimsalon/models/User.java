@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -53,6 +54,7 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
