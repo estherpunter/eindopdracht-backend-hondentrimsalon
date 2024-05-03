@@ -56,36 +56,37 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
-        User user = userRepository.findById(username).get();
-        user.setPassword(newUser.getPassword());
-        userRepository.save(user);
+    public void updateUser(String username, UserDto newUserDto) {
+        if (!userRepository.existsById(username)) {
+            throw new RecordNotFoundException();
+        }
+        User userToUpdate = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        userToUpdate.setPassword(newUserDto.getPassword());
+        userRepository.save(userToUpdate);
     }
 
     public Set<RoleDto> getRoles(String username) {
-        if (!userRepository.existsById(username)) {
-            throw new UsernameNotFoundException(username);
-        }
-        User user = userRepository.findById(username).get();
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
         return roleMapper.rolesToRoleDtos(user.getRoles());
     }
 
-    public void addRole(String username, String role) {
+    public void addRole(String username, String roleName) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        user.addRole(new Role(username, role));
+        Role newRole = new Role(username, roleName);
+        user.addRole(newRole);
         userRepository.save(user);
     }
 
-    public void removeRole(String username, String role) {
+    public void removeRole(String username, String roleName) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        Role roleToRemove = user.getRoles().stream()
-                .filter(r -> r.getRole().equalsIgnoreCase(role))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
-        user.removeRole(roleToRemove);
+        Optional<Role> roleToRemove = user.getRoles().stream()
+                .filter(role -> role.getRole().equalsIgnoreCase(roleName))
+                .findFirst();
+        roleToRemove.ifPresent(user::removeRole);
         userRepository.save(user);
     }
 

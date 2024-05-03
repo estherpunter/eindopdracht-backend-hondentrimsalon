@@ -6,7 +6,6 @@ public class TreatmentDto {
     private String name;
     private double price;
 
-
     public Long getId() {
         return id;
     }

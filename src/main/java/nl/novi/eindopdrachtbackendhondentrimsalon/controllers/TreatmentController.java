@@ -1,7 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Treatment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

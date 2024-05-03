@@ -17,6 +17,7 @@ public interface TreatmentMapper {
     @Mapping(target = "name", source = "treatment.name")
     @Mapping(target = "price", source = "treatment.price")
     TreatmentDto treatmentToTreatmentDto(Treatment treatment);
+
     Treatment treatmentDtoToTreatment(TreatmentDto treatmentDto);
 
     List<TreatmentDto> treatmentsToTreatmentDtos(List<Treatment> treatments);

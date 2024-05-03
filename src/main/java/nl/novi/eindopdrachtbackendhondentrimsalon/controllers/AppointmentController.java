@@ -85,4 +85,5 @@ public class AppointmentController {
         Receipt receipt = appointmentService.generateReceipt(appointmentId);
         return ResponseEntity.ok(receipt);
     }
+
 }

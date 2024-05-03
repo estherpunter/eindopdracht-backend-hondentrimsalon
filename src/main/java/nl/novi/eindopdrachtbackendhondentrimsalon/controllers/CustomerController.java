@@ -27,6 +27,7 @@ public class CustomerController {
         return ResponseEntity.ok(customers);
     }
 
+
     @GetMapping("/{customerId}")
     public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
         Customer customer = customerService.getCustomerById(customerId);
@@ -36,6 +37,7 @@ public class CustomerController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
 
     @PostMapping
     public ResponseEntity<Customer> addCustomer(@RequestParam String customerName,
@@ -52,11 +54,13 @@ public class CustomerController {
         return ResponseEntity.ok(customer);
     }
 
+
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.noContent().build();
     }
+
 
     @PostMapping("/{customerId}/dogs")
     public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
@@ -66,6 +70,7 @@ public class CustomerController {
         Customer updatedCustomer = customerService.addDogToCustomer(customerId, dogName, breed, age);
         return ResponseEntity.ok(updatedCustomer);
     }
+
 
     @PutMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Customer> updateDogForCustomer(@PathVariable Long customerId,
@@ -81,6 +86,7 @@ public class CustomerController {
         }
     }
 
+
     @DeleteMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Void> removeDogFromCustomer(@PathVariable Long customerId,
                                                       @PathVariable Long dogId) {
@@ -90,5 +96,8 @@ public class CustomerController {
         } catch (RecordNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
+
     }
+
+
 }

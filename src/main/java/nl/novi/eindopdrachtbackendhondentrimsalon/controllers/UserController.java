@@ -44,8 +44,6 @@ public class UserController {
         return ResponseEntity.created(location).build();
     }
 
-
-
     @PutMapping(value = "/{username}")
     public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
 
@@ -77,5 +75,6 @@ public class UserController {
         userService.removeRole(username, role);
         return ResponseEntity.noContent().build();
     }
+
 }
 

@@ -1,7 +1,5 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
-
 import java.util.Set;
 
 public class UserDto {

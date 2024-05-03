@@ -15,7 +15,6 @@ public class AuthorityKey implements Serializable {
         this.role = role;
     }
 
-    // Implement equals() method
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -25,13 +24,11 @@ public class AuthorityKey implements Serializable {
                 Objects.equals(role, that.role);
     }
 
-    // Implement hashCode() method
     @Override
     public int hashCode() {
         return Objects.hash(username, role);
     }
 
-    // Getters and setters
     public String getUsername() {
         return username;
     }
