@@ -15,6 +15,11 @@ public class AppConfig {
     }
 
     @Bean
+    public CustomerMapper customerMapper() {
+        return CustomerMapper.INSTANCE;
+    }
+
+    @Bean
     public ProductMapper productMapper() {
         return ProductMapper.INSTANCE;
     }

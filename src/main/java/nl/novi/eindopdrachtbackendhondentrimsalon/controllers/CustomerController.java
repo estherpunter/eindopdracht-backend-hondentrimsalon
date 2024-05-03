@@ -1,7 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,36 +21,31 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping
-    public ResponseEntity<List<Customer>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
+    @GetMapping("")
+    public ResponseEntity<List<CustomerDto>> getAllCustomers() {
+        List<CustomerDto> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
-
     @GetMapping("/{customerId}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Long customerId) {
-        Customer customer = customerService.getCustomerById(customerId);
-        if (customer != null) {
-            return new ResponseEntity<>(customer, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable Long customerId) {
+        CustomerDto customer = customerService.getCustomerById(customerId);
+        return ResponseEntity.ok(customer);
     }
 
 
     @PostMapping
-    public ResponseEntity<Customer> addCustomer(@RequestParam String customerName,
-                                                @RequestParam String phoneNumber) {
-        Customer newCustomer = customerService.addCustomer(customerName, phoneNumber);
+    public ResponseEntity<CustomerDto> addCustomer(@RequestParam String customerName,
+                                                   @RequestParam String phoneNumber) {
+        CustomerDto newCustomer = customerService.addCustomer(customerName, phoneNumber);
         return new ResponseEntity<>(newCustomer, HttpStatus.CREATED);
     }
 
 
     @PutMapping("/{customerId}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long customerId,
-                                                   @RequestBody Customer updatedCustomer) {
-        Customer customer = customerService.updateCustomer(customerId, updatedCustomer);
+    public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long customerId,
+                                                      @RequestBody CustomerDto updatedCustomer) {
+        CustomerDto customer = customerService.updateCustomer(customerId, updatedCustomer);
         return ResponseEntity.ok(customer);
     }
 
@@ -63,21 +58,21 @@ public class CustomerController {
 
 
     @PostMapping("/{customerId}/dogs")
-    public ResponseEntity<Customer> addDogToCustomer(@PathVariable Long customerId,
-                                                     @RequestParam String dogName,
-                                                     @RequestParam String breed,
-                                                     @RequestParam int age) {
-        Customer updatedCustomer = customerService.addDogToCustomer(customerId, dogName, breed, age);
+    public ResponseEntity<CustomerDto> addDogToCustomer(@PathVariable Long customerId,
+                                                        @RequestParam String dogName,
+                                                        @RequestParam String breed,
+                                                        @RequestParam int age) {
+        CustomerDto updatedCustomer = customerService.addDogToCustomer(customerId, dogName, breed, age);
         return ResponseEntity.ok(updatedCustomer);
     }
 
 
     @PutMapping("/{customerId}/dogs/{dogId}")
-    public ResponseEntity<Customer> updateDogForCustomer(@PathVariable Long customerId,
-                                                         @PathVariable Long dogId,
-                                                         @RequestParam String dogName,
-                                                         @RequestParam String breed,
-                                                         @RequestParam int age) {
+    public ResponseEntity<Void> updateDogForCustomer(@PathVariable Long customerId,
+                                                     @PathVariable Long dogId,
+                                                     @RequestParam String dogName,
+                                                     @RequestParam String breed,
+                                                     @RequestParam int age) {
         try {
             customerService.updateDogForCustomer(customerId, dogId, dogName, breed, age);
             return ResponseEntity.ok().build();
@@ -96,7 +91,6 @@ public class CustomerController {
         } catch (RecordNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
-
     }
 
 
