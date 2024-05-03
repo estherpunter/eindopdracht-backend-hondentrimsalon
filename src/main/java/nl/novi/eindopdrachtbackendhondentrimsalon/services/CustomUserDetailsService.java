@@ -27,7 +27,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         String password = userDto.getPassword();
 
-        Set<RoleDto> roles = userService.getRoles(username); // Convert roles to RoleDto
+        Set<RoleDto> roles = userService.getRoles(username);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
         for (RoleDto role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole()));

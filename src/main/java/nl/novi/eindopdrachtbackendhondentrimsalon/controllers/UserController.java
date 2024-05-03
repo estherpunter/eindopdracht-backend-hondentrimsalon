@@ -37,9 +37,11 @@ public class UserController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto dto) {
+    public ResponseEntity<Void> createUser(@RequestBody UserDto dto, @RequestParam String roleName) {
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "ROLE_USER");
+
+        userService.addRole(newUsername, roleName);
+
         URI location = URI.create("/api/users/" + newUsername);
         return ResponseEntity.created(location).build();
     }
@@ -77,4 +79,3 @@ public class UserController {
     }
 
 }
-

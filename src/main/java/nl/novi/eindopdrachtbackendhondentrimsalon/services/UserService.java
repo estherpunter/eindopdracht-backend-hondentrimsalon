@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
@@ -7,6 +8,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.RoleMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.UserMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.RoleRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
 import org.springframework.stereotype.Service;
@@ -16,11 +18,13 @@ import java.util.*;
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper, RoleMapper roleMapper) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, RoleMapper roleMapper) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.roleMapper = roleMapper;
     }
@@ -65,11 +69,17 @@ public class UserService {
     }
 
     public void addRole(String username, String roleName) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        Role newRole = new Role(username, roleName);
-        user.addRole(newRole);
-        userRepository.save(user);
+        UserRole userRole = UserRole.valueOf(roleName.toUpperCase()); // Convert roleName to enum
+        Role role = roleRepository.findByRole(userRole.name());
+
+        if (role != null) {
+            User user = userRepository.findById(username)
+                    .orElseThrow(() -> new UsernameNotFoundException(username));
+            user.addRole(role);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("Role not found: " + roleName);
+        }
     }
 
     public void removeRole(String username, String roleName) {
