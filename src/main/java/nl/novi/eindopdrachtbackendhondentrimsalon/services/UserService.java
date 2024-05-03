@@ -100,7 +100,6 @@ public class UserService {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
-        user.setApikey(userDto.getApikey());
         user.setEnabled(userDto.isEnabled());
         return user;
     }

@@ -23,11 +23,8 @@ public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;
 
-    private final JwtRequestFilter jwtRequestFilter;
-
-    public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter) {
+    public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -43,8 +40,9 @@ public class SpringSecurityConfig {
         return new ProviderManager(auth);
     }
 
+
     @Bean
-    protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filter(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
 
         http
                 .csrf(AbstractHttpConfigurer::disable)
@@ -52,6 +50,7 @@ public class SpringSecurityConfig {
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/customers/**", "/api/appointments/**", "api/dogs/**", "api/treatments/**", "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasRole("CASHIER")
                         .requestMatchers(HttpMethod.GET, "api/appointments/{appointmentId}").hasRole("CASHIER")
                         .requestMatchers(HttpMethod.PUT, "api/appointments/{appointmentId}").hasRole("CASHIER")
@@ -60,8 +59,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/products").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/treatments").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/custom-treatment").hasRole("DOGGROOMER")
-                        .requestMatchers("/authenticated").hasRole("ADMIN")
-                        .requestMatchers("/authenticated").hasRole("ADMIN")
+                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/authenticated").permitAll()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
