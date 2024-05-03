@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 
 import java.util.HashSet;
 import java.util.Set;

@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
@@ -9,10 +10,8 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -59,49 +58,58 @@ public class UserService {
         userRepository.save(user);
     }
 
-    public Set<Role> getRoles(String username) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        UserDto userDto = fromUser(user);
-        return userDto.getRoles();
+    public Set<RoleDto> getRoles(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return user.getRoles().stream()
+                .map(role -> new RoleDto(role.getUsername(), role.getRole()))
+                .collect(Collectors.toSet());
     }
 
     public void addRole(String username, String role) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
         user.addRole(new Role(username, role));
         userRepository.save(user);
     }
 
     public void removeRole(String username, String role) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        Role roleToRemove = user.getRoles().stream().filter((a) -> a.getRole().equalsIgnoreCase(role)).findAny().get();
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Role roleToRemove = user.getRoles().stream()
+                .filter(r -> r.getRole().equalsIgnoreCase(role))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Role not found"));
         user.removeRole(roleToRemove);
         userRepository.save(user);
     }
 
-    public static UserDto fromUser(User user) {
+    public UserDto fromUser(User user) {
         UserDto dto = new UserDto();
-
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.roles = user.getRoles();
-        dto.enabled = user.isEnabled();
-        dto.apikey = user.getApikey();
-
+        dto.setUsername(user.getUsername());
+        dto.setPassword(user.getPassword());
+        dto.setRoles(fromRoles(user.getRoles()));
+        dto.setEnabled(user.isEnabled());
+        dto.setApikey(user.getApikey());
         return dto;
     }
 
-    public User toUser(UserDto userDto) {
-        var user = new User();
 
+    public User toUser(UserDto userDto) {
+        User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
         user.setApikey(userDto.getApikey());
         user.setEnabled(userDto.isEnabled());
-
         return user;
+    }
+
+    private Set<RoleDto> fromRoles(Set<Role> roles) {
+        Set<RoleDto> roleDtos = new HashSet<>();
+        for (Role role : roles) {
+            roleDtos.add(new RoleDto(role.getUsername(), role.getRole()));
+        }
+        return roleDtos;
     }
 
 }
