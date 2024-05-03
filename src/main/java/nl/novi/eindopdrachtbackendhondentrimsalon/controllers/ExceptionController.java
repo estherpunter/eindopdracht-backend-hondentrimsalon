@@ -15,10 +15,9 @@ public class ExceptionController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(value = IndexOutOfBoundsException.class)
-    public ResponseEntity<Object> exception(IndexOutOfBoundsException exception) {
-
-        return new ResponseEntity<>("This Id was not found in the database", HttpStatus.NOT_FOUND);
+    @ExceptionHandler(value = Throwable.class)
+    public ResponseEntity<Object> handleException(Throwable exception) {
+        return new ResponseEntity<>("An error occurred: " + exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = CustomerNotFoundException.class)
@@ -35,10 +34,12 @@ public class ExceptionController {
     public ResponseEntity<String> exception(ProductNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = AppointmentNotFoundException.class)
     public ResponseEntity<String> exception(AppointmentNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(value = BadRequestException.class)
     public ResponseEntity<String> exception(BadRequestException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);

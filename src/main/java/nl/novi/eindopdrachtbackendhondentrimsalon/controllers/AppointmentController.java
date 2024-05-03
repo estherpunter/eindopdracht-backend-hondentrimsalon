@@ -1,16 +1,15 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Appointment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -23,75 +22,56 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
+
+    @GetMapping("/allAppointments")
+    public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
+        List<AppointmentDto> appointmentDtos = appointmentService.getAllAppointments();
+        return ResponseEntity.ok(appointmentDtos);
+    }
+
+
     @GetMapping("/{appointmentId}")
-    public ResponseEntity<Appointment> getAppointmentByCustomer(@PathVariable Long appointmentId) {
-            Appointment appointment = appointmentService.getAppointmentById(appointmentId);
-            if (appointment != null) {
-                return new ResponseEntity<>(appointment, HttpStatus.OK);
-            } else {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
+    public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable Long appointmentId) {
+        AppointmentDto appointmentDto = appointmentService.getAppointmentById(appointmentId);
+        return ResponseEntity.ok(appointmentDto);
     }
 
 
-    @PostMapping
-    public ResponseEntity<Appointment> scheduleAppointment(@RequestParam Long customerId,
-                                                           @RequestParam Long dogId,
-                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDate) {
-        try {
-            Appointment appointment = appointmentService.scheduleAppointment(customerId, dogId, appointmentDate);
-            return ResponseEntity.ok(appointment);
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    @PostMapping("")
+    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestBody AppointmentDto appointmentDto) {
+        AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(appointmentDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(scheduledAppointmentDto);
     }
+
 
     @PutMapping("/{appointmentId}")
-    public ResponseEntity<Void> updateAppointment(@PathVariable Long appointmentId, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime appointmentDate,
-                                                  @RequestParam String status) {
-        try {
-            appointmentService.updateAppointment(appointmentId, appointmentDate, status);
-            return ResponseEntity.ok().build();
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> updateAppointment(@PathVariable Long appointmentId, @RequestBody AppointmentDto appointmentDto) {
+        appointmentDto.setId(appointmentId);
+        appointmentService.updateAppointment(appointmentDto);
+        return ResponseEntity.ok().build();
     }
+
 
     @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> cancelAppointment(@PathVariable Long appointmentId) {
-        try {
-            appointmentService.cancelAppointment(appointmentId);
-            return ResponseEntity.noContent().build();
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        appointmentService.cancelAppointment(appointmentId);
+        return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{appointmentId}/products")
-    public ResponseEntity<Void> addProductToAppointment(
-            @PathVariable Long appointmentId,
-            @RequestParam Long productId
-    ) {
-        try {
-            appointmentService.addProductToAppointment(appointmentId, productId);
-            return ResponseEntity.ok().build();
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+    @PostMapping("/{appointmentId}/products/{productId}")
+    public ResponseEntity<Void> addProductToAppointment(@PathVariable Long appointmentId, @PathVariable Long productId) {
+        appointmentService.addProductToAppointment(appointmentId, productId);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{appointmentId}/treatments")
-    public ResponseEntity<Void> addTreatmentToAppointment(
-            @PathVariable Long appointmentId,
-            @RequestParam Long treatmentId
-    ) {
-        try {
-            appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
-            return ResponseEntity.ok().build();
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+
+    @PostMapping("/{appointmentId}/treatments/{treatmentId}")
+    public ResponseEntity<Void> addTreatmentToAppointment(@PathVariable Long appointmentId, @PathVariable Long treatmentId) {
+        appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
+        return ResponseEntity.ok().build();
     }
+
 
     @PostMapping("/{appointmentId}/custom-treatment")
     public ResponseEntity<Appointment> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
@@ -99,9 +79,11 @@ public class AppointmentController {
         return ResponseEntity.ok(updatedAppointment);
     }
 
+
     @PostMapping("/{appointmentId}/generate-receipt")
     public ResponseEntity<Receipt> generateReceipt(@PathVariable Long appointmentId) {
         Receipt receipt = appointmentService.generateReceipt(appointmentId);
         return ResponseEntity.ok(receipt);
     }
+
 }

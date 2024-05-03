@@ -1,7 +1,5 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
-
 import java.util.Set;
 
 public class UserDto {
@@ -10,7 +8,7 @@ public class UserDto {
     public String password;
     public boolean enabled;
     public String apikey;
-    public Set<Role> roles;
+    public Set<RoleDto> roles;
 
     public String getUsername() {
         return username;
@@ -44,11 +42,12 @@ public class UserDto {
         this.apikey = apikey;
     }
 
-    public Set<Role> getRoles() {
+    public Set<RoleDto> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(Set<RoleDto> roles) {
         this.roles = roles;
     }
+
 }

@@ -1,7 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
@@ -17,61 +19,58 @@ public class CustomerService {
     private final CustomerRepository customerRepository;
     private final DogRepository dogRepository;
 
+    private final CustomerMapper customerMapper;
+
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository) {
+    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository, CustomerMapper customerMapper) {
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
+        this.customerMapper = customerMapper;
     }
 
-    public Customer getCustomerById(Long customerId) {
-        return customerRepository.findById(customerId)
+    public CustomerDto getCustomerById(Long customerId) {
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        return customerMapper.customerToCustomerDto(customer);
     }
 
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDto> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+        return customerMapper.customersToCustomerDtos(customers);
     }
 
-    public Customer addCustomer(String customerName, String phoneNumber) {
-        Customer exisitingCustomer = customerRepository.findByName(customerName);
+    public CustomerDto addCustomer(String customerName, String phoneNumber) {
+        Customer existingCustomer = customerRepository.findByName(customerName);
 
-        if (exisitingCustomer != null) {
+        if (existingCustomer != null) {
             throw new RuntimeException("Customer with name: " + customerName + " already exists.");
         } else {
             Customer newCustomer = new Customer(customerName, phoneNumber);
-            return customerRepository.save(newCustomer);
+            Customer savedCustomer = customerRepository.save(newCustomer);
+            return customerMapper.customerToCustomerDto(savedCustomer);
         }
     }
 
-//    private void checkIfDogExistsForCustomer(Customer customer, String dogName) {
-//        List<Dog> dogs = customer.getDogs();
-//        for (Dog dog : dogs) {
-//            if (dog.getName().equalsIgnoreCase(dogName)) {
-//                throw new RuntimeException("Dog with name '" + dogName + "' already exists for customer '" + customer.getName() + "'.");
-//            }
-//        }
-//    }
-
-    public Customer updateCustomer(Long customerId, Customer customer) {
+    public CustomerDto updateCustomer(Long customerId, CustomerDto customerDto) {
         Customer existingCustomer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        existingCustomer.setName(customer.getName());
-        existingCustomer.setPhoneNumber(customer.getPhoneNumber());
-        existingCustomer.setDogs(customer.getDogs());
+        existingCustomer.setName(customerDto.getName());
+        existingCustomer.setPhoneNumber(customerDto.getPhoneNumber());
 
-        return customerRepository.save(existingCustomer);
+        Customer updatedCustomer = customerRepository.save(existingCustomer);
+        return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
     public void deleteCustomer(Long customerId) {
-        if (customerRepository.findById(customerId).isPresent()) {
+        if (!customerRepository.existsById(customerId)) {
             throw new CustomerNotFoundException(customerId);
-        } else {
-            customerRepository.deleteById(customerId);
         }
+
+        customerRepository.deleteById(customerId);
     }
 
-    public Customer addDogToCustomer(Long customerId, String dogName, String breed, int age) {
+    public CustomerDto addDogToCustomer(Long customerId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
@@ -90,7 +89,8 @@ public class CustomerService {
         newDog.setCustomer(customer);
         customer.getDogs().add(newDog);
 
-        return customerRepository.save(customer);
+        Customer updatedCustomer = customerRepository.save(customer);
+        return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
     public void updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
@@ -117,4 +117,5 @@ public class CustomerService {
 
         customerRepository.save(customer);
     }
+
 }

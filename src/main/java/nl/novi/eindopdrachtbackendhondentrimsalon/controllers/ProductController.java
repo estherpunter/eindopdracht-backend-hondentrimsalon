@@ -1,6 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,45 +21,45 @@ public class ProductController {
     }
 
     @GetMapping("/allproducts")
-    public ResponseEntity<List<Product>> getAllProducts() {
-        List<Product> products = productService.getAllProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+    public ResponseEntity<List<ProductDto>> getAllProducts() {
+        List<ProductDto> productDtos = productService.getAllProducts();
+        return new ResponseEntity<>(productDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{productId}")
-    public ResponseEntity<Product> getProductById(@PathVariable Long productId) {
-        Product product = productService.getProductById(productId);
-        if (product != null) {
-            return new ResponseEntity<>(product, HttpStatus.OK);
+    public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
+        ProductDto productDto = productService.getProductById(productId);
+        if (productDto != null) {
+            return new ResponseEntity<>(productDto, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> findProductByName(@RequestParam String name) {
-        List<Product> products = productService.findProductByName(name);
+    public ResponseEntity<List<ProductDto>> findProductByName(@RequestParam String name) {
+        List<ProductDto> products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
-    public ResponseEntity<Product> addProduct(@RequestBody Product product) {
-        Product newProduct = productService.addProduct(product);
-        return new ResponseEntity<>(newProduct, HttpStatus.CREATED);
+    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) {
+        ProductDto newProductDto = productService.addProduct(productDto);
+        return new ResponseEntity<>(newProductDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{productId}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long productId,
-                                                 @RequestBody Product updatedProduct) {
-        Product product = productService.updateProduct(productId, updatedProduct);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId,
+                                                    @RequestBody ProductDto updatedProductDto) {
+        ProductDto productDto = productService.updateProduct(productId, updatedProductDto);
+        return ResponseEntity.ok(productDto);
     }
 
     @PatchMapping("/{productId}/stock")
-    public ResponseEntity<Product> updateProductStock(@PathVariable Long productId,
-                                                      @RequestParam int newStock) {
-        Product product = productService.updateProductStock(productId, newStock);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<ProductDto> updateProductStock(@PathVariable Long productId,
+                                                         @RequestParam int newStock) {
+        ProductDto productDto = productService.updateProductStock(productId, newStock);
+        return ResponseEntity.ok(productDto);
     }
 
     @DeleteMapping("/{productId}")
@@ -67,6 +67,4 @@ public class ProductController {
         productService.deleteProduct(productId);
         return ResponseEntity.noContent().build();
     }
-
-
 }

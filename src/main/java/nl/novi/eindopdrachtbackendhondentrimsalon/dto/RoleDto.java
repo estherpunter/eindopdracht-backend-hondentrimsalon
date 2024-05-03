@@ -1,28 +1,14 @@
-package nl.novi.eindopdrachtbackendhondentrimsalon.models;
+package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
-import jakarta.persistence.*;
+public class RoleDto {
 
-import java.io.Serializable;
-
-@Entity
-@IdClass(AuthorityKey.class)
-@Table(name = "roles")
-public class Role implements Serializable {
-
-
-    @Id
-    @Column(nullable = false)
     private String username;
-
-    @Id
-    @Column(nullable = false)
     private String role;
 
-    public Role() {
-
+    public RoleDto() {
     }
 
-    public Role(String username, String role) {
+    public RoleDto(String username, String role) {
         this.username = username;
         this.role = role;
     }

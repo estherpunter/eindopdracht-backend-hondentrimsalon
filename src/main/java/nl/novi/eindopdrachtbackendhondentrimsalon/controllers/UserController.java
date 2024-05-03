@@ -2,18 +2,16 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.BadRequestException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -23,7 +21,7 @@ public class UserController {
     }
 
     @GetMapping(value = "")
-    public ResponseEntity<List<UserDto>> getUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
 
         List<UserDto> userDtos = userService.getUsers();
 
@@ -31,7 +29,7 @@ public class UserController {
     }
 
     @GetMapping(value = "/{username}")
-    public ResponseEntity<UserDto> getUser(@PathVariable("username") String username) {
+    public ResponseEntity<UserDto> getUserByUsername(@PathVariable("username") String username) {
 
         UserDto optionalUser = userService.getUser(username);
 
@@ -39,19 +37,17 @@ public class UserController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<UserDto> createKlant(@RequestBody UserDto dto) {
-
+    public ResponseEntity<Void> createUser(@RequestBody UserDto dto, @RequestParam String roleName) {
         String newUsername = userService.createUser(dto);
-        userService.addRole(newUsername, "ROLE_USER");
 
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}")
-                .buildAndExpand(newUsername).toUri();
+        userService.addRole(newUsername, roleName);
 
+        URI location = URI.create("/api/users/" + newUsername);
         return ResponseEntity.created(location).build();
     }
 
     @PutMapping(value = "/{username}")
-    public ResponseEntity<UserDto> updateKlant(@PathVariable("username") String username, @RequestBody UserDto dto) {
+    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto dto) {
 
         userService.updateUser(username, dto);
 
@@ -59,7 +55,7 @@ public class UserController {
     }
 
     @DeleteMapping(value = "/{username}")
-    public ResponseEntity<Object> deleteKlant(@PathVariable("username") String username) {
+    public ResponseEntity<Object> deleteUser(@PathVariable("username") String username) {
         userService.deleteUser(username);
         return ResponseEntity.noContent().build();
     }
@@ -70,22 +66,16 @@ public class UserController {
     }
 
     @PostMapping(value = "/{username}/roles")
-    public ResponseEntity<Object> addUserRoles(@PathVariable("username") String username, @RequestBody Map<String, Object> fields) {
-        try {
-            String roleName = (String) fields.get("role");
-            userService.addRole(username, roleName);
-            return ResponseEntity.noContent().build();
-        }
-        catch (Exception ex) {
-            throw new BadRequestException();
-        }
+    public ResponseEntity<Void> addUserRoles(@PathVariable("username") String username, @RequestBody Map<String, String> fields) {
+        String roleName = fields.get("role");
+        userService.addRole(username, roleName);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping(value = "/{username}/roles/{role}")
-    public ResponseEntity<Object> deleteUserRole(@PathVariable("username") String username, @PathVariable("role") String role) {
+    public ResponseEntity<Void> deleteUserRole(@PathVariable("username") String username, @PathVariable("role") String role) {
         userService.removeRole(username, role);
         return ResponseEntity.noContent().build();
     }
 
 }
-

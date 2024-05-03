@@ -4,7 +4,6 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationResponse;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomUserDetailsService;
 import nl.novi.eindopdrachtbackendhondentrimsalon.utils.JwtUtil;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,12 +24,12 @@ public class AuthenticationController {
 
     public AuthenticationController(AuthenticationManager authenticationManager, CustomUserDetailsService userDetailsService, JwtUtil jwtUtil) {
         this.authenticationManager = authenticationManager;
-        this. userDetailsService =  userDetailsService;
+        this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
     }
 
     @GetMapping(value = "/authenticated")
-    public ResponseEntity<Object> authenticated(Authentication authentication, Principal principal) {
+    public ResponseEntity<Object> authenticated(Principal principal) {
         return ResponseEntity.ok().body(principal);
     }
 
@@ -54,9 +53,7 @@ public class AuthenticationController {
         final String jwt = jwtUtil.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+
     }
-
-
-
 
 }

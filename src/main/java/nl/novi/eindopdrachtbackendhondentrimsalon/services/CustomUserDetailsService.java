@@ -1,8 +1,8 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,21 +22,19 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userService = userService;
     }
 
-    @Override
     public UserDetails loadUserByUsername(String username) {
         UserDto userDto = userService.getUser(username);
 
         String password = userDto.getPassword();
 
-        Set<Role> roles = userDto.getRoles();
+        Set<RoleDto> roles = userService.getRoles(username);
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (Role role : roles) {
+        for (RoleDto role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
 
         return new org.springframework.security.core.userdetails.User(username, password, grantedAuthorities);
     }
-
 
 
 }

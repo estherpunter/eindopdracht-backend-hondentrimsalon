@@ -8,9 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,11 +23,8 @@ public class SpringSecurityConfig {
 
     public final CustomUserDetailsService customUserDetailsService;
 
-    private final JwtRequestFilter jwtRequestFilter;
-
-    public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService, JwtRequestFilter jwtRequestFilter) {
+    public SpringSecurityConfig(CustomUserDetailsService customUserDetailsService) {
         this.customUserDetailsService = customUserDetailsService;
-        this.jwtRequestFilter = jwtRequestFilter;
     }
 
     @Bean
@@ -36,32 +33,34 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager authenticationManager(PasswordEncoder passwordEncoder) {
         var auth = new DaoAuthenticationProvider();
         auth.setPasswordEncoder(passwordEncoder);
         auth.setUserDetailsService(customUserDetailsService);
         return new ProviderManager(auth);
     }
 
+
     @Bean
-    protected SecurityFilterChain filter(HttpSecurity http) throws Exception {
+    protected SecurityFilterChain filter(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
-                .httpBasic(basic -> basic.disable())
-                .cors(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-
                         .requestMatchers("/api/customers/**", "/api/appointments/**", "api/dogs/**", "api/treatments/**", "/api/products/**").hasRole("ADMIN")
+                        .requestMatchers("/api/users/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasRole("CASHIER")
                         .requestMatchers(HttpMethod.GET, "api/appointments/{appointmentId}").hasRole("CASHIER")
+                        .requestMatchers(HttpMethod.PUT, "api/appointments/{appointmentId}").hasRole("CASHIER")
                         .requestMatchers(HttpMethod.POST, "api/appointments").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "api/customers/{customerId}").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/products").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/treatments").hasRole("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "api/appointments/{appointmentId}/custom-treatment").hasRole("DOGGROOMER")
-                        .requestMatchers("/authenticated").hasRole("ADMIN")
-                        .requestMatchers("/authenticated").hasRole("ADMIN")
+                        .requestMatchers("/authenticate").permitAll()
+                        .requestMatchers("/authenticated").permitAll()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

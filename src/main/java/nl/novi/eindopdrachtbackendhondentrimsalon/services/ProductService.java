@@ -1,76 +1,85 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.ProductNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.ProductMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
 
     @Autowired
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductMapper productMapper) {
         this.productRepository = productRepository;
+        this.productMapper = productMapper;
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    public List<ProductDto> getAllProducts() {
+        List<Product> products = productRepository.findAll();
+        return productMapper.productsToProductDtos(products);
     }
 
-    public Product getProductById(Long productId) {
-        return productRepository.findById(productId)
+    public ProductDto getProductById(Long productId) {
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new RecordNotFoundException("Product not found with ID: " + productId));
+        return productMapper.productToProductDto(product);
     }
 
-    public List<Product> findProductByName(String name) {
-        return productRepository.findByNameIgnoreCase(name);
+    public List<ProductDto> findProductByName(String name) {
+        List<Product> products = productRepository.findByNameIgnoreCase(name);
+        return products.stream()
+                .map(productMapper::productToProductDto)
+                .collect(Collectors.toList());
     }
 
-    public Product addProduct(Product product) {
-        Optional<Product> existingProduct = productRepository.findById(product.getId());
-        if (existingProduct.isPresent()) {
-            throw new RuntimeException("Product with ID " + product.getId() + " already exists.");
+    public ProductDto addProduct(ProductDto productDto) {
+        if (productDto.getId() != null && productRepository.existsById(productDto.getId())) {
+            throw new RuntimeException("Product with ID " + productDto.getId() + " already exists.");
         }
-        if (product.getName() == null || product.getPrice() <= 0) {
+        if (productDto.getName() == null || productDto.getPrice() <= 0) {
             throw new IllegalArgumentException("Product name and price are required.");
         }
-        return productRepository.save(product);
+        Product product = productMapper.productDtoToProduct(productDto);
+        Product savedProduct = productRepository.save(product);
+        return productMapper.productToProductDto(savedProduct);
     }
 
 
-    public Product updateProduct(Long productId, Product updatedProduct) {
+    public ProductDto updateProduct(Long productId, ProductDto updatedProductDto) {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        existingProduct.setName(updatedProduct.getName());
-        existingProduct.setPrice(updatedProduct.getPrice());
-        existingProduct.setStock(updatedProduct.getStock());
+        existingProduct.setName(updatedProductDto.getName());
+        existingProduct.setPrice(updatedProductDto.getPrice());
+        existingProduct.setStock(updatedProductDto.getStock());
 
-        return productRepository.save(existingProduct);
+        Product savedProduct = productRepository.save(existingProduct);
+        return productMapper.productToProductDto(savedProduct);
     }
 
-    public Product updateProductStock(Long productId, int newStock) {
+    public ProductDto updateProductStock(Long productId, int newStock) {
         Product existingProduct = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         existingProduct.setStock(newStock);
-        return productRepository.save(existingProduct);
-
+        Product savedProduct = productRepository.save(existingProduct);
+        return productMapper.productToProductDto(savedProduct);
     }
 
     public void deleteProduct(Long productId) {
-        Optional<Product> productOptional = productRepository.findById(productId);
-        if (productOptional.isPresent()) {
-            productRepository.deleteById(productId);
-        } else {
+        if (!productRepository.existsById(productId)) {
             throw new ProductNotFoundException(productId);
         }
+        productRepository.deleteById(productId);
     }
 }

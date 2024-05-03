@@ -1,14 +1,16 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.helpers.PriceCalculator;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentService {
@@ -19,54 +21,62 @@ public class AppointmentService {
     private final TreatmentRepository treatmentRepository;
     private final ReceiptRepository receiptRepository;
     private final ProductRepository productRepository;
+    private final AppointmentMapper appointmentMapper;
 
     @Autowired
-    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository, ReceiptRepository receiptRepository, ProductRepository productRepository) {
+    public AppointmentService(AppointmentRepository appointmentRepository, CustomerRepository customerRepository, DogRepository dogRepository, TreatmentRepository treatmentRepository, ReceiptRepository receiptRepository, ProductRepository productRepository, AppointmentMapper appointmentMapper) {
         this.appointmentRepository = appointmentRepository;
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
         this.treatmentRepository = treatmentRepository;
         this.receiptRepository = receiptRepository;
         this.productRepository = productRepository;
+        this.appointmentMapper = appointmentMapper;
     }
 
-    public Appointment getAppointmentById(Long appointmentId) {
-        return appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
+    public List<AppointmentDto> getAllAppointments() {
+        List<Appointment> appointments = appointmentRepository.findAll();
+        return appointments.stream()
+                .map(appointmentMapper::appointmentToAppointmentDto)
+                .collect(Collectors.toList());
     }
 
-    public Appointment scheduleAppointment(Long customerId, Long dogId, LocalDateTime appointmentDate) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
-
-        Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new DogNotFoundException(dogId));
-
-        Appointment appointment = new Appointment();
-        appointment.setCustomer(customer);
-        appointment.setDog(dog);
-        appointment.setDate(appointmentDate);
-
-        customer.getAppointments().add(appointment);
-
-        return appointmentRepository.save(appointment);
-    }
-
-    public void updateAppointment(Long appointmentId, LocalDateTime newDate, String newStatus) {
+    public AppointmentDto getAppointmentById(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
+        return appointmentMapper.appointmentToAppointmentDto(appointment);
+    }
 
-        appointment.setDate(newDate);
-        appointment.setStatus(newStatus);
+    public AppointmentDto scheduleAppointment(AppointmentDto appointmentDto) {
+        Customer customer = customerRepository.findById(appointmentDto.getCustomerId())
+                .orElseThrow(() -> new CustomerNotFoundException(appointmentDto.getCustomerId()));
+
+        Dog dog = dogRepository.findById(appointmentDto.getDogId())
+                .orElseThrow(() -> new DogNotFoundException(appointmentDto.getDogId()));
+
+        Appointment appointment = appointmentMapper.appointmentDtoToAppointment(appointmentDto);
+        appointment.setCustomer(customer);
+        appointment.setDog(dog);
+
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
+    }
+
+    public void updateAppointment(AppointmentDto appointmentDto) {
+        Appointment appointment = appointmentRepository.findById(appointmentDto.getId())
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentDto.getId()));
+
+        appointment.setDate(appointmentDto.getDate());
+        appointment.setStatus(appointmentDto.getStatus());
 
         appointmentRepository.save(appointment);
     }
 
     public void cancelAppointment(Long appointmentId) {
-        Appointment existingAppointment = appointmentRepository.findById(appointmentId)
+        Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
-        appointmentRepository.delete(existingAppointment);
+        appointmentRepository.delete(appointment);
     }
 
     public void addProductToAppointment(Long appointmentId, Long productId) {
@@ -121,4 +131,5 @@ public class AppointmentService {
 
         return receiptRepository.save(receipt);
     }
+
 }

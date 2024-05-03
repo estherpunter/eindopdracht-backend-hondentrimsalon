@@ -27,9 +27,6 @@ public class User {
     @Column
     private boolean enabled = true;
 
-    @Column
-    private String apikey;
-
 
     public String getUsername() {
         return username;
@@ -54,6 +51,7 @@ public class User {
     public void addRole(Role role) {
         this.roles.add(role);
     }
+
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
@@ -66,11 +64,4 @@ public class User {
         this.enabled = enabled;
     }
 
-    public String getApikey() {
-        return apikey;
-    }
-
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
-    }
 }

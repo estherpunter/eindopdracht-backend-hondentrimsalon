@@ -9,7 +9,6 @@ import java.util.List;
 @Repository
 public interface TreatmentRepository extends JpaRepository<Treatment, Long> {
 
-    //Find treatments by name
     List<Treatment> findByNameIgnoreCase(String name);
 
 }

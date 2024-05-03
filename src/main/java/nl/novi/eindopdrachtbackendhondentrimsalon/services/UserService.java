@@ -1,25 +1,32 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.RoleMapper;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.UserMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.RoleRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, RoleMapper roleMapper) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
+        this.userMapper = userMapper;
+        this.roleMapper = roleMapper;
     }
 
     public List<UserDto> getUsers() {
@@ -32,18 +39,9 @@ public class UserService {
     }
 
     public UserDto getUser(String username) {
-        UserDto dto = new UserDto();
-        Optional<User> user = userRepository.findById(username);
-        if (user.isPresent()) {
-            dto = fromUser(user.get());
-        } else {
-            throw new UsernameNotFoundException(username);
-        }
-        return dto;
-    }
-
-    public boolean userExists(String username) {
-        return userRepository.existsById(username);
+        Optional<User> userOptional = userRepository.findById(username);
+        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException(username));
+        return userMapper.userToUserDto(user);
     }
 
     public String createUser(UserDto userDto) {
@@ -57,55 +55,52 @@ public class UserService {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUser) {
-        if (!userRepository.existsById(username)) throw new RecordNotFoundException();
-        User user = userRepository.findById(username).get();
-        user.setPassword(newUser.getPassword());
+    public void updateUser(String username, UserDto newUserDto) {
+        User userToUpdate = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        userToUpdate.setPassword(newUserDto.getPassword());
+        userRepository.save(userToUpdate);
+    }
+
+    public Set<RoleDto> getRoles(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        return roleMapper.rolesToRoleDtos(user.getRoles());
+    }
+
+    public void addRole(String username, String roleName) {
+        UserRole userRole = UserRole.valueOf(roleName.toUpperCase()); // Convert roleName to enum
+        Role role = roleRepository.findByRole(userRole.name());
+
+        if (role != null) {
+            User user = userRepository.findById(username)
+                    .orElseThrow(() -> new UsernameNotFoundException(username));
+            user.addRole(role);
+            userRepository.save(user);
+        } else {
+            throw new RuntimeException("Role not found: " + roleName);
+        }
+    }
+
+    public void removeRole(String username, String roleName) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        Optional<Role> roleToRemove = user.getRoles().stream()
+                .filter(role -> role.getRole().equalsIgnoreCase(roleName))
+                .findFirst();
+        roleToRemove.ifPresent(user::removeRole);
         userRepository.save(user);
     }
 
-    public Set<Role> getRoles(String username) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        UserDto userDto = fromUser(user);
-        return userDto.getRoles();
-    }
-
-    public void addRole(String username, String role) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        user.addRole(new Role(username, role));
-        userRepository.save(user);
-    }
-
-    public void removeRole(String username, String role) {
-        if (!userRepository.existsById(username)) throw new UsernameNotFoundException(username);
-        User user = userRepository.findById(username).get();
-        Role roleToRemove = user.getRoles().stream().filter((a) -> a.getRole().equalsIgnoreCase(role)).findAny().get();
-        user.removeRole(roleToRemove);
-        userRepository.save(user);
-    }
-
-    public static UserDto fromUser(User user) {
-        var dto = new UserDto();
-
-        dto.username = user.getUsername();
-        dto.password = user.getPassword();
-        dto.roles = user.getRoles();
-        dto.enabled = user.isEnabled();
-        dto.apikey = user.getApikey();
-
-        return dto;
+    public UserDto fromUser(User user) {
+        return userMapper.userToUserDto(user);
     }
 
     public User toUser(UserDto userDto) {
-        var user = new User();
-
+        User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(userDto.getPassword());
-        user.setApikey(userDto.getApikey());
         user.setEnabled(userDto.isEnabled());
-
         return user;
     }
 

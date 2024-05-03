@@ -1,31 +1,10 @@
-package nl.novi.eindopdrachtbackendhondentrimsalon.models;
+package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
-import jakarta.persistence.*;
+public class TreatmentDto {
 
-@Entity
-@Table(name = "treatments")
-public class Treatment {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String name;
-
     private double price;
-
-    @ManyToOne
-    @JoinColumn(name = "appointment_id")
-    private Appointment appointment;
-
-    public Treatment() {
-
-    }
-
-    public Treatment(String name, double price) {
-        this.name = name;
-        this.price = price;
-    }
 
     public Long getId() {
         return id;

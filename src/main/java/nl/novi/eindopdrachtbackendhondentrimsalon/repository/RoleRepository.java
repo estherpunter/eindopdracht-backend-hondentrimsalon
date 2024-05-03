@@ -1,12 +1,12 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.repository;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CustomerRepository extends JpaRepository <Customer, Long> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
-    Customer findByName(String name);
+    Role findByRole(String roleName);
 
 }

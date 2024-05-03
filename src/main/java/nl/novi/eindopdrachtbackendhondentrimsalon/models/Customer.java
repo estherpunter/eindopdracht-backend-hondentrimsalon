@@ -16,10 +16,10 @@ public class Customer {
 
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Dog> dogs;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
 
     public Customer() {
@@ -70,4 +70,5 @@ public class Customer {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
+
 }
