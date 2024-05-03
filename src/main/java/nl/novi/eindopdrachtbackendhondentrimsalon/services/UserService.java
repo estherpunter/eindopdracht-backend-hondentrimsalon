@@ -4,6 +4,8 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.RoleMapper;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.UserMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
@@ -11,14 +13,17 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
+    private final RoleMapper roleMapper;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, RoleMapper roleMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.roleMapper = roleMapper;
     }
 
     public List<UserDto> getUsers() {
@@ -33,7 +38,7 @@ public class UserService {
     public UserDto getUser(String username) {
         Optional<User> userOptional = userRepository.findById(username);
         User user = userOptional.orElseThrow(() -> new UsernameNotFoundException(username));
-    return fromUser(user);
+    return userMapper.userToUserDto(user);
     }
 
     public boolean userExists(String username) {
@@ -59,11 +64,11 @@ public class UserService {
     }
 
     public Set<RoleDto> getRoles(String username) {
-        User user = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        return user.getRoles().stream()
-                .map(role -> new RoleDto(role.getUsername(), role.getRole()))
-                .collect(Collectors.toSet());
+        if (!userRepository.existsById(username)) {
+            throw new UsernameNotFoundException(username);
+        }
+        User user = userRepository.findById(username).get();
+        return roleMapper.rolesToRoleDtos(user.getRoles());
     }
 
     public void addRole(String username, String role) {
@@ -85,15 +90,8 @@ public class UserService {
     }
 
     public UserDto fromUser(User user) {
-        UserDto dto = new UserDto();
-        dto.setUsername(user.getUsername());
-        dto.setPassword(user.getPassword());
-        dto.setRoles(fromRoles(user.getRoles()));
-        dto.setEnabled(user.isEnabled());
-        dto.setApikey(user.getApikey());
-        return dto;
+        return userMapper.userToUserDto(user);
     }
-
 
     public User toUser(UserDto userDto) {
         User user = new User();
@@ -102,14 +100,6 @@ public class UserService {
         user.setApikey(userDto.getApikey());
         user.setEnabled(userDto.isEnabled());
         return user;
-    }
-
-    private Set<RoleDto> fromRoles(Set<Role> roles) {
-        Set<RoleDto> roleDtos = new HashSet<>();
-        for (Role role : roles) {
-            roleDtos.add(new RoleDto(role.getUsername(), role.getRole()));
-        }
-        return roleDtos;
     }
 
 }
