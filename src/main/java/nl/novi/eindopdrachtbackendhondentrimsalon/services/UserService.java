@@ -69,7 +69,7 @@ public class UserService {
     }
 
     public void addRole(String username, String roleName) {
-        UserRole userRole = UserRole.valueOf(roleName.toUpperCase()); // Convert roleName to enum
+        UserRole userRole = UserRole.valueOf(roleName.toUpperCase());
         Role role = roleRepository.findByRole(userRole.name());
 
         if (role != null) {

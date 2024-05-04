@@ -7,7 +7,7 @@ public class CustomerDto {
     private Long id;
     private String name;
     private String phoneNumber;
-    private List<Long> dogIds; // Assuming you want to map dog IDs
+    private List<Long> dogIds;
 
     public CustomerDto() {
     }

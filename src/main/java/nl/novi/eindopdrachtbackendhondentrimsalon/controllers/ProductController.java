@@ -36,13 +36,13 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<List<ProductDto>> findProductByName(@RequestParam String name) {
         List<ProductDto> products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         ProductDto newProductDto = productService.addProduct(productDto);
         return new ResponseEntity<>(newProductDto, HttpStatus.CREATED);
