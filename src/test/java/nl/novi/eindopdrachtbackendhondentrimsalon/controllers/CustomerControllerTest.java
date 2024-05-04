@@ -54,7 +54,7 @@ class CustomerControllerTest {
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/customers")
+                .get("/api/customers/allcustomers")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Assert

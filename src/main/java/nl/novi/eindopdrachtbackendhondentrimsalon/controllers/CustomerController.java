@@ -21,7 +21,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("")
+    @GetMapping("/allcustomers")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         List<CustomerDto> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
@@ -34,7 +34,7 @@ public class CustomerController {
     }
 
 
-    @PostMapping
+    @PostMapping("")
     public ResponseEntity<CustomerDto> addCustomer(@RequestParam String customerName,
                                                    @RequestParam String phoneNumber) {
         CustomerDto newCustomer = customerService.addCustomer(customerName, phoneNumber);
