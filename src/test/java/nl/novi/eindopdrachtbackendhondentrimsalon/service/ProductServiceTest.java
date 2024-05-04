@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.service;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.ProductNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.ProductMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
@@ -72,6 +73,43 @@ public class ProductServiceTest {
     }
 
     @Test
+    public void testFindProductByName_ExistingProducts() {
+        // Arrange
+        String productName = "Test Product";
+        List<Product> products = new ArrayList<>();
+        products.add(new Product(1L, productName, 10.0, 5));
+        products.add(new Product(2L, productName, 15.0, 8));
+        Mockito.when(productRepository.findByNameIgnoreCase(productName)).thenReturn(products);
+        Mockito.when(productMapper.productToProductDto(Mockito.any(Product.class))).thenAnswer(
+                invocation -> {
+                    Product product = invocation.getArgument(0);
+                    return new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getStock());
+                });
+
+        // Act
+        List<ProductDto> result = productService.findProductByName(productName);
+
+        // Assert
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testFindProductByName_NonExistingProduct() {
+        // Arrange
+        String productName = "Non-existing Product";
+        Mockito.when(productRepository.findByNameIgnoreCase(productName)).thenReturn(new ArrayList<>());
+
+        // Act
+        List<ProductDto> result = productService.findProductByName(productName);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
     public void testAddProduct_ValidProduct() {
         // Arrange
         ProductDto productDto = new ProductDto();
@@ -101,5 +139,110 @@ public class ProductServiceTest {
         assertThrows(IllegalArgumentException.class, () -> productService.addProduct(productDto));
     }
 
-    // Add more tests for other methods like updateProduct, updateProductStock, deleteProduct, etc.
+    @Test
+    public void testUpdateProduct_ValidProduct() {
+        // Arrange
+        long productId = 1L;
+        ProductDto updatedProductDto = new ProductDto(productId, "Updated Product", 20.0, 3);
+        Product existingProduct = new Product(productId, "Old Product", 15.0, 5);
+
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+        Mockito.when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mockito.when(productMapper.productToProductDto(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product product = invocation.getArgument(0);
+                    return new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getStock());
+                });
+
+        // Act
+        ProductDto result = productService.updateProduct(productId, updatedProductDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(updatedProductDto.getName(), result.getName());
+        assertEquals(updatedProductDto.getPrice(), result.getPrice());
+        assertEquals(updatedProductDto.getStock(), result.getStock());
+    }
+
+
+    @Test
+    public void testUpdateProduct_NonExistingProduct() {
+        // Arrange
+        long productId = 1L;
+        ProductDto updatedProductDto = new ProductDto(productId, "Updated Product", 20.0, 3);
+
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Act/Assert
+        assertThrows(ProductNotFoundException.class, () -> productService.updateProduct(productId, updatedProductDto));
+    }
+
+    @Test
+    public void testUpdateProductStock_ValidProduct() {
+        // Arrange
+        long productId = 1L;
+        int newStock = 8;
+        Product existingProduct = new Product(productId, "Existing Product", 15.0, 5);
+
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.of(existingProduct));
+        Mockito.when(productRepository.save(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        Mockito.when(productMapper.productToProductDto(Mockito.any(Product.class)))
+                .thenAnswer(invocation -> {
+                    Product product = invocation.getArgument(0);
+                    return new ProductDto(product.getId(), product.getName(), product.getPrice(), product.getStock());
+                });
+
+        // Act
+        ProductDto result = productService.updateProductStock(productId, newStock);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(existingProduct.getStock(), newStock);
+    }
+
+    @Test
+    public void testUpdateProductStock_NonExistingProduct() {
+        // Arrange
+        long productId = 1L;
+        int newStock = 8;
+
+        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+
+        // Act/Assert
+        assertThrows(ProductNotFoundException.class, () -> productService.updateProductStock(productId, newStock));
+    }
+
+    @Test
+    public void testDeleteProduct_ExistingProduct() {
+        // Arrange
+        long productId = 1L;
+        Product existingProduct = new Product(productId, "Existing Product", 15.0, 5);
+
+        Mockito.when(productRepository.existsById(productId)).thenReturn(true);
+
+        // Act
+        assertDoesNotThrow(() -> productService.deleteProduct(productId));
+
+        // Assert
+        Mockito.verify(productRepository, Mockito.times(1)).deleteById(productId);
+    }
+
+    @Test
+    public void testDeleteProduct_NonExistingProduct() {
+        // Arrange
+        long productId = 1L;
+
+        Mockito.when(productRepository.existsById(productId)).thenReturn(false);
+
+        // Act/Assert
+        assertThrows(ProductNotFoundException.class, () -> productService.deleteProduct(productId));
+
+        // Verify that deleteById method was not invoked
+        Mockito.verify(productRepository, Mockito.never()).deleteById(productId);
+    }
 }
+
