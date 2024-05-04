@@ -23,9 +23,7 @@ public interface CustomerMapper {
                 .map(Dog::getId)
                 .collect(Collectors.toList());
     }
+
     List<CustomerDto> customersToCustomerDtos(List<Customer> customers);
-
-    Customer customerDtoToCustomer(CustomerDto customerDto);
-
 
 }

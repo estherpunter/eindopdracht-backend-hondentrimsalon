@@ -40,11 +40,6 @@ public class ExceptionController {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(value = BadRequestException.class)
-    public ResponseEntity<String> exception(BadRequestException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-    }
-
     @ExceptionHandler(value = TreatmentNotFoundException.class)
     public ResponseEntity<String> exception(TreatmentNotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);

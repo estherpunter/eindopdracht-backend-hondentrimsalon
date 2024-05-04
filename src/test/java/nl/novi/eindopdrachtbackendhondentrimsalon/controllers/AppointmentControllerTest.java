@@ -72,7 +72,7 @@ class AppointmentControllerTest {
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/appointments/allAppointments")
+                .get("/api/appointments/allappointments")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Assert
