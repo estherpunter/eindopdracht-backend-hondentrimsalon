@@ -2,6 +2,8 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Appointment;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,7 @@ import java.util.Collections;
 
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest
@@ -119,26 +122,102 @@ class AppointmentControllerTest {
     }
 
     @Test
-    void updateAppointment() {
+    void updateAppointment() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+
+        // Assuming update was successful, mock the appointment service behavior
+        doNothing().when(appointmentService).updateAppointment(any(AppointmentDto.class));
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .put("/api/appointments/{appointmentId}", appointmentId)
+                .content(objectMapper.writeValueAsString(appointmentDto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+
+    @Test
+    void cancelAppointment() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/api/appointments/{appointmentId}", appointmentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON));
+
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isNoContent());
+    }
+    @Test
+    void addProductToAppointment() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+        long productId = 1L;
+        doNothing().when(appointmentService).addProductToAppointment(appointmentId, productId);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/appointments/{appointmentId}/products/{productId}", appointmentId, productId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void cancelAppointment() {
+    void addTreatmentToAppointment() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+        long treatmentId = 1L;
+        doNothing().when(appointmentService).addTreatmentToAppointment(appointmentId, treatmentId);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/appointments/{appointmentId}/treatments/{treatmentId}", appointmentId, treatmentId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void addProductToAppointment() {
+    void addCustomTreatmentToAppointment() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+        double customPrice = 50.0;
+        Appointment updatedAppointment = new Appointment(); // mock the returned appointment
+        when(appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice)).thenReturn(updatedAppointment);
+
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/appointments/{appointmentId}/custom-treatment", appointmentId)
+                .param("customPrice", String.valueOf(customPrice))
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    void addTreatmentToAppointment() {
-    }
+    void generateReceipt() throws Exception {
+        // Arrange
+        long appointmentId = 1L;
+        Receipt receipt = new Receipt(); // mock the generated receipt
+        when(appointmentService.generateReceipt(appointmentId)).thenReturn(receipt);
 
-    @Test
-    void addCustomTreatmentToAppointment() {
-    }
+        // Act
+        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+                .post("/api/appointments/{appointmentId}/generate-receipt", appointmentId)
+                .contentType(MediaType.APPLICATION_JSON));
 
-    @Test
-    void generateReceipt() {
+        // Assert
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 }
