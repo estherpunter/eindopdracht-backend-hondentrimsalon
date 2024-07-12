@@ -2,7 +2,6 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
-import nl.novi.eindopdrachtbackendhondentrimsalon.helpers.PriceCalculator;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
@@ -130,6 +129,23 @@ public class AppointmentService {
         receipt.setTotalPrice(totalPrice);
 
         return receiptRepository.save(receipt);
+    }
+
+    private static class PriceCalculator {
+
+        public static double calculateTotalPrice(List<Product> products, List<Treatment> treatments) {
+            double totalPrice = 0.0;
+
+            for (Product product : products) {
+                totalPrice += product.getPrice();
+            }
+
+            for (Treatment treatment : treatments) {
+                totalPrice += treatment.getPrice();
+            }
+            return totalPrice;
+        }
+
     }
 
 }
