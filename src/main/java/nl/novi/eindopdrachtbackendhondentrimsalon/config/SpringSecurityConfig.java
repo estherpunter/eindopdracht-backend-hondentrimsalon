@@ -50,7 +50,6 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/dogs").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/dogs/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
@@ -65,9 +64,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/custom-treatment").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "/api/products/**").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/products/{productId}").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/treatments/{treatmentId}").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAuthority("CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasAuthority("CASHIER")
                         .requestMatchers("/authenticated").authenticated()
