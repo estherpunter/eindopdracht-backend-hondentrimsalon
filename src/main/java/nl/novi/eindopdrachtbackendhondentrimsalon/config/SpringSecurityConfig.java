@@ -49,6 +49,7 @@ public class SpringSecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
+                        .requestMatchers("/api/users").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/dogs/**").hasAuthority("ADMIN")

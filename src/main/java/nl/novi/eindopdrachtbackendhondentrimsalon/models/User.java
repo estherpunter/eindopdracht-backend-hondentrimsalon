@@ -20,7 +20,6 @@ public class User {
             targetEntity = Role.class,
             mappedBy = "username",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
