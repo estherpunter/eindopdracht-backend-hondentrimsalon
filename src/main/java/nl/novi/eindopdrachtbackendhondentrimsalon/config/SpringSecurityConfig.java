@@ -51,7 +51,7 @@ public class SpringSecurityConfig {
                         // Appointments endpoints
                         .requestMatchers(HttpMethod.GET, "/api/appointments/allappointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
                         .requestMatchers(HttpMethod.GET, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/allappointments").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyRole("ADMIN", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN")
@@ -67,7 +67,7 @@ public class SpringSecurityConfig {
                         // Customers endpoints
                         .requestMatchers(HttpMethod.GET, "/api/customers/allcustomers").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.GET, "/api/customers/{customerId}").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/customers/allcustomers").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/customers/{customerId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/customers/{customerId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/customers/{customerId}/dogs").hasAuthority("ADMIN")
@@ -80,14 +80,15 @@ public class SpringSecurityConfig {
                         // Products endpoints
                         .requestMatchers(HttpMethod.GET, "/api/products/allproducts").hasAnyAuthority("ADMIN", "DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "api/products/**").hasAnyAuthority("ADMIN", "DOGGROOMER")
-                        .requestMatchers(HttpMethod.POST, "/api/products/allproducts").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "api/products/{productId}/stock").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "api/products/{productId}").hasAuthority("ADMIN")
 
                         // Treatments endpoints
                         .requestMatchers(HttpMethod.GET, "/api/treatments/alltreatments").hasAnyAuthority("ADMIN", "DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "api/treatments/**").hasAnyAuthority("ADMIN", "DOGGROOMER")
-                        .requestMatchers(HttpMethod.POST, "/api/treatments/alltreatments").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/treatments").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "api/treatments/{treatmentId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/treatments/{treatmentId}").hasAuthority("ADMIN")
 
