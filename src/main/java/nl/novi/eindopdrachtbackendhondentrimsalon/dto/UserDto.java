@@ -6,8 +6,6 @@ public class UserDto {
 
     public String username;
     public String password;
-    public boolean enabled;
-    public String apikey;
     public Set<RoleDto> roles;
 
     public String getUsername() {
@@ -24,22 +22,6 @@ public class UserDto {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getApikey() {
-        return apikey;
-    }
-
-    public void setApikey(String apikey) {
-        this.apikey = apikey;
     }
 
     public Set<RoleDto> getRoles() {

@@ -23,9 +23,6 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
-    @Column
-    private boolean enabled = true;
-
 
     public String getUsername() {
         return username;
@@ -53,14 +50,6 @@ public class User {
 
     public void removeRole(Role role) {
         this.roles.remove(role);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
 }

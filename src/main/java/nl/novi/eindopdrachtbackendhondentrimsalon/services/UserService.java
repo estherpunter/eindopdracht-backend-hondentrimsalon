@@ -10,7 +10,6 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.RoleRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,8 +47,6 @@ public class UserService {
     }
 
     public String createUser(UserDto userDto) {
-        String randomString = RandomStringGenerator.generateAlphaNumeric(20);
-        userDto.setApikey(randomString);
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User newUser = userRepository.save(toUser(userDto));
         return newUser.getUsername();
