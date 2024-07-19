@@ -2,13 +2,13 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
-import nl.novi.eindopdrachtbackendhondentrimsalon.helpers.PriceCalculator;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,6 +48,14 @@ public class AppointmentService {
     }
 
     public AppointmentDto scheduleAppointment(AppointmentDto appointmentDto) {
+
+        if (appointmentDto.getProductIds() == null) {
+            appointmentDto.setProductIds(new ArrayList<>());
+        }
+        if (appointmentDto.getTreatmentIds() == null) {
+            appointmentDto.setTreatmentIds(new ArrayList<>());
+        }
+
         Customer customer = customerRepository.findById(appointmentDto.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException(appointmentDto.getCustomerId()));
 
@@ -120,8 +128,8 @@ public class AppointmentService {
 
         Receipt receipt = new Receipt();
 
-        List<Product> products = appointment.getProducts();
-        List<Treatment> treatments = appointment.getTreatments();
+        List<Product> products = new ArrayList<>(appointment.getProducts());
+        List<Treatment> treatments = new ArrayList<>(appointment.getTreatments());
 
         receipt.setProducts(products);
         receipt.setTreatments(treatments);
@@ -130,6 +138,23 @@ public class AppointmentService {
         receipt.setTotalPrice(totalPrice);
 
         return receiptRepository.save(receipt);
+    }
+
+    private static class PriceCalculator {
+
+        public static double calculateTotalPrice(List<Product> products, List<Treatment> treatments) {
+            double totalPrice = 0.0;
+
+            for (Product product : products) {
+                totalPrice += product.getPrice();
+            }
+
+            for (Treatment treatment : treatments) {
+                totalPrice += treatment.getPrice();
+            }
+            return totalPrice;
+        }
+
     }
 
 }

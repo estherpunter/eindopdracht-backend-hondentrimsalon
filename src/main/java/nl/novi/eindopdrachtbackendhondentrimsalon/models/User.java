@@ -20,12 +20,8 @@ public class User {
             targetEntity = Role.class,
             mappedBy = "username",
             cascade = CascadeType.ALL,
-            orphanRemoval = true,
             fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
-
-    @Column
-    private boolean enabled = true;
 
 
     public String getUsername() {
@@ -54,14 +50,6 @@ public class User {
 
     public void removeRole(Role role) {
         this.roles.remove(role);
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 
 }
