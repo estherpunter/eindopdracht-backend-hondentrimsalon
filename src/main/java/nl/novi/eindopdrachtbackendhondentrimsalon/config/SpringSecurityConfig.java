@@ -48,28 +48,41 @@ public class SpringSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
-                        .requestMatchers("/api/users").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/dogs/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/treatments").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/products").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/treatments").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/custom-treatment").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.PUT, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAuthority("CASHIER")
+                        // Appointments endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/allappointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/allappointments").hasAuthority("ADMIN") // Scheduling appointments
+                        .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER") // Updating appointments
+                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER") // Canceling an appointment
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN") // Adding products and treatments to appointments
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/products").hasAuthority("DOGGROOMER") // Adding products to appointments
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/treatments").hasAuthority("DOGGROOMER") // Adding treatments to appointments
+                        .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/custom-treatment").hasAuthority("DOGGROOMER") // Adding a custom treatment to an appointment
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasAuthority("CASHIER")
+
+                        // Authentication endpoints
                         .requestMatchers("/authenticated").authenticated()
                         .requestMatchers("/authenticate").permitAll()
+
+                        // Customers endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAuthority("ADMIN")
+
+                        // Dogs endpoints
+                        .requestMatchers(HttpMethod.PUT, "/api/dogs/**").hasAuthority("ADMIN")
+
+                        // Products endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/products/**").hasAuthority("ADMIN")
+
+                        // Treatments endpoints
+                        .requestMatchers(HttpMethod.POST, "/api/treatments").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/treatments/**").hasAuthority("DOGGROOMER")
+                        .requestMatchers(HttpMethod.PUT, "/api/treatments/**").hasAuthority("DOGGROOMER")
+
+                        // Users endpoints
+                        .requestMatchers("/api/users").permitAll()
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

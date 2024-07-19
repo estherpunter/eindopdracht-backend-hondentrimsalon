@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentDto {
@@ -10,8 +11,8 @@ public class AppointmentDto {
     private Long customerId;
     private Long dogId;
     private String status;
-    private List<Long> productIds;
-    private List<Long> treatmentIds;
+    private List<Long> productIds = new ArrayList<>();
+    private List<Long> treatmentIds = new ArrayList<>();
 
     public Long getId() {
         return id;

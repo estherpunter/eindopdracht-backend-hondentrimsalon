@@ -8,6 +8,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +48,14 @@ public class AppointmentService {
     }
 
     public AppointmentDto scheduleAppointment(AppointmentDto appointmentDto) {
+
+        if (appointmentDto.getProductIds() == null) {
+            appointmentDto.setProductIds(new ArrayList<>());
+        }
+        if (appointmentDto.getTreatmentIds() == null) {
+            appointmentDto.setTreatmentIds(new ArrayList<>());
+        }
+
         Customer customer = customerRepository.findById(appointmentDto.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException(appointmentDto.getCustomerId()));
 
