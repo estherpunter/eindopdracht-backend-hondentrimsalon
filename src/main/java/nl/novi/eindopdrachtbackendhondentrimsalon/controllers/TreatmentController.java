@@ -42,7 +42,7 @@ public class TreatmentController {
         return ResponseEntity.ok(treatments);
     }
 
-    @PostMapping("")
+    @PostMapping("/alltreatments")
     public ResponseEntity<TreatmentDto> addTreatment(@RequestBody TreatmentDto treatmentDto) {
         TreatmentDto newTreatmentDto = treatmentService.addTreatment(treatmentDto);
         return new ResponseEntity<>(newTreatmentDto, HttpStatus.CREATED);

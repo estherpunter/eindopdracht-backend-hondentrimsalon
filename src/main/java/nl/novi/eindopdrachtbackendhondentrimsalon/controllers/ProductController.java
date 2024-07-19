@@ -42,7 +42,7 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping("")
+    @PostMapping("/allproducts")
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) {
         ProductDto newProductDto = productService.addProduct(productDto);
         return new ResponseEntity<>(newProductDto, HttpStatus.CREATED);
@@ -55,7 +55,7 @@ public class ProductController {
         return ResponseEntity.ok(productDto);
     }
 
-    @PatchMapping("/{productId}/stock")
+    @PutMapping("/{productId}/stock")
     public ResponseEntity<ProductDto> updateProductStock(@PathVariable Long productId,
                                                          @RequestParam int newStock) {
         ProductDto productDto = productService.updateProductStock(productId, newStock);

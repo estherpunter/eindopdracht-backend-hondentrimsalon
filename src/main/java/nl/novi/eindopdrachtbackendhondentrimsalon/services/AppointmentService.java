@@ -128,8 +128,8 @@ public class AppointmentService {
 
         Receipt receipt = new Receipt();
 
-        List<Product> products = appointment.getProducts();
-        List<Treatment> treatments = appointment.getTreatments();
+        List<Product> products = new ArrayList<>(appointment.getProducts());
+        List<Treatment> treatments = new ArrayList<>(appointment.getTreatments());
 
         receipt.setProducts(products);
         receipt.setTreatments(treatments);

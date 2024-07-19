@@ -34,7 +34,7 @@ public class CustomerController {
     }
 
 
-    @PostMapping("")
+    @PostMapping("/allcustomers")
     public ResponseEntity<CustomerDto> addCustomer(@RequestParam String customerName,
                                                    @RequestParam String phoneNumber) {
         CustomerDto newCustomer = customerService.addCustomer(customerName, phoneNumber);
