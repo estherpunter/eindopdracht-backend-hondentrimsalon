@@ -23,7 +23,6 @@ public class User {
             fetch = FetchType.EAGER)
     private Set<Role> roles = new HashSet<>();
 
-
     public String getUsername() {
         return username;
     }

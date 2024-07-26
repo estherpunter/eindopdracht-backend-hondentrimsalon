@@ -23,6 +23,7 @@ public interface AppointmentMapper {
             @Mapping(target = "productIds", expression = "java(mapProductsToIds(appointment.getProducts()))"),
             @Mapping(target = "treatmentIds", expression = "java(mapTreatmentsToIds(appointment.getTreatments()))")
     })
+
     AppointmentDto appointmentToAppointmentDto(Appointment appointment);
 
     Appointment appointmentDtoToAppointment(AppointmentDto appointmentDto);

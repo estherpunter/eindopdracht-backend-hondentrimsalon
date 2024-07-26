@@ -48,12 +48,13 @@ public class SpringSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
+
                         // Appointments endpoints
                         .requestMatchers(HttpMethod.GET, "/api/appointments/allappointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
                         .requestMatchers(HttpMethod.GET, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
-                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyRole("ADMIN", "CASHIER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/products").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/treatments").hasAuthority("DOGGROOMER")

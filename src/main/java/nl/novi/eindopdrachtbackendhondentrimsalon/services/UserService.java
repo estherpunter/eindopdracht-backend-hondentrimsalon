@@ -70,31 +70,32 @@ public class UserService {
     }
 
     public void addRole(String username, UserRole userRole) {
-            User user = userRepository.findById(username)
-                    .orElseThrow(() -> new UsernameNotFoundException(username));
-            user.addRole(new Role(username, userRole.name()));
-            userRepository.save(user);
-    }
-
-    public void removeRole(String username, String roleName) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        Optional<Role> roleToRemove = user.getRoles().stream()
-                .filter(role -> role.getRole().equalsIgnoreCase(roleName))
-                .findFirst();
-        roleToRemove.ifPresent(user::removeRole);
+        user.addRole(new Role (username, userRole.name()));
         userRepository.save(user);
-    }
+}
 
-    public UserDto fromUser(User user) {
-        return userMapper.userToUserDto(user);
-    }
+public void removeRole(String username, String roleName) {
+    User user = userRepository.findById(username)
+            .orElseThrow(() -> new UsernameNotFoundException(username));
+    Optional<Role> roleToRemove = user.getRoles().stream()
+            .filter(role -> role.getRole().equalsIgnoreCase(roleName))
+            .findFirst();
+    roleToRemove.ifPresent(user::removeRole);
+    userRepository.save(user);
+}
 
-    public User toUser(UserDto userDto) {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        return user;
-    }
 
+public UserDto fromUser(User user) {
+    return userMapper.userToUserDto(user);
+}
+
+public User toUser(UserDto userDto) {
+    User user = new User();
+    user.setUsername(userDto.getUsername());
+    user.setPassword(userDto.getPassword());
+    return user;
+}
+  
 }

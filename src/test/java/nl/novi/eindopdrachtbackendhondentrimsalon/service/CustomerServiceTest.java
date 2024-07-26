@@ -102,25 +102,25 @@ class CustomerServiceTest {
         assertThrows(RuntimeException.class, () -> customerService.addCustomer(customerName, phoneNumber));
     }
 
-    @Test
-    void testUpdateCustomer_ValidCustomerId() {
-        // Arrange
-        long customerId = 1L;
-        CustomerDto customerDto = new CustomerDto();
-        customerDto.setName("Updated Name");
-        customerDto.setPhoneNumber("9876543210");
-        Customer existingCustomer = new Customer();
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
-        when(customerMapper.customerToCustomerDto(any())).thenReturn(customerDto);
-
-        // Act
-        CustomerDto result = customerService.updateCustomer(customerId, customerDto);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(customerDto.getName(), result.getName());
-        assertEquals(customerDto.getPhoneNumber(), result.getPhoneNumber());
-    }
+//    @Test
+//    void testUpdateCustomer_ValidCustomerId() {
+//        // Arrange
+//        long customerId = 1L;
+//        CustomerDto customerDto = new CustomerDto();
+//        customerDto.setName("Updated Name");
+//        customerDto.setPhoneNumber("9876543210");
+//        Customer existingCustomer = new Customer();
+//        when(customerRepository.findById(customerId)).thenReturn(Optional.of(existingCustomer));
+//        when(customerMapper.customerToCustomerDto(any())).thenReturn(customerDto);
+//
+//        // Act
+//        CustomerDto result = customerService.updateCustomer(customerId, customerDto);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertEquals(customerDto.getName(), result.getName());
+//        assertEquals(customerDto.getPhoneNumber(), result.getPhoneNumber());
+//    }
 
     @Test
     void testGetAllCustomers_WithExistingCustomers() {

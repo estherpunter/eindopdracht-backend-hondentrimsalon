@@ -20,6 +20,11 @@ public class AppConfig {
     }
 
     @Bean
+    public DogMapper dogMapper() {
+        return DogMapper.INSTANCE;
+    }
+
+    @Bean
     public ProductMapper productMapper() {
         return ProductMapper.INSTANCE;
     }

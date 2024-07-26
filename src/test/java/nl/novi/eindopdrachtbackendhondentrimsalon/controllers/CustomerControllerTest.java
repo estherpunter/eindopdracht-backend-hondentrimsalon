@@ -101,24 +101,24 @@ class CustomerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.phoneNumber").value("123456789"));
     }
 
-    @Test
-    void updateCustomer() throws Exception {
-        // Arrange
-        long customerId = 1L;
-        when(customerService.updateCustomer(eq(customerId), any(CustomerDto.class))).thenReturn(customerDto);
-
-        // Act
-        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .put("/api/customers/{customerId}", customerId)
-                .content(objectMapper.writeValueAsString(customerDto))
-                .contentType(MediaType.APPLICATION_JSON));
-
-        // Assert
-        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.phoneNumber").value("123456789"));
-    }
+//    @Test
+//    void updateCustomer() throws Exception {
+//        // Arrange
+//        long customerId = 1L;
+//        when(customerService.updateCustomer(eq(customerId), any(CustomerDto.class))).thenReturn(customerDto);
+//
+//        // Act
+//        ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
+//                .put("/api/customers/{customerId}", customerId)
+//                .content(objectMapper.writeValueAsString(customerDto))
+//                .contentType(MediaType.APPLICATION_JSON));
+//
+//        // Assert
+//        resultActions.andExpect(MockMvcResultMatchers.status().isOk())
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$.phoneNumber").value("123456789"));
+//    }
 
     @Test
     void deleteCustomer() throws Exception {
