@@ -1,7 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Appointment;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;

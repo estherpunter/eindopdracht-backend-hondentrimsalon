@@ -132,10 +132,11 @@ public class AppointmentService {
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Receipt receipt = new Receipt();
-        receipt.setAppointmentId(appointmentId);
         receipt.setCustomerId(appointment.getCustomer().getId());
+        receipt.setCustomerName(appointment.getCustomer().getName());
         receipt.setDogId(appointment.getDog().getId());
-        receipt.setStatus("Completed");
+        receipt.setDogName(appointment.getDog().getName());
+        receipt.setStatus("Completed"); //
 
         List<Product> products = new ArrayList<>(appointment.getProducts());
         List<Treatment> treatments = new ArrayList<>(appointment.getTreatments());
