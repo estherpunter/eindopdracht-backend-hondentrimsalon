@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Service
@@ -113,17 +112,19 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
-    public Appointment addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
+       public AppointmentDto  addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Treatment customTreatment = new Treatment();
         customTreatment.setName("Other");
         customTreatment.setPrice(customPrice);
+        treatmentRepository.save(customTreatment);
 
         appointment.getTreatments().add(customTreatment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
 
-        return appointmentRepository.save(appointment);
+        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
     public Receipt generateReceipt(Long appointmentId) {
@@ -131,6 +132,10 @@ public class AppointmentService {
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
         Receipt receipt = new Receipt();
+        receipt.setAppointmentId(appointmentId);
+        receipt.setCustomerId(appointment.getCustomer().getId());
+        receipt.setDogId(appointment.getDog().getId());
+        receipt.setStatus("Completed");
 
         List<Product> products = new ArrayList<>(appointment.getProducts());
         List<Treatment> treatments = new ArrayList<>(appointment.getTreatments());

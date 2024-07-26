@@ -74,8 +74,8 @@ public class AppointmentController {
 
 
     @PostMapping("/{appointmentId}/custom-treatment")
-    public ResponseEntity<Appointment> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
-        Appointment updatedAppointment = appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice);
+    public ResponseEntity<AppointmentDto> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
+        AppointmentDto updatedAppointment = appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice);
         return ResponseEntity.ok(updatedAppointment);
     }
 

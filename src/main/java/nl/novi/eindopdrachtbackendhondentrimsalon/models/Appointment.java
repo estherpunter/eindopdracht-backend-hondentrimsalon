@@ -35,7 +35,7 @@ public class Appointment {
     )
     private List<Product> products = new ArrayList<>();
 
-    @ManyToMany
+    @OneToMany
     @JoinTable(
             name = "appointment_treatments",
             joinColumns = @JoinColumn(name = "appointment_id"),

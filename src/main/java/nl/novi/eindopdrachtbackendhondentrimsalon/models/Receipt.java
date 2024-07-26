@@ -13,6 +13,10 @@ public class Receipt {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "receipt_products",
             joinColumns = @JoinColumn(name = "receipt_id"),
@@ -24,10 +28,6 @@ public class Receipt {
             joinColumns = @JoinColumn(name = "receipt_id"),
             inverseJoinColumns = @JoinColumn(name = "treatment_id"))
     private List<Treatment> treatments = new ArrayList<>();
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id")
-    private Appointment appointment;
 
     @Column(name = "total_price", nullable = false)
     private double totalPrice;
