@@ -3,7 +3,9 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "customers")
@@ -17,8 +19,8 @@ public class Customer {
 
     private String phoneNumber;
 
-    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Dog> dogs = new ArrayList<>();
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Dog> dogs = new HashSet<>();
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Appointment> appointments;
@@ -56,11 +58,11 @@ public class Customer {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<Dog> getDogs() {
+    public Set<Dog> getDogs() {
         return dogs;
     }
 
-    public void setDogs(List<Dog> dogs) {
+    public void setDogs(Set<Dog> dogs) {
         this.dogs = dogs;
     }
 

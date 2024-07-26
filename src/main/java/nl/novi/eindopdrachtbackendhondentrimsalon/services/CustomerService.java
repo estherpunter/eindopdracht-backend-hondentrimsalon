@@ -2,6 +2,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.DogMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
@@ -97,13 +98,22 @@ public class CustomerService {
         return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
-        public void removeDogFromCustomer(Long customerId, Long dogId) {
+    public void removeDogFromCustomer(Long customerId, Long dogId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        customer.getDogs().removeIf(dog -> dog.getId().equals(dogId));
+        Dog dog = dogRepository.findById(dogId)
+                .orElseThrow(() -> new DogNotFoundException(dogId));
 
-        customerRepository.save(customer);
+        if (dog.getCustomer() != null && dog.getCustomer().getId().equals(customerId)) {
+            customer.getDogs().remove(dog);
+            dog.setCustomer(null);
+
+            customerRepository.save(customer);
+            dogRepository.save(dog);
+        } else {
+            throw new IllegalStateException("Dog does not belong to this customer");
+        }
     }
 
 }

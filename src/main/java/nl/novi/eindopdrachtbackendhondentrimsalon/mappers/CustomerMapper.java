@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Mapper
@@ -18,7 +19,7 @@ public interface CustomerMapper {
     @Mapping(target = "dogIds", source = "customer.dogs")
     CustomerDto customerToCustomerDto(Customer customer);
 
-    default List<Long> mapDogsToDogIds(List<Dog> dogs) {
+    default List<Long> mapDogsToDogIds(Set<Dog> dogs) {
         return dogs.stream()
                 .map(Dog::getId)
                 .collect(Collectors.toList());

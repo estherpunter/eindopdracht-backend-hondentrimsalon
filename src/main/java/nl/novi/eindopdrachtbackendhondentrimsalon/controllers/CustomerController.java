@@ -1,10 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -73,13 +69,8 @@ public class CustomerController {
     @DeleteMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Void> removeDogFromCustomer(@PathVariable Long customerId,
                                                       @PathVariable Long dogId) {
-        try {
-            customerService.removeDogFromCustomer(customerId, dogId);
-            return ResponseEntity.ok().build();
-        } catch (RecordNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        }
+        customerService.removeDogFromCustomer(customerId, dogId);
+        return ResponseEntity.ok().build();
     }
-
 
 }

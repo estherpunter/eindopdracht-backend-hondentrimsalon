@@ -15,10 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -252,7 +249,7 @@ class CustomerServiceTest {
         Customer customer = new Customer();
         customer.setId(customerId);
         customer.setName("John Doe");
-        customer.setDogs(new ArrayList<>());
+        customer.setDogs(new HashSet<>());
 
         Dog dog = new Dog();
         dog.setId(dogId);
