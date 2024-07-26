@@ -1,9 +1,11 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
+import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.DogMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.CustomerRepository;
@@ -20,23 +22,26 @@ public class CustomerService {
     private final DogRepository dogRepository;
 
     private final CustomerMapper customerMapper;
+    private final DogMapper dogMapper;
 
     @Autowired
-    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository, CustomerMapper customerMapper) {
+    public CustomerService(CustomerRepository customerRepository, DogRepository dogRepository, CustomerMapper customerMapper, DogMapper dogMapper) {
         this.customerRepository = customerRepository;
         this.dogRepository = dogRepository;
         this.customerMapper = customerMapper;
+        this.dogMapper = dogMapper;
+    }
+
+    public List<CustomerDto> getAllCustomers() {
+        List<Customer> customers = customerRepository.findAll();
+
+        return customerMapper.customersToCustomerDtos(customers);
     }
 
     public CustomerDto getCustomerById(Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
         return customerMapper.customerToCustomerDto(customer);
-    }
-
-    public List<CustomerDto> getAllCustomers() {
-        List<Customer> customers = customerRepository.findAll();
-        return customerMapper.customersToCustomerDtos(customers);
     }
 
     public CustomerDto addCustomer(String customerName, String phoneNumber) {
@@ -47,27 +52,27 @@ public class CustomerService {
         } else {
             Customer newCustomer = new Customer(customerName, phoneNumber);
             Customer savedCustomer = customerRepository.save(newCustomer);
+
             return customerMapper.customerToCustomerDto(savedCustomer);
         }
     }
 
-    public CustomerDto updateCustomer(Long customerId, CustomerDto customerDto) {
-        Customer existingCustomer = customerRepository.findById(customerId)
+    public CustomerDto updateCustomer(Long customerId, String customerName, String phoneNumber) {
+        Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        existingCustomer.setName(customerDto.getName());
-        existingCustomer.setPhoneNumber(customerDto.getPhoneNumber());
+        customer.setName(customerName);
+        customer.setPhoneNumber(phoneNumber);
 
-        Customer updatedCustomer = customerRepository.save(existingCustomer);
+        Customer updatedCustomer = customerRepository.save(customer);
+
         return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
     public void deleteCustomer(Long customerId) {
-        if (!customerRepository.existsById(customerId)) {
-            throw new CustomerNotFoundException(customerId);
-        }
-
-        customerRepository.deleteById(customerId);
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+        customerRepository.delete(customer);
     }
 
     public CustomerDto addDogToCustomer(Long customerId, String dogName, String breed, int age) {
@@ -90,23 +95,26 @@ public class CustomerService {
         customer.getDogs().add(newDog);
 
         Customer updatedCustomer = customerRepository.save(customer);
+
         return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
-    public void updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
+    public DogDto updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        Dog existingDog = customer.getDogs().stream()
-                .filter(dog -> dog.getId().equals(dogId))
+        Dog dog = customer.getDogs().stream()
+                .filter(d -> d.getId().equals(dogId))
                 .findFirst()
                 .orElseThrow(() -> new DogNotFoundException(dogId));
 
-        existingDog.setName(dogName);
-        existingDog.setBreed(breed);
-        existingDog.setAge(age);
+        dog.setName(dogName);
+        dog.setBreed(breed);
+        dog.setAge(age);
 
-        dogRepository.save(existingDog);
+        Dog updatedDog = dogRepository.save(dog);
+
+        return dogMapper.dogToDogDto(updatedDog);
     }
 
     public void removeDogFromCustomer(Long customerId, Long dogId) {

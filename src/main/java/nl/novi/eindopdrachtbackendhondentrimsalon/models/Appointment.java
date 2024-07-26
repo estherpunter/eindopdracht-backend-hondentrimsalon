@@ -2,7 +2,6 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ public class Appointment {
     )
     private List<Product> products = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany
     @JoinTable(
             name = "appointment_treatments",
             joinColumns = @JoinColumn(name = "appointment_id"),
@@ -124,4 +123,5 @@ public class Appointment {
     public void setReceipt(Receipt receipt) {
         this.receipt = receipt;
     }
+
 }

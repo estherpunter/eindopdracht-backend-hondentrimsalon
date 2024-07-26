@@ -37,6 +37,7 @@ public class AppointmentService {
 
     public List<AppointmentDto> getAllAppointments() {
         List<Appointment> appointments = appointmentRepository.findAll();
+
         return appointments.stream()
                 .map(appointmentMapper::appointmentToAppointmentDto)
                 .collect(Collectors.toList());
@@ -45,6 +46,7 @@ public class AppointmentService {
     public AppointmentDto getAppointmentById(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
+
         return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 
@@ -64,6 +66,7 @@ public class AppointmentService {
         appointment.setTreatments(new ArrayList<>());
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
+
         return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
     }
 
@@ -75,14 +78,13 @@ public class AppointmentService {
         appointment.setStatus(status);
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
-        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
 
+        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
     public void cancelAppointment(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
-
         appointmentRepository.delete(appointment);
     }
 
@@ -112,7 +114,7 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
-       public AppointmentDto  addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
+    public AppointmentDto addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
@@ -136,7 +138,7 @@ public class AppointmentService {
         receipt.setCustomerName(appointment.getCustomer().getName());
         receipt.setDogId(appointment.getDog().getId());
         receipt.setDogName(appointment.getDog().getName());
-        receipt.setStatus("Completed"); //
+        receipt.setStatus("Completed");
 
         List<Product> products = new ArrayList<>(appointment.getProducts());
         List<Treatment> treatments = new ArrayList<>(appointment.getTreatments());
