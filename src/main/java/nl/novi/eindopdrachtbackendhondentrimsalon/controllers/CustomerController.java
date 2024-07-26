@@ -70,31 +70,12 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-
-    @PutMapping("/{customerId}/dogs/{dogId}")
-    public ResponseEntity<DogDto> updateDogForCustomer(@PathVariable Long customerId,
-                                                       @PathVariable Long dogId,
-                                                       @RequestParam String dogName,
-                                                       @RequestParam String breed,
-                                                       @RequestParam int age) {
-        try {
-            DogDto updatedDog = customerService.updateDogForCustomer(customerId, dogId, dogName, breed, age);
-            return ResponseEntity.ok(updatedDog);
-        } catch (CustomerNotFoundException | DogNotFoundException e) {
-            return ResponseEntity.notFound().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-    }
-
-
     @DeleteMapping("/{customerId}/dogs/{dogId}")
     public ResponseEntity<Void> removeDogFromCustomer(@PathVariable Long customerId,
                                                       @PathVariable Long dogId) {
         try {
             customerService.removeDogFromCustomer(customerId, dogId);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.ok().build();
         } catch (RecordNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

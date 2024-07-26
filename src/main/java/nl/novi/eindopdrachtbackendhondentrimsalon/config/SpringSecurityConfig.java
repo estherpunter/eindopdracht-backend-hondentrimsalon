@@ -72,7 +72,6 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/customers/{customerId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/customers/{customerId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/customers/{customerId}/dogs").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/customers/{customerId}/dogs/{dogId}").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "api/customers/{customerId}/dogs/{dogId}").hasAuthority("ADMIN")
 
                         // Dogs endpoints

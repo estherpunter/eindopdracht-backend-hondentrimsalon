@@ -1,9 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.DogMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Customer;
@@ -99,25 +97,7 @@ public class CustomerService {
         return customerMapper.customerToCustomerDto(updatedCustomer);
     }
 
-    public DogDto updateDogForCustomer(Long customerId, Long dogId, String dogName, String breed, int age) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
-
-        Dog dog = customer.getDogs().stream()
-                .filter(d -> d.getId().equals(dogId))
-                .findFirst()
-                .orElseThrow(() -> new DogNotFoundException(dogId));
-
-        dog.setName(dogName);
-        dog.setBreed(breed);
-        dog.setAge(age);
-
-        Dog updatedDog = dogRepository.save(dog);
-
-        return dogMapper.dogToDogDto(updatedDog);
-    }
-
-    public void removeDogFromCustomer(Long customerId, Long dogId) {
+        public void removeDogFromCustomer(Long customerId, Long dogId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
