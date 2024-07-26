@@ -24,20 +24,20 @@ VALUES ('Dog Shampoo', 12.99, 50),
        ('Brush', 8.50, 30);
 
 
-INSERT INTO users (username, password, enabled)
-VALUES ('admin', '$2a$10$H0xLFvvBYM.NtMbTlsYe4emMWIo/2DGrohgTG8PmwIQoThv3S9zjW', true);
+INSERT INTO users (username, password)
+VALUES ('admin', '$2a$10$H0xLFvvBYM.NtMbTlsYe4emMWIo/2DGrohgTG8PmwIQoThv3S9zjW');
 
 INSERT INTO roles (username, role)
 VALUES ('admin', 'ADMIN');
 
-INSERT INTO users (username, password, enabled)
-VALUES ('cashier', '$2a$10$5SP253Ev3YlFL/h/TdSP5eAgPxiEx8VyMSbrWhvxMggxzzYoZKGy.', true);
+INSERT INTO users (username, password)
+VALUES ('cashier', '$2a$10$5SP253Ev3YlFL/h/TdSP5eAgPxiEx8VyMSbrWhvxMggxzzYoZKGy.');
 
 INSERT INTO roles (username, role)
 VALUES ('cashier', 'CASHIER');
 
-INSERT INTO users (username, password, enabled)
-VALUES ('doggroomer', '$2a$10$Wtpz7aVnAJdbvgppY4YaQ.GlL5yV697ZkdTq29VnMp7CP0ZKl5pM2', true);
+INSERT INTO users (username, password)
+VALUES ('doggroomer', '$2a$10$Wtpz7aVnAJdbvgppY4YaQ.GlL5yV697ZkdTq29VnMp7CP0ZKl5pM2');
 
 INSERT INTO roles (username, role)
 VALUES ('doggroomer', 'DOGGROOMER');

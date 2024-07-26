@@ -48,30 +48,55 @@ public class SpringSecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/api/appointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
-                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/dogs").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/customers/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/dogs/**").hasAuthority("ADMIN")
+
+                        // Appointments endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/allappointments").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
+                        .requestMatchers(HttpMethod.GET, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "DOGGROOMER", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/api/appointments/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
+                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyRole("ADMIN", "CASHIER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/api/appointments/**").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/treatments").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/products").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/treatments").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/custom-treatment").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/products/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/products/{productId}").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.PUT, "/api/treatments/**").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.GET, "/api/treatments/{treatmentId}").hasAuthority("DOGGROOMER")
-                        .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAuthority("CASHIER")
+
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/generate-receipt").hasAuthority("CASHIER")
+
+                        // Authentication endpoints
                         .requestMatchers("/authenticated").authenticated()
                         .requestMatchers("/authenticate").permitAll()
+
+                        // Customers endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/customers/allcustomers").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/api/customers/{customerId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/customers").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/customers/{customerId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/customers/{customerId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/customers/{customerId}/dogs").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/customers/{customerId}/dogs/{dogId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "api/customers/{customerId}/dogs/{dogId}").hasAuthority("ADMIN")
+
+                        // Dogs endpoints
+                        .requestMatchers(HttpMethod.PUT, "/api/dogs/{dogId}/characteristics").hasAuthority("ADMIN")
+
+                        // Products endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/products/allproducts").hasAnyAuthority("ADMIN", "DOGGROOMER")
+                        .requestMatchers(HttpMethod.GET, "api/products/**").hasAnyAuthority("ADMIN", "DOGGROOMER")
+                        .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "api/products/{productId}/stock").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "api/products/{productId}").hasAuthority("ADMIN")
+
+                        // Treatments endpoints
+                        .requestMatchers(HttpMethod.GET, "/api/treatments/alltreatments").hasAnyAuthority("ADMIN", "DOGGROOMER")
+                        .requestMatchers(HttpMethod.GET, "api/treatments/**").hasAnyAuthority("ADMIN", "DOGGROOMER")
+                        .requestMatchers(HttpMethod.POST, "/api/treatments").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "api/treatments/{treatmentId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/treatments/{treatmentId}").hasAuthority("ADMIN")
+
+                        // Users endpoints
+                        .requestMatchers("/api/users").permitAll()
+
                         .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
