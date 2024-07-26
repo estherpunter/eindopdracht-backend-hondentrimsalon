@@ -10,7 +10,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.RoleRepository;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.utils.RandomStringGenerator;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,12 +21,14 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final RoleMapper roleMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, RoleMapper roleMapper) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, UserMapper userMapper, RoleMapper roleMapper, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.roleMapper = roleMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<UserDto> getUsers() {
@@ -45,6 +47,7 @@ public class UserService {
     }
 
     public String createUser(UserDto userDto) {
+        userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
         User newUser = userRepository.save(toUser(userDto));
         return newUser.getUsername();
     }
@@ -66,39 +69,32 @@ public class UserService {
         return roleMapper.rolesToRoleDtos(user.getRoles());
     }
 
-    public void addRole(String username, String roleName) {
-        UserRole userRole = UserRole.valueOf(roleName.toUpperCase());
-        Role role = roleRepository.findByRole(userRole.name());
-
-        if (role != null) {
-            User user = userRepository.findById(username)
-                    .orElseThrow(() -> new UsernameNotFoundException(username));
-            user.addRole(role);
-            userRepository.save(user);
-        } else {
-            throw new RuntimeException("Role not found: " + roleName);
-        }
-    }
-
-    public void removeRole(String username, String roleName) {
+    public void addRole(String username, UserRole userRole) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        Optional<Role> roleToRemove = user.getRoles().stream()
-                .filter(role -> role.getRole().equalsIgnoreCase(roleName))
-                .findFirst();
-        roleToRemove.ifPresent(user::removeRole);
+        user.addRole(new Role (username, userRole.name()));
         userRepository.save(user);
-    }
+}
 
-    public UserDto fromUser(User user) {
-        return userMapper.userToUserDto(user);
-    }
+public void removeRole(String username, String roleName) {
+    User user = userRepository.findById(username)
+            .orElseThrow(() -> new UsernameNotFoundException(username));
+    Optional<Role> roleToRemove = user.getRoles().stream()
+            .filter(role -> role.getRole().equalsIgnoreCase(roleName))
+            .findFirst();
+    roleToRemove.ifPresent(user::removeRole);
+    userRepository.save(user);
+}
 
-    public User toUser(UserDto userDto) {
-        User user = new User();
-        user.setUsername(userDto.getUsername());
-        user.setPassword(userDto.getPassword());
-        return user;
-    }
+public UserDto fromUser(User user) {
+    return userMapper.userToUserDto(user);
+}
+
+public User toUser(UserDto userDto) {
+    User user = new User();
+    user.setUsername(userDto.getUsername());
+    user.setPassword(userDto.getPassword());
+    return user;
+}
 
 }
