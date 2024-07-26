@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,24 +49,20 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 
-    public AppointmentDto scheduleAppointment(AppointmentDto appointmentDto) {
+    public AppointmentDto scheduleAppointment(LocalDateTime date, Long customerId, Long dogId) {
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        if (appointmentDto.getProductIds() == null) {
-            appointmentDto.setProductIds(new ArrayList<>());
-        }
-        if (appointmentDto.getTreatmentIds() == null) {
-            appointmentDto.setTreatmentIds(new ArrayList<>());
-        }
+        Dog dog = dogRepository.findById(dogId)
+                .orElseThrow(() -> new DogNotFoundException(dogId));
 
-        Customer customer = customerRepository.findById(appointmentDto.getCustomerId())
-                .orElseThrow(() -> new CustomerNotFoundException(appointmentDto.getCustomerId()));
-
-        Dog dog = dogRepository.findById(appointmentDto.getDogId())
-                .orElseThrow(() -> new DogNotFoundException(appointmentDto.getDogId()));
-
-        Appointment appointment = appointmentMapper.appointmentDtoToAppointment(appointmentDto);
+        Appointment appointment = new Appointment();
+        appointment.setDate(date);
         appointment.setCustomer(customer);
         appointment.setDog(dog);
+        appointment.setStatus("Scheduled");
+        appointment.setProducts(new ArrayList<>());
+        appointment.setTreatments(new ArrayList<>());
 
         Appointment savedAppointment = appointmentRepository.save(appointment);
         return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
@@ -90,7 +87,7 @@ public class AppointmentService {
         appointmentRepository.delete(appointment);
     }
 
-    public void addProductToAppointment(Long appointmentId, Long productId) {
+    public AppointmentDto addProductToAppointment(Long appointmentId, Long productId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
@@ -98,10 +95,12 @@ public class AppointmentService {
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         appointment.getProducts().add(product);
-        appointmentRepository.save(appointment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
-    public void addTreatmentToAppointment(Long appointmentId, Long treatmentId) {
+    public AppointmentDto addTreatmentToAppointment(Long appointmentId, Long treatmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
@@ -109,7 +108,9 @@ public class AppointmentService {
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
         appointment.getTreatments().add(treatment);
-        appointmentRepository.save(appointment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+
+        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
     }
 
     public Appointment addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {

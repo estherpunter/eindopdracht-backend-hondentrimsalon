@@ -39,8 +39,8 @@ public class AppointmentController {
 
 
     @PostMapping("")
-    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestBody AppointmentDto appointmentDto) {
-        AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(appointmentDto);
+    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestParam("date") LocalDateTime date, @RequestParam("customerId") Long customerId, @RequestParam("dogId") Long dogId) {
+        AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(date, customerId, dogId);
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduledAppointmentDto);
     }
 
@@ -55,21 +55,21 @@ public class AppointmentController {
     @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> cancelAppointment(@PathVariable Long appointmentId) {
         appointmentService.cancelAppointment(appointmentId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 
     @PostMapping("/{appointmentId}/products/{productId}")
-    public ResponseEntity<Void> addProductToAppointment(@PathVariable Long appointmentId, @PathVariable Long productId) {
-        appointmentService.addProductToAppointment(appointmentId, productId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AppointmentDto> addProductToAppointment(@PathVariable Long appointmentId, @PathVariable Long productId) {
+        AppointmentDto updatedAppointment = appointmentService.addProductToAppointment(appointmentId, productId);
+        return ResponseEntity.ok(updatedAppointment);
     }
 
 
     @PostMapping("/{appointmentId}/treatments/{treatmentId}")
-    public ResponseEntity<Void> addTreatmentToAppointment(@PathVariable Long appointmentId, @PathVariable Long treatmentId) {
-        appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
-        return ResponseEntity.ok().build();
+    public ResponseEntity <AppointmentDto> addTreatmentToAppointment(@PathVariable Long appointmentId, @PathVariable Long treatmentId) {
+        AppointmentDto updatedAppointment = appointmentService.addTreatmentToAppointment(appointmentId, treatmentId);
+        return ResponseEntity.ok(updatedAppointment);
     }
 
 
