@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @PostMapping(value = "")
-    public ResponseEntity<Void> createUser(@RequestBody UserDto dto, @RequestParam String roleName) {
+    public ResponseEntity<Void> createUser(@RequestBody UserDto dto, @RequestParam UserRole roleName) {
         String newUsername = userService.createUser(dto);
 
         userService.addRole(newUsername, roleName);
@@ -66,8 +66,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/{username}/roles")
-    public ResponseEntity<Void> addUserRoles(@PathVariable("username") String username, @RequestBody Map<String, String> fields) {
-        String roleName = fields.get("role");
+    public ResponseEntity<Void> addUserRoles(@PathVariable("username") String username, @RequestBody UserRole roleName) {
         userService.addRole(username, roleName);
         return ResponseEntity.noContent().build();
     }

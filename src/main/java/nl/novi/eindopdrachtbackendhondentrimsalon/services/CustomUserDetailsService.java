@@ -1,8 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
-
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
+import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,20 +17,19 @@ import java.util.Set;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UserService userService;
-
-    public CustomUserDetailsService(UserService userService) {
-        this.userService = userService;
+    public CustomUserDetailsService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
+    private final UserRepository userRepository;
+
     public UserDetails loadUserByUsername(String username) {
-        UserDto userDto = userService.getUser(username);
+        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("Username not found"));
+        String password = user.getPassword();
 
-        String password = userDto.getPassword();
-
-        Set<RoleDto> roles = userService.getRoles(username);
+        Set<Role> roles = user.getRoles();
         List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
-        for (RoleDto role : roles) {
+        for (Role role : roles) {
             grantedAuthorities.add(new SimpleGrantedAuthority(role.getRole()));
         }
 
