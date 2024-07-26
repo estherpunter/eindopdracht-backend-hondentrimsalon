@@ -8,6 +8,7 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -70,14 +71,16 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
     }
 
-    public void updateAppointment(AppointmentDto appointmentDto) {
-        Appointment appointment = appointmentRepository.findById(appointmentDto.getId())
-                .orElseThrow(() -> new AppointmentNotFoundException(appointmentDto.getId()));
+    public AppointmentDto updateAppointment(Long appointmentId, LocalDateTime date, String status) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
-        appointment.setDate(appointmentDto.getDate());
-        appointment.setStatus(appointmentDto.getStatus());
+        appointment.setDate(date);
+        appointment.setStatus(status);
 
-        appointmentRepository.save(appointment);
+        Appointment updatedAppointment = appointmentRepository.save(appointment);
+        return appointmentMapper.appointmentToAppointmentDto(updatedAppointment);
+
     }
 
     public void cancelAppointment(Long appointmentId) {

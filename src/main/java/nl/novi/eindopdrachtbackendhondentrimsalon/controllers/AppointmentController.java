@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -38,17 +39,16 @@ public class AppointmentController {
 
 
     @PostMapping("")
-    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestParam AppointmentDto appointmentDto) {
+    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestBody AppointmentDto appointmentDto) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(appointmentDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(scheduledAppointmentDto);
     }
 
 
     @PutMapping("/{appointmentId}")
-    public ResponseEntity<Void> updateAppointment(@PathVariable Long appointmentId, @RequestBody AppointmentDto appointmentDto) {
-        appointmentDto.setId(appointmentId);
-        appointmentService.updateAppointment(appointmentDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AppointmentDto> updateAppointment(@PathVariable Long appointmentId, @RequestParam("date") LocalDateTime date, @RequestParam("status") String status) {
+        AppointmentDto updatedAppointment = appointmentService.updateAppointment(appointmentId, date, status);
+        return ResponseEntity.ok(updatedAppointment);
     }
 
 
