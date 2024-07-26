@@ -86,6 +86,7 @@ public void removeRole(String username, String roleName) {
     userRepository.save(user);
 }
 
+
 public UserDto fromUser(User user) {
     return userMapper.userToUserDto(user);
 }
@@ -96,5 +97,5 @@ public User toUser(UserDto userDto) {
     user.setPassword(userDto.getPassword());
     return user;
 }
-
+  
 }

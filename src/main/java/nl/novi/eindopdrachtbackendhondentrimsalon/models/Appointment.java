@@ -39,7 +39,7 @@ public class Appointment {
             name = "appointment_treatments",
             joinColumns = @JoinColumn(name = "appointment_id"),
             inverseJoinColumns = @JoinColumn(name = "treatment_id")
-    )
+    ) 
     private List<Treatment> treatments = new ArrayList<>();
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

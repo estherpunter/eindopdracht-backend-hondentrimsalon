@@ -54,6 +54,7 @@ public class AppointmentService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
+   
         Dog dog = dogRepository.findById(dogId)
                 .orElseThrow(() -> new DogNotFoundException(dogId));
 

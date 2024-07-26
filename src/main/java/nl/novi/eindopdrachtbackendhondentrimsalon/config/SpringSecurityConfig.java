@@ -96,7 +96,7 @@ public class SpringSecurityConfig {
                         // Users endpoints
                         .requestMatchers("/api/users").permitAll()
 
-//                        .anyRequest().denyAll()
+                        .anyRequest().denyAll()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
