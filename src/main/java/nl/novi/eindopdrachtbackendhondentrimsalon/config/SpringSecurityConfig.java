@@ -55,7 +55,6 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/appointments").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
                         .requestMatchers(HttpMethod.DELETE, "/api/appointments/{appointmentId}").hasAnyAuthority("ADMIN", "CASHIER")
-                        .requestMatchers(HttpMethod.POST, "/api/appointments/**").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/products").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/treatments").hasAuthority("DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/appointments/{appointmentId}/custom-treatment").hasAuthority("DOGGROOMER")

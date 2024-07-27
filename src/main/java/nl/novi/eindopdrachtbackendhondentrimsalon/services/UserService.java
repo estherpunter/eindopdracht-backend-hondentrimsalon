@@ -3,6 +3,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.InvalidRoleException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.RoleMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.UserMapper;
@@ -45,17 +46,32 @@ public class UserService {
         return userMapper.userToUserDto(user);
     }
 
-    public String createUser(UserDto userDto) {
+    public String createUser(String username, String password) {
+        UserDto userDto = new UserDto();
+        userDto.setUsername(username);
+        userDto.setPassword(password);
+
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User newUser = userRepository.save(userMapper.userDtoToUser(userDto));
+
+        User newUser = userMapper.userDtoToUser(userDto);
+        newUser = userRepository.save(newUser);
+
         return newUser.getUsername();
     }
 
-    public void updateUser(String username, UserDto userDto) {
+    public UserDto updateUserPassword(String username, String password) {
         User userToUpdate = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        userToUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        userRepository.save(userToUpdate);
+
+        if (password != null && !password.isEmpty()) {
+            userToUpdate.setPassword(passwordEncoder.encode(password));
+        } else {
+            throw new IllegalArgumentException("Passowrd cannot be null or empty.");
+        }
+
+        User updatedUser = userRepository.save(userToUpdate);
+
+        return userMapper.userToUserDto(updatedUser);
     }
 
     public void deleteUser(String username) {
@@ -70,31 +86,35 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public void addUserRoles(String username, UserRole userRole) {
+    public List<RoleDto> addUserRole(String username, String roleName) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        Role role = new Role(user.getUsername(), userRole.name());
-        user.addRole(role);
-        userRepository.save(user);
+        try {
+            UserRole userRole = UserRole.valueOf(roleName.toUpperCase());
+            Role role = new Role(user.getUsername(), userRole.name());
+            user.addRole(role);
+            userRepository.save(user);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidRoleException("Invalid role: " + roleName);
+        }
+
+        return user.getRoles().stream()
+                .map(roleMapper::roleToRoleDto)
+                .collect(Collectors.toList());
     }
 
-    public void deleteUserRole(String username, UserRole userRole) {
+    public UserDto deleteUserRole(String username, String roleName) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        user.getRoles().removeIf(role -> role.getRole().equalsIgnoreCase(userRole.name()));
-        userRepository.save(user);
-    }
+        boolean roleRemoved = user.getRoles().removeIf(role -> role.getRole().equalsIgnoreCase(roleName));
 
-//    public UserDto fromUser(User user) {
-//        return userMapper.userToUserDto(user);
-//    }
-//
-//    public User toUser(UserDto userDto) {
-//        User user = new User();
-//        user.setUsername(userDto.getUsername());
-//        user.setPassword(userDto.getPassword());
-//        return user;
-//    }
+        if (!roleRemoved) {
+            throw new InvalidRoleException("Role: " + roleName + " not found for user: " + username);
+        }
+        User updatedUser = userRepository.save(user);
+
+        return userMapper.userToUserDto(updatedUser);
+    }
 
     public User toUser(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);

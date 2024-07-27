@@ -1,6 +1,5 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
@@ -10,6 +9,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -23,8 +23,8 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<List<UserDto>> getAllUsers() {
-        List<UserDto> userDtos = userService.getAllUsers();
-        return ResponseEntity.ok(userDtos);
+        List<UserDto> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{username}")
@@ -34,8 +34,9 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestBody UserDto userDto) {
-        String newUsername = userService.createUser(userDto);
+    public ResponseEntity<Void> createUser(@RequestParam("username") String username,
+                                           @RequestParam("password") String password) {
+        String newUsername = userService.createUser(username, password);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -47,9 +48,13 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<UserDto> updateUser(@PathVariable("username") String username, @RequestBody UserDto userDto) {
-        userService.updateUser(username, userDto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<UserDto> updateUserPassword (@PathVariable("username") String username, @RequestBody Map<String, String> passwordUpdate) {
+        if (!passwordUpdate.containsKey("password")) {
+            throw new IllegalArgumentException("Request body must contain a password field");
+        }
+        String newPassword = passwordUpdate.get("password");
+        UserDto updatedUserDto = userService.updateUserPassword(username, newPassword);
+        return ResponseEntity.ok(updatedUserDto);
     }
 
     @DeleteMapping("/{username}")
@@ -65,15 +70,15 @@ public class UserController {
     }
 
     @PostMapping("/{username}/roles")
-    public ResponseEntity<Void> addUserRoles(@PathVariable("username") String username, @RequestBody UserRole role) {
-        userService.addUserRoles(username, role);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<List<RoleDto>> addUserRole(@PathVariable("username") String username, @RequestParam("role") String role) {
+        List<RoleDto> updatedRoles = userService.addUserRole(username, role);
+        return ResponseEntity.ok(updatedRoles);
     }
 
     @DeleteMapping("/{username}/roles/{role}")
-    public ResponseEntity<Void> deleteUserRole(@PathVariable("username") String username, @PathVariable("role") UserRole role) {
-        userService.deleteUserRole(username, role);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<UserDto> deleteUserRole(@PathVariable("username") String username, @PathVariable("role") String role) {
+        UserDto updatedUserDto = userService.deleteUserRole(username, role);
+        return ResponseEntity.ok(updatedUserDto);
     }
 
 }
