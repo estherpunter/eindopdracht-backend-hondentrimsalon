@@ -1,7 +1,10 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 public class RoleDto {
 
+    @NotBlank
     private String username;
     private String role;
 

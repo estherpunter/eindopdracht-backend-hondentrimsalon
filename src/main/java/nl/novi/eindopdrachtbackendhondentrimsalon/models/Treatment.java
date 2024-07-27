@@ -2,6 +2,8 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "treatments")
 public class Treatment {
@@ -14,9 +16,8 @@ public class Treatment {
 
     private double price;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id")
-    private Appointment appointment;
+    @ManyToMany(mappedBy = "treatments")
+    private Set<Appointment> appointments;
 
     public Treatment() {
 

@@ -2,6 +2,8 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.models;
 
 import jakarta.persistence.*;
 
+import java.util.Set;
+
 @Entity
 @Table(name = "products")
 public class Product {
@@ -16,12 +18,10 @@ public class Product {
 
     private int stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "appointment_id")
-    private Appointment appointment;
+    @ManyToMany(mappedBy = "products")
+    private Set<Appointment> appointments;
 
     public Product() {
-
     }
 
     public Product(Long id, String name, double price, int stock) {

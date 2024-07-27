@@ -1,10 +1,14 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotBlank;
+
 import java.util.Set;
 
 public class UserDto {
 
+    @NotBlank
     public String username;
+    @NotBlank
     public String password;
     public Set<RoleDto> roles;
 

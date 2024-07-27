@@ -1,8 +1,13 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class TreatmentDto {
 
+    @NotNull
     private Long id;
+    @NotBlank
     private String name;
     private double price;
 

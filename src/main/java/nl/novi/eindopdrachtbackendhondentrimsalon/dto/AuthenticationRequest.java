@@ -1,8 +1,15 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 public class AuthenticationRequest {
 
+    @NotBlank
     private String username;
+
+    @NotBlank
+    @Size(min=6, max=30)
     private String password;
 
     public AuthenticationRequest() {

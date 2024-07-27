@@ -1,15 +1,27 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AppointmentDto {
 
+    @NotNull
     private Long id;
+
+    @NotNull
     private LocalDateTime date;
+
+    @NotNull
     private Long customerId;
+
+    @NotNull
     private Long dogId;
+
+    @Size(max = 50, message = "Status cannot be longer than 50 characters")
     private String status;
     private List<Long> productIds = new ArrayList<>();
     private List<Long> treatmentIds = new ArrayList<>();

@@ -1,9 +1,19 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public class DogDto {
+
+    @NotNull
     private Long id;
+
+    @NotBlank
     private String name;
+
+    @NotBlank
     private String breed;
+
     private int age;
 
     public Long getId() {
