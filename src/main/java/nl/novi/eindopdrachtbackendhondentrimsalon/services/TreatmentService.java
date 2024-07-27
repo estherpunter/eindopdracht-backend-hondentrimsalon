@@ -39,27 +39,35 @@ public class TreatmentService {
     }
 
 
-    public TreatmentDto addTreatment(TreatmentDto treatmentDto) {
-        if (treatmentDto.getId() != null && treatmentRepository.existsById(treatmentDto.getId())) {
-            throw new RuntimeException("Treatment with ID " + treatmentDto.getId() + " already exists.");
-        }
-        if (treatmentDto.getName() == null || treatmentDto.getPrice() <= 0) {
+    public TreatmentDto addTreatment(String name, double price) {
+        if (name == null || name.trim().isEmpty() || price <= 0) {
             throw new IllegalArgumentException("Treatment name and price are required.");
         }
-        Treatment treatment = treatmentMapper.treatmentDtoToTreatment(treatmentDto);
-        Treatment savedTreatment = treatmentRepository.save(treatment);
-        return treatmentMapper.treatmentToTreatmentDto(savedTreatment);
+
+        List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(name);
+        if (!treatments.isEmpty()) {
+            throw new IllegalArgumentException("Treatment with this name already exists.");
+        }
+
+        Treatment treatment = new Treatment();
+        treatment.setName(name);
+        treatment.setPrice(price);
+
+        Treatment newTreatment = treatmentRepository.save(treatment);
+
+        return treatmentMapper.treatmentToTreatmentDto(newTreatment);
     }
 
 
-    public TreatmentDto updateTreatment(Long treatmentId, TreatmentDto updatedTreatmentDto) {
-        Treatment existingTreatment = treatmentRepository.findById(treatmentId)
+    public TreatmentDto updateTreatment(Long treatmentId, String name, double price) {
+        Treatment treatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
-        existingTreatment.setName(updatedTreatmentDto.getName());
-        existingTreatment.setPrice(updatedTreatmentDto.getPrice());
+        treatment.setName(name);
+        treatment.setPrice(price);
 
-        Treatment savedTreatment = treatmentRepository.save(existingTreatment);
+        Treatment savedTreatment = treatmentRepository.save(treatment);
+
         return treatmentMapper.treatmentToTreatmentDto(savedTreatment);
     }
 

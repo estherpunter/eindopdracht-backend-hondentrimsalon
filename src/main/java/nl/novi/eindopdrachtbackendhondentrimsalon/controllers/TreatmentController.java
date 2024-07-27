@@ -22,18 +22,14 @@ public class TreatmentController {
 
     @GetMapping("/alltreatments")
     public ResponseEntity<List<TreatmentDto>> getAllTreatments() {
-        List<TreatmentDto> treatments = treatmentService.getAllTreatments();
-        return new ResponseEntity<>(treatments, HttpStatus.OK);
+        List<TreatmentDto> treatmentDtos = treatmentService.getAllTreatments();
+        return new ResponseEntity<>(treatmentDtos, HttpStatus.OK);
     }
 
     @GetMapping("/{treatmentId}")
     public ResponseEntity<TreatmentDto> getTreatmentById(@PathVariable Long treatmentId) {
         TreatmentDto treatmentDto = treatmentService.getTreatmentById(treatmentId);
-        if (treatmentDto != null) {
-            return new ResponseEntity<>(treatmentDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(treatmentDto);
     }
 
     @GetMapping("")
@@ -43,21 +39,23 @@ public class TreatmentController {
     }
 
     @PostMapping("")
-    public ResponseEntity<TreatmentDto> addTreatment(@RequestBody TreatmentDto treatmentDto) {
-        TreatmentDto newTreatmentDto = treatmentService.addTreatment(treatmentDto);
+    public ResponseEntity<TreatmentDto> addTreatment(@RequestParam("name") String name,
+                                                     @RequestParam("price") double price) {
+        TreatmentDto newTreatmentDto = treatmentService.addTreatment(name, price);
         return new ResponseEntity<>(newTreatmentDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{treatmentId}")
     public ResponseEntity<TreatmentDto> updateTreatment(@PathVariable Long treatmentId,
-                                                        @RequestBody TreatmentDto updatedTreatmentDto) {
-        TreatmentDto treatmentDto = treatmentService.updateTreatment(treatmentId, updatedTreatmentDto);
+                                                        @RequestParam("name") String name,
+                                                        @RequestParam("price") double price) {
+        TreatmentDto treatmentDto = treatmentService.updateTreatment(treatmentId, name, price);
         return ResponseEntity.ok(treatmentDto);
     }
 
     @DeleteMapping("/{treatmentId}")
     public ResponseEntity<Void> deleteTreatment(@PathVariable Long treatmentId) {
         treatmentService.deleteTreatment(treatmentId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

@@ -42,38 +42,48 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDto addProduct(ProductDto productDto) {
-        if (productDto.getId() != null && productRepository.existsById(productDto.getId())) {
-            throw new RuntimeException("Product with ID " + productDto.getId() + " already exists.");
-        }
-        if (productDto.getName() == null || productDto.getPrice() <= 0) {
+    public ProductDto addProduct(String name, double price, int stock) {
+        if (name == null || name.trim().isEmpty() || price <= 0) {
             throw new IllegalArgumentException("Product name and price are required.");
         }
-        Product product = productMapper.productDtoToProduct(productDto);
+
+        List<Product> products = productRepository.findByNameIgnoreCase(name);
+        if (!products.isEmpty()) {
+            throw new IllegalArgumentException("Product with this name already exists.");
+        }
+
+        Product product = new Product();
+        product.setName(name);
+        product.setPrice(price);
+        product.setStock(stock);
+
+        Product newProduct = productRepository.save(product);
+
+        return productMapper.productToProductDto(newProduct);
+    }
+
+
+    public ProductDto updateProduct(Long productId, String name, double price) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        product.setName(name);
+        product.setPrice(price);
+
         Product savedProduct = productRepository.save(product);
+
         return productMapper.productToProductDto(savedProduct);
     }
 
-
-    public ProductDto updateProduct(Long productId, ProductDto updatedProductDto) {
-        Product existingProduct = productRepository.findById(productId)
+    public ProductDto updateProductStock(Long productId, int stock) {
+        Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        existingProduct.setName(updatedProductDto.getName());
-        existingProduct.setPrice(updatedProductDto.getPrice());
-        existingProduct.setStock(updatedProductDto.getStock());
+        product.setStock(stock);
 
-        Product savedProduct = productRepository.save(existingProduct);
-        return productMapper.productToProductDto(savedProduct);
-    }
+        Product updatedProduct = productRepository.save(product);
 
-    public ProductDto updateProductStock(Long productId, int newStock) {
-        Product existingProduct = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-
-        existingProduct.setStock(newStock);
-        Product savedProduct = productRepository.save(existingProduct);
-        return productMapper.productToProductDto(savedProduct);
+        return productMapper.productToProductDto(updatedProduct);
     }
 
     public void deleteProduct(Long productId) {

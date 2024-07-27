@@ -29,11 +29,7 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDto> getProductById(@PathVariable Long productId) {
         ProductDto productDto = productService.getProductById(productId);
-        if (productDto != null) {
-            return new ResponseEntity<>(productDto, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        return ResponseEntity.ok(productDto);
     }
 
     @GetMapping("")
@@ -43,28 +39,31 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto productDto) {
-        ProductDto newProductDto = productService.addProduct(productDto);
+    public ResponseEntity<ProductDto> addProduct(@RequestParam("name") String name,
+                                                 @RequestParam("price") double price,
+                                                 @RequestParam("stock") int stock) {
+        ProductDto newProductDto = productService.addProduct(name, price, stock);
         return new ResponseEntity<>(newProductDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{productId}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId,
-                                                    @RequestBody ProductDto updatedProductDto) {
-        ProductDto productDto = productService.updateProduct(productId, updatedProductDto);
+                                                    @RequestParam("name") String name,
+                                                    @RequestParam("price") double price) {
+        ProductDto productDto = productService.updateProduct(productId, name, price);
         return ResponseEntity.ok(productDto);
     }
 
     @PutMapping("/{productId}/stock")
     public ResponseEntity<ProductDto> updateProductStock(@PathVariable Long productId,
-                                                         @RequestParam int newStock) {
-        ProductDto productDto = productService.updateProductStock(productId, newStock);
+                                                         @RequestParam int stock) {
+        ProductDto productDto = productService.updateProductStock(productId, stock);
         return ResponseEntity.ok(productDto);
     }
 
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long productId) {
         productService.deleteProduct(productId);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

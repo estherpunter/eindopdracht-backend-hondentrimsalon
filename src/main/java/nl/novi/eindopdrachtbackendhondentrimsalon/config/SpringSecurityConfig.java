@@ -74,16 +74,12 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/customers/{customerId}/dogs").hasAuthority("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "api/customers/{customerId}/dogs/{dogId}").hasAuthority("ADMIN")
 
-                        // Dogs endpoints
-                        .requestMatchers(HttpMethod.PUT, "/api/dogs/{dogId}/characteristics").hasAuthority("ADMIN")
-
                         // Products endpoints
                         .requestMatchers(HttpMethod.GET, "/api/products/allproducts").hasAnyAuthority("ADMIN", "DOGGROOMER")
                         .requestMatchers(HttpMethod.GET, "api/products/**").hasAnyAuthority("ADMIN", "DOGGROOMER")
                         .requestMatchers(HttpMethod.POST, "/api/products").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/api/products").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "api/products/{productId}/stock").hasAuthority("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "api/products/{productId}").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/products/**").hasAuthority("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "api/products/**").hasAuthority("ADMIN")
 
                         // Treatments endpoints
                         .requestMatchers(HttpMethod.GET, "/api/treatments/alltreatments").hasAnyAuthority("ADMIN", "DOGGROOMER")
