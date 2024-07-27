@@ -1,6 +1,8 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +30,16 @@ public class CustomerController {
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable Long customerId) {
+    public ResponseEntity<CustomerDto> getCustomerById(@PathVariable("customerId") Long customerId) {
         CustomerDto customerDto = customerService.getCustomerById(customerId);
         return ResponseEntity.ok(customerDto);
     }
 
+    @GetMapping("/{customerId}/dogs")
+    public ResponseEntity<List<DogDto>> getDogsByCustomerId(@PathVariable("customerId") Long customerId) {
+        List<DogDto> dogs = customerService.getDogsByCustomerId(customerId);
+        return ResponseEntity.ok(dogs);
+    }
 
     @PostMapping
     public ResponseEntity<Void> addCustomer(@RequestParam("customerName") String customerName,

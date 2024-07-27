@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -41,6 +43,17 @@ public class CustomerService {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
         return customerMapper.customerToCustomerDto(customer);
+    }
+
+    public List<DogDto> getDogsByCustomerId(Long customerId) {
+        customerRepository.findById(customerId)
+                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
+        List<Dog> dogs = dogRepository.findByCustomerId(customerId);
+
+        return dogs.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
     }
 
     public CustomerDto addCustomer(String customerName, String phoneNumber) {
@@ -116,4 +129,12 @@ public class CustomerService {
         }
     }
 
+    private DogDto convertToDto(Dog dog) {
+        DogDto dto = new DogDto();
+        dto.setId(dog.getId());
+        dto.setName(dog.getName());
+        dto.setBreed(dog.getBreed());
+        dto.setAge(dog.getAge());
+        return dto;
+    }
 }

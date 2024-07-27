@@ -11,5 +11,6 @@ import java.util.List;
 public interface DogRepository extends JpaRepository<Dog, Long> {
 
     List<Dog> findByCustomer(Customer customer);
+    List<Dog> findByCustomerId(Long customerId);
 
 }
