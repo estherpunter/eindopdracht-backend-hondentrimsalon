@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,7 +22,7 @@ public class TreatmentController {
         this.treatmentService = treatmentService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<TreatmentDto>> getAllTreatments() {
         List<TreatmentDto> treatmentDtos = treatmentService.getAllTreatments();
         return new ResponseEntity<>(treatmentDtos, HttpStatus.OK);
@@ -32,17 +34,25 @@ public class TreatmentController {
         return ResponseEntity.ok(treatmentDto);
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<List<TreatmentDto>> findTreatmentByName(@RequestParam String name) {
         List<TreatmentDto> treatments = treatmentService.findTreatmentByName(name);
         return ResponseEntity.ok(treatments);
     }
 
-    @PostMapping("")
-    public ResponseEntity<TreatmentDto> addTreatment(@RequestParam("name") String name,
+    @PostMapping
+    public ResponseEntity<Void> addTreatment(@RequestParam("name") String name,
                                                      @RequestParam("price") double price) {
         TreatmentDto newTreatmentDto = treatmentService.addTreatment(name, price);
-        return new ResponseEntity<>(newTreatmentDto, HttpStatus.CREATED);
+
+        Long treatmentId = newTreatmentDto.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(treatmentId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{treatmentId}")

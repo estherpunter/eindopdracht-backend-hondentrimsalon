@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +25,7 @@ public class AppointmentController {
     }
 
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
         List<AppointmentDto> appointmentDtos = appointmentService.getAllAppointments();
         return ResponseEntity.ok(appointmentDtos);
@@ -37,12 +39,20 @@ public class AppointmentController {
     }
 
 
-    @PostMapping("")
-    public ResponseEntity<AppointmentDto> scheduleAppointment(@RequestParam("date") LocalDateTime date,
+    @PostMapping
+    public ResponseEntity<Void> scheduleAppointment(@RequestParam("date") LocalDateTime date,
                                                               @RequestParam("customerId") Long customerId,
                                                               @RequestParam("dogId") Long dogId) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(date, customerId, dogId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(scheduledAppointmentDto);
+
+        Long appointmentId = scheduledAppointmentDto.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(appointmentId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 

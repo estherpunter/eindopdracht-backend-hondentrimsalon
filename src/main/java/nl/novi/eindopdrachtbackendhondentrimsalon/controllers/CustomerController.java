@@ -3,10 +3,11 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,7 +21,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         List<CustomerDto> customerDtos = customerService.getAllCustomers();
         return ResponseEntity.ok(customerDtos);
@@ -33,11 +34,19 @@ public class CustomerController {
     }
 
 
-    @PostMapping("")
-    public ResponseEntity<CustomerDto> addCustomer(@RequestParam("customerName") String customerName,
+    @PostMapping
+    public ResponseEntity<Void> addCustomer(@RequestParam("customerName") String customerName,
                                                    @RequestParam("phoneNumber") String phoneNumber) {
         CustomerDto newCustomerDto = customerService.addCustomer(customerName, phoneNumber);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCustomerDto);
+
+        Long customerId = newCustomerDto.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(customerId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
 

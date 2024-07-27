@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -20,7 +22,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("")
+    @GetMapping
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         List<ProductDto> productDtos = productService.getAllProducts();
         return new ResponseEntity<>(productDtos, HttpStatus.OK);
@@ -32,18 +34,26 @@ public class ProductController {
         return ResponseEntity.ok(productDto);
     }
 
-    @GetMapping("")
+    @GetMapping("/search")
     public ResponseEntity<List<ProductDto>> findProductByName(@RequestParam String name) {
         List<ProductDto> products = productService.findProductByName(name);
         return ResponseEntity.ok(products);
     }
 
-    @PostMapping("")
-    public ResponseEntity<ProductDto> addProduct(@RequestParam("name") String name,
+    @PostMapping
+    public ResponseEntity<Void> addProduct(@RequestParam("name") String name,
                                                  @RequestParam("price") double price,
                                                  @RequestParam("stock") int stock) {
         ProductDto newProductDto = productService.addProduct(name, price, stock);
-        return new ResponseEntity<>(newProductDto, HttpStatus.CREATED);
+
+        Long productId = newProductDto.getId();
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(productId)
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @PutMapping("/{productId}")
