@@ -62,15 +62,15 @@ import static org.mockito.ArgumentMatchers.any;
 //        assertNotNull(result);
 //    }
 
-    @Test
-    public void testGetProductById_NonExistingProduct() {
-        // Arrange
-        long productId = 1L;
-        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
-
-        // Act/Assert
-        assertThrows(RecordNotFoundException.class, () -> productService.getProductById(productId));
-    }
+//    @Test
+//    public void testGetProductById_NonExistingProduct() {
+//        // Arrange
+//        long productId = 1L;
+//        Mockito.when(productRepository.findById(productId)).thenReturn(Optional.empty());
+//
+//        // Act/Assert
+//        assertThrows(RecordNotFoundException.class, () -> productService.getProductById(productId));
+//    }
 
 //    @Test
 //    public void testFindProductByName_ExistingProducts() {

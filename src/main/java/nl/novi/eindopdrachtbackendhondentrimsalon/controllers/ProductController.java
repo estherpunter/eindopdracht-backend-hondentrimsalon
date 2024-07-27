@@ -20,7 +20,7 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping("/allproducts")
+    @GetMapping("")
     public ResponseEntity<List<ProductDto>> getAllProducts() {
         List<ProductDto> productDtos = productService.getAllProducts();
         return new ResponseEntity<>(productDtos, HttpStatus.OK);

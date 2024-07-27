@@ -20,7 +20,7 @@ public class TreatmentController {
         this.treatmentService = treatmentService;
     }
 
-    @GetMapping("/alltreatments")
+    @GetMapping("")
     public ResponseEntity<List<TreatmentDto>> getAllTreatments() {
         List<TreatmentDto> treatmentDtos = treatmentService.getAllTreatments();
         return new ResponseEntity<>(treatmentDtos, HttpStatus.OK);

@@ -20,7 +20,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @GetMapping("/allcustomers")
+    @GetMapping("")
     public ResponseEntity<List<CustomerDto>> getAllCustomers() {
         List<CustomerDto> customerDtos = customerService.getAllCustomers();
         return ResponseEntity.ok(customerDtos);

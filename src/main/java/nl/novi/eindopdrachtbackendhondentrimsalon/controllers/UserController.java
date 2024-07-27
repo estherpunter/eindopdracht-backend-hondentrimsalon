@@ -1,6 +1,5 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
-
 import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
@@ -22,7 +21,6 @@ public class UserController {
 
     @GetMapping(value = "")
     public ResponseEntity<List<UserDto>> getAllUsers() {
-
         List<UserDto> userDtos = userService.getUsers();
 
         return ResponseEntity.ok().body(userDtos);
@@ -30,7 +28,6 @@ public class UserController {
 
     @GetMapping(value = "/{username}")
     public ResponseEntity<UserDto> getUserByUsername(@PathVariable("username") String username) {
-
         UserDto optionalUser = userService.getUser(username);
 
         return ResponseEntity.ok().body(optionalUser);
