@@ -90,6 +90,7 @@ public class SpringSecurityConfig {
 
                         // Users endpoints
                         .requestMatchers("/api/users").permitAll()
+                        .requestMatchers("api/users/**").permitAll()
 
                         .anyRequest().denyAll()
                 )

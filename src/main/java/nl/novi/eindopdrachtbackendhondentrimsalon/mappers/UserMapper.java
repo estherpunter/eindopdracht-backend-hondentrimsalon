@@ -15,4 +15,6 @@ public interface UserMapper {
     @Mapping(target = "roles", source = "user.roles")
     UserDto userToUserDto(User user);
 
+    User userDtoToUser(UserDto userDto);
+
 }

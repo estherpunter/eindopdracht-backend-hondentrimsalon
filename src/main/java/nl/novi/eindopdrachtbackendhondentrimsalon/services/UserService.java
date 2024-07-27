@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -31,71 +32,90 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public List<UserDto> getUsers() {
-        List<UserDto> collection = new ArrayList<>();
-        List<User> list = userRepository.findAll();
-        for (User user : list) {
-            collection.add(fromUser(user));
-        }
-        return collection;
+    public List<UserDto> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return users.stream()
+                .map(userMapper::userToUserDto)
+                .collect(Collectors.toList());
     }
 
-    public UserDto getUser(String username) {
-        Optional<User> userOptional = userRepository.findById(username);
-        User user = userOptional.orElseThrow(() -> new UsernameNotFoundException(username));
+    public UserDto getUserByUsername(String username) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
         return userMapper.userToUserDto(user);
     }
 
     public String createUser(UserDto userDto) {
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
-        User newUser = userRepository.save(toUser(userDto));
+        User newUser = userRepository.save(userMapper.userDtoToUser(userDto));
         return newUser.getUsername();
+    }
+
+    public void updateUser(String username, UserDto userDto) {
+        User userToUpdate = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        userToUpdate.setPassword(passwordEncoder.encode(userDto.getPassword()));
+        userRepository.save(userToUpdate);
     }
 
     public void deleteUser(String username) {
         userRepository.deleteById(username);
     }
 
-    public void updateUser(String username, UserDto newUserDto) {
-        User userToUpdate = userRepository.findById(username)
-                .orElseThrow(() -> new UsernameNotFoundException(username));
-        userToUpdate.setPassword(newUserDto.getPassword());
-        userRepository.save(userToUpdate);
-    }
-
-    public Set<RoleDto> getRoles(String username) {
+    public List<RoleDto> getUserRoles(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        return roleMapper.rolesToRoleDtos(user.getRoles());
+        return user.getRoles().stream()
+                .map(roleMapper::roleToRoleDto)
+                .collect(Collectors.toList());
     }
 
-    public void addRole(String username, UserRole userRole) {
+    public void addUserRoles(String username, UserRole userRole) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
-        user.addRole(new Role (username, userRole.name()));
+        Role role = new Role(user.getUsername(), userRole.name());
+        user.addRole(role);
         userRepository.save(user);
-}
+    }
 
-public void removeRole(String username, String roleName) {
-    User user = userRepository.findById(username)
-            .orElseThrow(() -> new UsernameNotFoundException(username));
-    Optional<Role> roleToRemove = user.getRoles().stream()
-            .filter(role -> role.getRole().equalsIgnoreCase(roleName))
-            .findFirst();
-    roleToRemove.ifPresent(user::removeRole);
-    userRepository.save(user);
-}
+    public void deleteUserRole(String username, UserRole userRole) {
+        User user = userRepository.findById(username)
+                .orElseThrow(() -> new UsernameNotFoundException(username));
+        user.getRoles().removeIf(role -> role.getRole().equalsIgnoreCase(userRole.name()));
+        userRepository.save(user);
+    }
 
+//    public UserDto fromUser(User user) {
+//        return userMapper.userToUserDto(user);
+//    }
+//
+//    public User toUser(UserDto userDto) {
+//        User user = new User();
+//        user.setUsername(userDto.getUsername());
+//        user.setPassword(userDto.getPassword());
+//        return user;
+//    }
 
-public UserDto fromUser(User user) {
-    return userMapper.userToUserDto(user);
-}
+    public User toUser(UserDto userDto) {
+        User user = userMapper.userDtoToUser(userDto);
+        if (userDto.getRoles() != null) {
+            Set<Role> roles = userDto.getRoles().stream()
+                    .map(roleMapper::roleDtoToRole)
+                    .collect(Collectors.toSet());
+            user.setRoles(roles);
+        }
+        return user;
+    }
 
-public User toUser(UserDto userDto) {
-    User user = new User();
-    user.setUsername(userDto.getUsername());
-    user.setPassword(userDto.getPassword());
-    return user;
-}
-  
+    public UserDto fromUser(User user) {
+        UserDto userDto = userMapper.userToUserDto(user);
+        if (user.getRoles() != null) {
+            Set<RoleDto> roleDtos = user.getRoles().stream()
+                    .map(roleMapper::roleToRoleDto)
+                    .collect(Collectors.toSet());
+            userDto.setRoles(roleDtos);
+        }
+        return userDto;
+    }
+
 }

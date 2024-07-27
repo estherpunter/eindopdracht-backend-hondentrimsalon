@@ -4,7 +4,6 @@ import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -33,7 +32,7 @@ public class AppointmentController {
 
 
     @GetMapping("/{appointmentId}")
-    public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable Long appointmentId) {
+    public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable("appointmentId") Long appointmentId) {
         AppointmentDto appointmentDto = appointmentService.getAppointmentById(appointmentId);
         return ResponseEntity.ok(appointmentDto);
     }
@@ -41,8 +40,8 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<Void> scheduleAppointment(@RequestParam("date") LocalDateTime date,
-                                                              @RequestParam("customerId") Long customerId,
-                                                              @RequestParam("dogId") Long dogId) {
+                                                    @RequestParam("customerId") Long customerId,
+                                                    @RequestParam("dogId") Long dogId) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(date, customerId, dogId);
 
         Long appointmentId = scheduledAppointmentDto.getId();
