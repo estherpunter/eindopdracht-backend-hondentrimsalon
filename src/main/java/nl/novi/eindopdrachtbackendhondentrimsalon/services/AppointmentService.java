@@ -1,6 +1,8 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ScheduleAppointmentRequest;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UpdateAppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
@@ -50,16 +52,15 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 
-    public AppointmentDto scheduleAppointment(LocalDateTime date, Long customerId, Long dogId) {
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new CustomerNotFoundException(customerId));
+    public AppointmentDto scheduleAppointment(ScheduleAppointmentRequest request) {
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new CustomerNotFoundException(request.getCustomerId()));
 
-   
-        Dog dog = dogRepository.findById(dogId)
-                .orElseThrow(() -> new DogNotFoundException(dogId));
+        Dog dog = dogRepository.findById(request.getDogId())
+                .orElseThrow(() -> new DogNotFoundException(request.getDogId()));
 
         Appointment appointment = new Appointment();
-        appointment.setDate(date);
+        appointment.setDate(request.getDate());
         appointment.setCustomer(customer);
         appointment.setDog(dog);
         appointment.setStatus("Scheduled");
@@ -71,12 +72,12 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
     }
 
-    public AppointmentDto updateAppointment(Long appointmentId, LocalDateTime date, String status) {
+    public AppointmentDto updateAppointment(Long appointmentId, UpdateAppointmentDto updateAppointmentDto) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
-        appointment.setDate(date);
-        appointment.setStatus(status);
+        appointment.setDate(updateAppointmentDto.getDate());
+        appointment.setStatus(updateAppointmentDto.getStatus());
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
 
