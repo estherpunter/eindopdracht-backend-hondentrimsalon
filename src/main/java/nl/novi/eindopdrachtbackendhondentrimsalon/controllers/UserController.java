@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
@@ -34,9 +35,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestParam("username") String username,
-                                           @RequestParam("password") String password) {
-        String newUsername = userService.createUser(username, password);
+    public ResponseEntity<Void> createUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        String newUsername = userService.createUser(authenticationRequest);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()

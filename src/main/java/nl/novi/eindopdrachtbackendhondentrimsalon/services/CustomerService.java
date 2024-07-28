@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
@@ -23,7 +24,6 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
     private final DogRepository dogRepository;
-
     private final CustomerMapper customerMapper;
     private final DogMapper dogMapper;
 
@@ -62,7 +62,7 @@ public class CustomerService {
         Customer customer = customerRepository.findByName(customerRequestDto.getCustomerName());
 
         if (customer != null) {
-            throw new RuntimeException("Customer with name: " + customerRequestDto.getCustomerName() + " already exists.");
+            throw new ValidationException("Customer with name: " + customerRequestDto.getCustomerName() + " already exists.");
         } else {
             Customer newCustomer = new Customer(customerRequestDto.getCustomerName(), customerRequestDto.getPhoneNumber());
             Customer savedCustomer = customerRepository.save(newCustomer);
@@ -96,7 +96,7 @@ public class CustomerService {
         List<Dog> dogs = dogRepository.findByCustomer(customer);
         for (Dog dog : dogs) {
             if (dog.getName().equalsIgnoreCase(dogRequestDto.getDogName())) {
-                throw new RuntimeException("Dog '" + dogRequestDto.getDogName() + "' already exists for customer.");
+                throw new ValidationException("Dog '" + dogRequestDto.getDogName() + "' already exists for customer.");
             }
         }
 
@@ -127,7 +127,7 @@ public class CustomerService {
             customerRepository.save(customer);
             dogRepository.save(dog);
         } else {
-            throw new IllegalStateException("Dog does not belong to this customer");
+            throw new ValidationException("Dog does not belong to this customer");
         }
     }
 

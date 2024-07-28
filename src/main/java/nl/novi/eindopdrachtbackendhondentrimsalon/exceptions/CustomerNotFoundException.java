@@ -8,7 +8,6 @@ public class CustomerNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public CustomerNotFoundException(Long customerId) {
-        super("Cannot find customer with Id: " + customerId);
+        super("Customer with id " + customerId + " not found.");
     }
-
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 
-public class UpdateAppointmentDto {
+public class AppointmentRequestDto {
 
     @NotNull
     private LocalDateTime date;

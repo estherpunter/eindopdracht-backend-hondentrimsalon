@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.InvalidRoleException;
@@ -46,10 +47,10 @@ public class UserService {
         return userMapper.userToUserDto(user);
     }
 
-    public String createUser(String username, String password) {
+    public String createUser(AuthenticationRequest authenticationRequest) {
         UserDto userDto = new UserDto();
-        userDto.setUsername(username);
-        userDto.setPassword(password);
+        userDto.setUsername(authenticationRequest.getUsername());
+        userDto.setPassword(authenticationRequest.getPassword());
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -66,7 +67,7 @@ public class UserService {
         if (password != null && !password.isEmpty()) {
             userToUpdate.setPassword(passwordEncoder.encode(password));
         } else {
-            throw new IllegalArgumentException("Passowrd cannot be null or empty.");
+            throw new IllegalArgumentException("Password cannot be null or empty.");
         }
 
         User updatedUser = userRepository.save(userToUpdate);

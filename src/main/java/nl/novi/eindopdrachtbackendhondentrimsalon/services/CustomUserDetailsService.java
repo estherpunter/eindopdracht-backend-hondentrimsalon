@@ -1,6 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
+import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.UsernameNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Role;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.User;
 import nl.novi.eindopdrachtbackendhondentrimsalon.repository.UserRepository;
@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 
     public UserDetails loadUserByUsername(String username) {
-        User user = userRepository.findById(username).orElseThrow(() -> new RecordNotFoundException("Username not found"));
+        User user = userRepository.findById(username).orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         String password = user.getPassword();
 
         Set<Role> roles = user.getRoles();

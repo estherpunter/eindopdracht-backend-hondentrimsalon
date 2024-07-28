@@ -1,23 +1,5 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.service;
 
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.ProductNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
-import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.ProductMapper;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Product;
-import nl.novi.eindopdrachtbackendhondentrimsalon.repository.ProductRepository;
-import nl.novi.eindopdrachtbackendhondentrimsalon.services.ProductService;
-import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 
 //@SpringBootTest

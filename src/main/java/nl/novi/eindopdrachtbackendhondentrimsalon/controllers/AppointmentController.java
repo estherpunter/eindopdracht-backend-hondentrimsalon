@@ -1,8 +1,8 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ScheduleAppointmentRequest;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UpdateAppointmentDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentSchedulingRequestDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -41,7 +40,7 @@ public class AppointmentController {
 
 
     @PostMapping
-    public ResponseEntity<Void> scheduleAppointment(@RequestBody ScheduleAppointmentRequest request) {
+    public ResponseEntity<Void> scheduleAppointment(@RequestBody AppointmentSchedulingRequestDto request) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(request);
 
         Long appointmentId = scheduledAppointmentDto.getId();
@@ -57,8 +56,8 @@ public class AppointmentController {
 
     @PutMapping("/{appointmentId}")
     public ResponseEntity<AppointmentDto> updateAppointment(@PathVariable Long appointmentId,
-                                                            @RequestBody UpdateAppointmentDto updateAppointmentDto) {
-        AppointmentDto updatedAppointment = appointmentService.updateAppointment(appointmentId, updateAppointmentDto);
+                                                            @RequestBody AppointmentRequestDto appointmentRequestDto) {
+        AppointmentDto updatedAppointment = appointmentService.updateAppointment(appointmentId, appointmentRequestDto);
         return ResponseEntity.ok(updatedAppointment);
     }
 

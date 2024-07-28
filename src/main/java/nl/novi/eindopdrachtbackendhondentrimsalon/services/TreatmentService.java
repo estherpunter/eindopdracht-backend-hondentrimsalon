@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.TreatmentNotFoundException;
@@ -41,13 +42,16 @@ public class TreatmentService {
 
 
     public TreatmentDto addTreatment(TreatmentRequestDto treatmentRequestDto) {
-        if (treatmentRequestDto.getTreatmentName() == null || treatmentRequestDto.getTreatmentName().trim().isEmpty() || treatmentRequestDto.getPrice() <= 0) {
-            throw new IllegalArgumentException("Treatment name and price are required.");
+        if (treatmentRequestDto.getTreatmentName() == null || treatmentRequestDto.getTreatmentName().trim().isEmpty()) {
+            throw new ValidationException("Treatment name is required.");
+        }
+        if (treatmentRequestDto.getPrice() <= 0) {
+            throw new ValidationException("Treatment price must be positive.");
         }
 
         List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(treatmentRequestDto.getTreatmentName());
         if (!treatments.isEmpty()) {
-            throw new IllegalArgumentException("Treatment with this name already exists.");
+            throw new ValidationException("Treatment with this name already exists.");
         }
 
         Treatment treatment = new Treatment();
@@ -64,6 +68,12 @@ public class TreatmentService {
         Treatment treatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
 
+        if (treatmentRequestDto.getTreatmentName() == null || treatmentRequestDto.getTreatmentName().trim().isEmpty()) {
+            throw new ValidationException("Treatment name is required.");
+        }
+        if (treatmentRequestDto.getPrice() <= 0) {
+            throw new ValidationException("Treatment price must be positive.");
+        }
         treatment.setName(treatmentRequestDto.getTreatmentName());
         treatment.setPrice(treatmentRequestDto.getPrice());
 
