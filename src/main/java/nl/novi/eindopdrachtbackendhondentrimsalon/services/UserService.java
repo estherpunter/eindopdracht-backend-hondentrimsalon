@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
@@ -48,10 +49,15 @@ public class UserService {
     }
 
     public String createUser(AuthenticationRequest authenticationRequest) {
+        if (authenticationRequest.getUsername() == null || authenticationRequest.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required.");
+        }
+        if (authenticationRequest.getPassword() == null || authenticationRequest.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required.");
+        }
+
         UserDto userDto = new UserDto();
         userDto.setUsername(authenticationRequest.getUsername());
-        userDto.setPassword(authenticationRequest.getPassword());
-
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User newUser = userMapper.userDtoToUser(userDto);
@@ -67,7 +73,7 @@ public class UserService {
         if (password != null && !password.isEmpty()) {
             userToUpdate.setPassword(passwordEncoder.encode(password));
         } else {
-            throw new IllegalArgumentException("Password cannot be null or empty.");
+            throw new ValidationException("Password cannot be null or empty.");
         }
 
         User updatedUser = userRepository.save(userToUpdate);
@@ -76,6 +82,9 @@ public class UserService {
     }
 
     public void deleteUser(String username) {
+        if (!userRepository.existsById(username)) {
+            throw new UsernameNotFoundException(username);
+        }
         userRepository.deleteById(username);
     }
 
