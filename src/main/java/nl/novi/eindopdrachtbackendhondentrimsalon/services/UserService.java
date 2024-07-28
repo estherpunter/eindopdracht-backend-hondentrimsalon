@@ -58,6 +58,8 @@ public class UserService {
 
         UserDto userDto = new UserDto();
         userDto.setUsername(authenticationRequest.getUsername());
+        userDto.setPassword(authenticationRequest.getPassword());
+        
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User newUser = userMapper.userDtoToUser(userDto);

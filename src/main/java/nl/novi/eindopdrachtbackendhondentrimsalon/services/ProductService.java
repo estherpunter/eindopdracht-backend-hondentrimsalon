@@ -36,8 +36,8 @@ public class ProductService {
         return productMapper.productToProductDto(product);
     }
 
-    public List<ProductDto> findProductByName(String name) {
-        List<Product> products = productRepository.findByNameIgnoreCase(name);
+    public List<ProductDto> findProductByName(String productName) {
+        List<Product> products = productRepository.findByNameIgnoreCase(productName);
         return products.stream()
                 .map(productMapper::productToProductDto)
                 .collect(Collectors.toList());

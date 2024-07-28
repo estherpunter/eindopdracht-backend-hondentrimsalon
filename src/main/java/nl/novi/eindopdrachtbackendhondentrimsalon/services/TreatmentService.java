@@ -35,8 +35,8 @@ public class TreatmentService {
         return treatmentMapper.treatmentToTreatmentDto(treatment);
     }
 
-    public List<TreatmentDto> findTreatmentByName(String name) {
-        List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(name);
+    public List<TreatmentDto> findTreatmentByName(String treatmentName) {
+        List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(treatmentName);
         return treatmentMapper.treatmentsToTreatmentDtos(treatments);
     }
 

@@ -8,7 +8,7 @@ public class ProductDto {
     @NotNull
     private Long id;
     @NotBlank
-    private String name;
+    private String productName;
     private double price;
     private int stock;
 
@@ -20,12 +20,12 @@ public class ProductDto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public double getPrice() {

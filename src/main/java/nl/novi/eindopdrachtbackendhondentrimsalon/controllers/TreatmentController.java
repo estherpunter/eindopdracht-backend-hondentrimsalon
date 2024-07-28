@@ -36,8 +36,8 @@ public class TreatmentController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<TreatmentDto>> findTreatmentByName(@RequestParam String name) {
-        List<TreatmentDto> treatments = treatmentService.findTreatmentByName(name);
+    public ResponseEntity<List<TreatmentDto>> findTreatmentByName(@RequestParam String treatmentName) {
+        List<TreatmentDto> treatments = treatmentService.findTreatmentByName(treatmentName);
         return ResponseEntity.ok(treatments);
     }
 

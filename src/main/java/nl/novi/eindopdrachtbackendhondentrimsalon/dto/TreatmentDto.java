@@ -8,7 +8,7 @@ public class TreatmentDto {
     @NotNull
     private Long id;
     @NotBlank
-    private String name;
+    private String treatmentName;
     private double price;
 
     public Long getId() {
@@ -19,12 +19,12 @@ public class TreatmentDto {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getTreatmentName() {
+        return treatmentName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTreatmentName(String treatmentName) {
+        this.treatmentName = treatmentName;
     }
 
     public double getPrice() {
