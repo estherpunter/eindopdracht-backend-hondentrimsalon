@@ -44,17 +44,17 @@ public class ProductService {
     }
 
     public ProductDto addProduct(ProductRequestDto productRequestDto) {
-        if (productRequestDto.getName() == null || productRequestDto.getName().trim().isEmpty() || productRequestDto.getPrice() <= 0) {
+        if (productRequestDto.getProductName() == null || productRequestDto.getProductName().trim().isEmpty() || productRequestDto.getPrice() <= 0) {
             throw new IllegalArgumentException("Product name and price are required.");
         }
 
-        List<Product> products = productRepository.findByNameIgnoreCase(productRequestDto.getName());
+        List<Product> products = productRepository.findByNameIgnoreCase(productRequestDto.getProductName());
         if (!products.isEmpty()) {
             throw new IllegalArgumentException("Product with this name already exists.");
         }
 
         Product product = new Product();
-        product.setName(productRequestDto.getName());
+        product.setName(productRequestDto.getProductName());
         product.setPrice(productRequestDto.getPrice());
         product.setStock(productRequestDto.getStock());
 
@@ -68,7 +68,7 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        product.setName(productRequestDto.getName());
+        product.setName(productRequestDto.getProductName());
         product.setPrice(productRequestDto.getPrice());
 
         Product savedProduct = productRepository.save(product);

@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.TreatmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.TreatmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,9 +42,8 @@ public class TreatmentController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addTreatment(@RequestParam("name") String name,
-                                                     @RequestParam("price") double price) {
-        TreatmentDto newTreatmentDto = treatmentService.addTreatment(name, price);
+    public ResponseEntity<Void> addTreatment(@RequestBody TreatmentRequestDto treatmentRequestDto) {
+        TreatmentDto newTreatmentDto = treatmentService.addTreatment(treatmentRequestDto);
 
         Long treatmentId = newTreatmentDto.getId();
         URI location = ServletUriComponentsBuilder
@@ -57,9 +57,8 @@ public class TreatmentController {
 
     @PutMapping("/{treatmentId}")
     public ResponseEntity<TreatmentDto> updateTreatment(@PathVariable Long treatmentId,
-                                                        @RequestParam("name") String name,
-                                                        @RequestParam("price") double price) {
-        TreatmentDto treatmentDto = treatmentService.updateTreatment(treatmentId, name, price);
+                                                        @RequestBody TreatmentRequestDto treatmentRequestDto) {
+        TreatmentDto treatmentDto = treatmentService.updateTreatment(treatmentId, treatmentRequestDto);
         return ResponseEntity.ok(treatmentDto);
     }
 

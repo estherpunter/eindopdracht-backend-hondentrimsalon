@@ -4,24 +4,21 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-public class ProductRequestDto {
+public class TreatmentRequestDto {
 
     @NotBlank
     @Size(min = 1, max = 100)
-    private String productName;
+    private String treatmentName;
 
     @NotNull
     private double price;
 
-    @NotNull
-    private int stock;
-
-    public String getProductName() {
-        return productName;
+    public String getTreatmentName() {
+        return treatmentName;
     }
 
-    public void setProductName(String productName) {
-        this.productName = productName;
+    public void setTreatmentName(String treatmentName) {
+        this.treatmentName = treatmentName;
     }
 
     public double getPrice() {
@@ -30,13 +27,5 @@ public class ProductRequestDto {
 
     public void setPrice(double price) {
         this.price = price;
-    }
-
-    public int getStock() {
-        return stock;
-    }
-
-    public void setStock(int stock) {
-        this.stock = stock;
     }
 }
