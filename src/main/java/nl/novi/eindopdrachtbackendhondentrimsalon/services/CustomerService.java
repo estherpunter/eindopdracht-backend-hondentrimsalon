@@ -1,7 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.CustomerNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.DogNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.CustomerMapper;
@@ -56,25 +58,25 @@ public class CustomerService {
                 .collect(Collectors.toList());
     }
 
-    public CustomerDto addCustomer(String customerName, String phoneNumber) {
-        Customer existingCustomer = customerRepository.findByName(customerName);
+    public CustomerDto addCustomer(CustomerRequestDto customerRequestDto) {
+        Customer customer = customerRepository.findByName(customerRequestDto.getCustomerName());
 
-        if (existingCustomer != null) {
-            throw new RuntimeException("Customer with name: " + customerName + " already exists.");
+        if (customer != null) {
+            throw new RuntimeException("Customer with name: " + customerRequestDto.getCustomerName() + " already exists.");
         } else {
-            Customer newCustomer = new Customer(customerName, phoneNumber);
+            Customer newCustomer = new Customer(customerRequestDto.getCustomerName(), customerRequestDto.getPhoneNumber());
             Customer savedCustomer = customerRepository.save(newCustomer);
 
             return customerMapper.customerToCustomerDto(savedCustomer);
         }
     }
 
-    public CustomerDto updateCustomer(Long customerId, String customerName, String phoneNumber) {
+    public CustomerDto updateCustomer(Long customerId, CustomerRequestDto customerRequestDto) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
-        customer.setName(customerName);
-        customer.setPhoneNumber(phoneNumber);
+        customer.setName(customerRequestDto.getCustomerName());
+        customer.setPhoneNumber(customerRequestDto.getPhoneNumber());
 
         Customer updatedCustomer = customerRepository.save(customer);
 
@@ -87,21 +89,21 @@ public class CustomerService {
         customerRepository.delete(customer);
     }
 
-    public CustomerDto addDogToCustomer(Long customerId, String dogName, String breed, int age) {
+    public CustomerDto addDogToCustomer(Long customerId, DogRequestDto dogRequestDto) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
 
         List<Dog> dogs = dogRepository.findByCustomer(customer);
         for (Dog dog : dogs) {
-            if (dog.getName().equalsIgnoreCase(dogName)) {
-                throw new RuntimeException("Dog '" + dogName + "' already exists for customer.");
+            if (dog.getName().equalsIgnoreCase(dogRequestDto.getDogName())) {
+                throw new RuntimeException("Dog '" + dogRequestDto.getDogName() + "' already exists for customer.");
             }
         }
 
         Dog newDog = new Dog();
-        newDog.setName(dogName);
-        newDog.setBreed(breed);
-        newDog.setAge(age);
+        newDog.setName(dogRequestDto.getDogName());
+        newDog.setBreed(dogRequestDto.getBreed());
+        newDog.setAge(dogRequestDto.getAge());
 
         newDog.setCustomer(customer);
         customer.getDogs().add(newDog);

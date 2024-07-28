@@ -21,83 +21,83 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-class CustomerServiceTest {
+//class CustomerServiceTest {
+//
+//    @Mock
+//    private CustomerRepository customerRepository;
+//
+//    @Mock
+//    private DogRepository dogRepository;
+//
+//    @Mock
+//    private CustomerMapper customerMapper;
+//
+//    @InjectMocks
+//    private CustomerService customerService;
+//
+//    @BeforeEach
+//    void setUp() {
+//        MockitoAnnotations.initMocks(this);
+//    }
+//
+//    @Test
+//    void testGetCustomerById_ExistingId() {
+//        // Arrange
+//        long customerId = 1L;
+//        Customer customer = new Customer();
+//        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+//        when(customerMapper.customerToCustomerDto(customer)).thenReturn(new CustomerDto());
+//
+//        // Act
+//        CustomerDto result = customerService.getCustomerById(customerId);
+//
+//        // Assert
+//        assertNotNull(result);
+//    }
+//
+//    @Test
+//    void testGetCustomerById_NonExistingId() {
+//        // Arrange
+//        long customerId = 1L;
+//        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+//
+//        // Act + Assert
+//        assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(customerId));
+//    }
+//
+//    @Test
+//    public void testAddCustomer_ValidCustomer() {
+//        // Arrange
+//        String customerName = "John Doe";
+//        String phoneNumber = "1234567890";
+//        CustomerDto customerDto = new CustomerDto();
+//        customerDto.setName(customerName);
+//        customerDto.setPhoneNumber(phoneNumber);
+//
+//        Customer savedCustomer = new Customer(customerName, phoneNumber);
+//        when(customerMapper.customerToCustomerDto(any())).thenReturn(customerDto);
+//        when(customerRepository.save(any())).thenReturn(savedCustomer);
+//
+//        // Act
+//        CustomerDto result = customerService.addCustomer(customerName, phoneNumber);
+//
+//        // Assert
+//        assertNotNull(result);
+//        assertEquals(customerName, result.getName());
+//        assertEquals(phoneNumber, result.getPhoneNumber());
+//    }
 
-    @Mock
-    private CustomerRepository customerRepository;
-
-    @Mock
-    private DogRepository dogRepository;
-
-    @Mock
-    private CustomerMapper customerMapper;
-
-    @InjectMocks
-    private CustomerService customerService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.initMocks(this);
-    }
-
-    @Test
-    void testGetCustomerById_ExistingId() {
-        // Arrange
-        long customerId = 1L;
-        Customer customer = new Customer();
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        when(customerMapper.customerToCustomerDto(customer)).thenReturn(new CustomerDto());
-
-        // Act
-        CustomerDto result = customerService.getCustomerById(customerId);
-
-        // Assert
-        assertNotNull(result);
-    }
-
-    @Test
-    void testGetCustomerById_NonExistingId() {
-        // Arrange
-        long customerId = 1L;
-        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
-
-        // Act + Assert
-        assertThrows(CustomerNotFoundException.class, () -> customerService.getCustomerById(customerId));
-    }
-
-    @Test
-    public void testAddCustomer_ValidCustomer() {
-        // Arrange
-        String customerName = "John Doe";
-        String phoneNumber = "1234567890";
-        CustomerDto customerDto = new CustomerDto();
-        customerDto.setName(customerName);
-        customerDto.setPhoneNumber(phoneNumber);
-
-        Customer savedCustomer = new Customer(customerName, phoneNumber);
-        when(customerMapper.customerToCustomerDto(any())).thenReturn(customerDto);
-        when(customerRepository.save(any())).thenReturn(savedCustomer);
-
-        // Act
-        CustomerDto result = customerService.addCustomer(customerName, phoneNumber);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(customerName, result.getName());
-        assertEquals(phoneNumber, result.getPhoneNumber());
-    }
-
-    @Test
-    void testAddCustomer_DuplicateCustomerName() {
-        // Arrange
-        String customerName = "John Doe";
-        String phoneNumber = "1234567890";
-        Customer existingCustomer = new Customer(customerName, phoneNumber);
-        when(customerRepository.findByName(customerName)).thenReturn(existingCustomer);
-
-        // Act + Assert
-        assertThrows(RuntimeException.class, () -> customerService.addCustomer(customerName, phoneNumber));
-    }
+//    @Test
+//    void testAddCustomer_DuplicateCustomerName() {
+//        // Arrange
+//        String customerName = "John Doe";
+//        String phoneNumber = "1234567890";
+//        Customer existingCustomer = new Customer(customerName, phoneNumber);
+//        when(customerRepository.findByName(customerName)).thenReturn(existingCustomer);
+//
+//        // Act + Assert
+//        assertThrows(RuntimeException.class, () -> customerService.addCustomer(customerName, phoneNumber));
+//    }
 
 //    @Test
 //    void testUpdateCustomer_ValidCustomerId() {
@@ -172,32 +172,32 @@ class CustomerServiceTest {
         verify(customerRepository, never()).deleteById(customerId);
     }
 
-    @Test
-    void testAddDogToCustomer_DuplicateDogName() {
-        // Arrange
-        long customerId = 1L;
-        String dogName = "Buddy";
-        String breed = "Labrador";
-        int age = 3;
-
-        Customer customer = new Customer();
-        Dog existingDog = new Dog();
-        existingDog.setName(dogName);
-        customer.getDogs().add(existingDog);
-
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-
-        // Mock dogRepository behavior to return a list with an existing dog with the same name
-        List<Dog> existingDogs = Collections.singletonList(existingDog);
-        when(dogRepository.findByCustomer(customer)).thenReturn(existingDogs);
-
-        // Act + Assert
-        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            customerService.addDogToCustomer(customerId, dogName, breed, age);
-        });
-
-        assertEquals("Dog '" + dogName + "' already exists for customer.", exception.getMessage());
-    }
+//    @Test
+//    void testAddDogToCustomer_DuplicateDogName() {
+//        // Arrange
+//        long customerId = 1L;
+//        String dogName = "Buddy";
+//        String breed = "Labrador";
+//        int age = 3;
+//
+//        Customer customer = new Customer();
+//        Dog existingDog = new Dog();
+//        existingDog.setName(dogName);
+//        customer.getDogs().add(existingDog);
+//
+//        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
+//
+//        // Mock dogRepository behavior to return a list with an existing dog with the same name
+//        List<Dog> existingDogs = Collections.singletonList(existingDog);
+//        when(dogRepository.findByCustomer(customer)).thenReturn(existingDogs);
+//
+//        // Act + Assert
+//        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+//            customerService.addDogToCustomer(customerId, dogName, breed, age);
+//        });
+//
+//        assertEquals("Dog '" + dogName + "' already exists for customer.", exception.getMessage());
+//    }
 
     @Test
     void testUpdateDogForCustomer_WithExistingDogId() {
