@@ -21,7 +21,6 @@ public class Dog {
     private Customer customer;
 
     public Dog() {
-
     }
 
     public Dog(String name, String breed, int age) {

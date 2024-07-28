@@ -26,7 +26,6 @@ public class Customer {
     private List<Appointment> appointments;
 
     public Customer() {
-
     }
 
     public Customer(String name, String phoneNumber) {
@@ -73,5 +72,4 @@ public class Customer {
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
     }
-
 }

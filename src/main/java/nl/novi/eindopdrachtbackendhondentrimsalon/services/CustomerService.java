@@ -44,6 +44,7 @@ public class CustomerService {
     public CustomerDto getCustomerById(Long customerId) {
         Customer customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new CustomerNotFoundException(customerId));
+
         return customerMapper.customerToCustomerDto(customer);
     }
 
@@ -137,6 +138,7 @@ public class CustomerService {
         dto.setName(dog.getName());
         dto.setBreed(dog.getBreed());
         dto.setAge(dog.getAge());
+
         return dto;
     }
 }

@@ -1,7 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentSchedulingRequestDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentScheduleRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
@@ -24,13 +24,11 @@ public class AppointmentController {
         this.appointmentService = appointmentService;
     }
 
-
     @GetMapping
     public ResponseEntity<List<AppointmentDto>> getAllAppointments() {
         List<AppointmentDto> appointmentDtos = appointmentService.getAllAppointments();
         return ResponseEntity.ok(appointmentDtos);
     }
-
 
     @GetMapping("/{appointmentId}")
     public ResponseEntity<AppointmentDto> getAppointmentById(@PathVariable("appointmentId") Long appointmentId) {
@@ -38,9 +36,8 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentDto);
     }
 
-
     @PostMapping
-    public ResponseEntity<Void> scheduleAppointment(@RequestBody AppointmentSchedulingRequestDto request) {
+    public ResponseEntity<Void> scheduleAppointment(@RequestBody AppointmentScheduleRequestDto request) {
         AppointmentDto scheduledAppointmentDto = appointmentService.scheduleAppointment(request);
 
         Long appointmentId = scheduledAppointmentDto.getId();
@@ -53,7 +50,6 @@ public class AppointmentController {
         return ResponseEntity.created(location).build();
     }
 
-
     @PutMapping("/{appointmentId}")
     public ResponseEntity<AppointmentDto> updateAppointment(@PathVariable Long appointmentId,
                                                             @RequestBody AppointmentRequestDto appointmentRequestDto) {
@@ -61,13 +57,11 @@ public class AppointmentController {
         return ResponseEntity.ok(updatedAppointment);
     }
 
-
     @DeleteMapping("/{appointmentId}")
     public ResponseEntity<Void> cancelAppointment(@PathVariable Long appointmentId) {
         appointmentService.cancelAppointment(appointmentId);
         return ResponseEntity.ok().build();
     }
-
 
     @PostMapping("/{appointmentId}/products")
     public ResponseEntity<AppointmentDto> addProductToAppointment(@PathVariable Long appointmentId,
@@ -76,7 +70,6 @@ public class AppointmentController {
         return ResponseEntity.ok(updatedAppointment);
     }
 
-
     @PostMapping("/{appointmentId}/treatments")
     public ResponseEntity<AppointmentDto> addTreatmentToAppointment(@PathVariable Long appointmentId,
                                                                     @RequestParam("treatmentId") Long treatmentId) {
@@ -84,18 +77,16 @@ public class AppointmentController {
         return ResponseEntity.ok(updatedAppointment);
     }
 
-
     @PostMapping("/{appointmentId}/custom-treatment")
-    public ResponseEntity<AppointmentDto> addCustomTreatmentToAppointment(@PathVariable Long appointmentId, @RequestParam double customPrice) {
+    public ResponseEntity<AppointmentDto> addCustomTreatmentToAppointment(@PathVariable Long appointmentId,
+                                                                          @RequestParam double customPrice) {
         AppointmentDto updatedAppointment = appointmentService.addCustomTreatmentToAppointment(appointmentId, customPrice);
         return ResponseEntity.ok(updatedAppointment);
     }
-
 
     @PostMapping("/{appointmentId}/generate-receipt")
     public ResponseEntity<Receipt> generateReceipt(@PathVariable Long appointmentId) {
         Receipt receipt = appointmentService.generateReceipt(appointmentId);
         return ResponseEntity.ok(receipt);
     }
-
 }

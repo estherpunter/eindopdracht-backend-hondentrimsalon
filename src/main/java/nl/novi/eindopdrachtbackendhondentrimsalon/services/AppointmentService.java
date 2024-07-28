@@ -2,7 +2,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentSchedulingRequestDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentScheduleRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
@@ -53,7 +53,7 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 
-    public AppointmentDto scheduleAppointment(AppointmentSchedulingRequestDto request) {
+    public AppointmentDto scheduleAppointment(AppointmentScheduleRequestDto request) {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException(request.getCustomerId()));
 
@@ -185,8 +185,8 @@ public class AppointmentService {
             for (Treatment treatment : treatments) {
                 totalPrice += treatment.getPrice();
             }
+
             return totalPrice;
         }
-
     }
 }

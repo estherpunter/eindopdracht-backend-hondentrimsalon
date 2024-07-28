@@ -4,5 +4,4 @@ public enum UserRole {
     ADMIN,
     CASHIER,
     DOGGROOMER
-
 }

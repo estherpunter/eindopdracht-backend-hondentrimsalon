@@ -37,6 +37,7 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
+
         return users.stream()
                 .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
@@ -45,6 +46,7 @@ public class UserService {
     public UserDto getUserByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return userMapper.userToUserDto(user);
     }
 
@@ -59,7 +61,7 @@ public class UserService {
         UserDto userDto = new UserDto();
         userDto.setUsername(authenticationRequest.getUsername());
         userDto.setPassword(authenticationRequest.getPassword());
-        
+
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
         User newUser = userMapper.userDtoToUser(userDto);
@@ -93,6 +95,7 @@ public class UserService {
     public List<RoleDto> getUserRoles(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return user.getRoles().stream()
                 .map(roleMapper::roleToRoleDto)
                 .collect(Collectors.toList());
@@ -136,6 +139,7 @@ public class UserService {
                     .collect(Collectors.toSet());
             user.setRoles(roles);
         }
+
         return user;
     }
 
@@ -147,7 +151,7 @@ public class UserService {
                     .collect(Collectors.toSet());
             userDto.setRoles(roleDtos);
         }
+
         return userDto;
     }
-
 }

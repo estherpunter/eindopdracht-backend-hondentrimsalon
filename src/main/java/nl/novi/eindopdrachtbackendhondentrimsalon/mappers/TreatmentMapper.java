@@ -16,7 +16,6 @@ public interface TreatmentMapper {
     @Mapping(target = "id", source = "treatment.id")
     @Mapping(target = "treatmentName", source = "treatment.name")
     @Mapping(target = "price", source = "treatment.price")
-
     TreatmentDto treatmentToTreatmentDto(Treatment treatment);
 
     Treatment treatmentDtoToTreatment(TreatmentDto treatmentDto);

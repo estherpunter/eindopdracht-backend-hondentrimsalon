@@ -56,7 +56,6 @@ public class CustomerController {
         return ResponseEntity.created(location).build();
     }
 
-
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long customerId,
                                                       @RequestBody CustomerRequestDto customerRequestDto) {
@@ -64,13 +63,11 @@ public class CustomerController {
         return ResponseEntity.ok(updatedCustomer);
     }
 
-
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteCustomer(customerId);
         return ResponseEntity.ok().build();
     }
-
 
     @PostMapping("/{customerId}/dogs")
     public ResponseEntity<CustomerDto> addDogToCustomer(@PathVariable Long customerId,
@@ -85,5 +82,4 @@ public class CustomerController {
         customerService.removeDogFromCustomer(customerId, dogId);
         return ResponseEntity.ok().build();
     }
-
 }

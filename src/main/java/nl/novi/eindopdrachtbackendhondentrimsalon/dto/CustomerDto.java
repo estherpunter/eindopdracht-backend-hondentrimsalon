@@ -14,8 +14,9 @@ public class CustomerDto {
     private String name;
 
     @NotBlank
-    @Size(min=10, max=20)
+    @Size(min = 10, max = 20)
     private String phoneNumber;
+
     private List<Long> dogIds;
 
     public CustomerDto() {

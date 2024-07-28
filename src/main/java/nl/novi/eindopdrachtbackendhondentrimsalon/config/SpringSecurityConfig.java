@@ -40,7 +40,6 @@ public class SpringSecurityConfig {
         return new ProviderManager(auth);
     }
 
-
     @Bean
     protected SecurityFilterChain filter(HttpSecurity http, JwtRequestFilter jwtRequestFilter) throws Exception {
         http
@@ -99,5 +98,4 @@ public class SpringSecurityConfig {
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-
 }

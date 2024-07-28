@@ -26,17 +26,20 @@ public class TreatmentService {
 
     public List<TreatmentDto> getAllTreatments() {
         List<Treatment> treatments = treatmentRepository.findAll();
+
         return treatmentMapper.treatmentsToTreatmentDtos(treatments);
     }
 
     public TreatmentDto getTreatmentById(Long treatmentId) {
         Treatment treatment = treatmentRepository.findById(treatmentId)
                 .orElseThrow(() -> new TreatmentNotFoundException(treatmentId));
+
         return treatmentMapper.treatmentToTreatmentDto(treatment);
     }
 
     public List<TreatmentDto> findTreatmentByName(String treatmentName) {
         List<Treatment> treatments = treatmentRepository.findByNameIgnoreCase(treatmentName);
+
         return treatmentMapper.treatmentsToTreatmentDtos(treatments);
     }
 

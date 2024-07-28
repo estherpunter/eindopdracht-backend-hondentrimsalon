@@ -17,11 +17,9 @@ public interface ProductMapper {
     @Mapping(target = "productName", source = "product.name")
     @Mapping(target = "price", source = "product.price")
     @Mapping(target = "stock", source = "product.stock")
-
     ProductDto productToProductDto(Product product);
 
     Product productDtoToProduct(ProductDto productDto);
 
     List<ProductDto> productsToProductDtos(List<Product> products);
-
 }

@@ -27,17 +27,20 @@ public class ProductService {
 
     public List<ProductDto> getAllProducts() {
         List<Product> products = productRepository.findAll();
+
         return productMapper.productsToProductDtos(products);
     }
 
     public ProductDto getProductById(Long productId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
+
         return productMapper.productToProductDto(product);
     }
 
     public List<ProductDto> findProductByName(String productName) {
         List<Product> products = productRepository.findByNameIgnoreCase(productName);
+
         return products.stream()
                 .map(productMapper::productToProductDto)
                 .collect(Collectors.toList());

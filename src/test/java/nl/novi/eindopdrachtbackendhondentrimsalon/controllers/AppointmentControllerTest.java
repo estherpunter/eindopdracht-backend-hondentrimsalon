@@ -3,7 +3,7 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.config.TestSecurityConfig;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentSchedulingRequestDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentScheduleRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.Receipt;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.AppointmentService;
@@ -45,7 +45,7 @@ class AppointmentControllerTest {
 
     private AppointmentDto appointmentDto;
     private AppointmentDto scheduledAppointmentDto;
-    private AppointmentSchedulingRequestDto appointmentSchedulingRequestDto;
+    private AppointmentScheduleRequestDto appointmentScheduleRequestDto;
     private AppointmentRequestDto appointmentRequestDto;
 
     @BeforeEach
@@ -68,10 +68,10 @@ class AppointmentControllerTest {
         scheduledAppointmentDto.setProductIds(Arrays.asList(1L, 2L));
         scheduledAppointmentDto.setTreatmentIds(Collections.singletonList(1L));
 
-        appointmentSchedulingRequestDto = new AppointmentSchedulingRequestDto();
-        appointmentSchedulingRequestDto.setCustomerId(1L);
-        appointmentSchedulingRequestDto.setDogId(1L);
-        appointmentSchedulingRequestDto.setDate(LocalDateTime.now().plusDays(1));
+        appointmentScheduleRequestDto = new AppointmentScheduleRequestDto();
+        appointmentScheduleRequestDto.setCustomerId(1L);
+        appointmentScheduleRequestDto.setDogId(1L);
+        appointmentScheduleRequestDto.setDate(LocalDateTime.now().plusDays(1));
 
         appointmentRequestDto = new AppointmentRequestDto();
         appointmentRequestDto.setDate(LocalDateTime.now().plusDays(1));
@@ -121,12 +121,12 @@ class AppointmentControllerTest {
     @WithMockUser(username = "admin", roles = {"ADMIN"})
     void scheduleAppointment() throws Exception {
         // Arrange
-        when(appointmentService.scheduleAppointment(any(AppointmentSchedulingRequestDto.class))).thenReturn(scheduledAppointmentDto);
+        when(appointmentService.scheduleAppointment(any(AppointmentScheduleRequestDto.class))).thenReturn(scheduledAppointmentDto);
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
                 .post("/api/appointments")
-                .content(objectMapper.writeValueAsString(appointmentSchedulingRequestDto))
+                .content(objectMapper.writeValueAsString(appointmentScheduleRequestDto))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON));
 

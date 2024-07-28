@@ -81,6 +81,5 @@ public class AppointmentDto {
     public void setTreatmentIds(List<Long> treatmentIds) {
         this.treatmentIds = treatmentIds;
     }
-
 }
 

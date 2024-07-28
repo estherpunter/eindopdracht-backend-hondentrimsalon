@@ -15,10 +15,7 @@ public interface DogMapper {
     @Mapping(target = "name", source = "dog.name")
     @Mapping(target = "breed", source = "dog.breed")
     @Mapping(target = "age", source = "dog.age")
-
-
     DogDto dogToDogDto(Dog dog);
 
     Dog dogDtoToDog(DogDto dogDto);
-
 }

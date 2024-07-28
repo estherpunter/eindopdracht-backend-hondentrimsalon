@@ -10,6 +10,5 @@ public class DogNotFoundException extends RuntimeException {
     public DogNotFoundException(Long dogId) {
         super("Dog with id " + dogId + " not found.");
     }
-
 }
 
