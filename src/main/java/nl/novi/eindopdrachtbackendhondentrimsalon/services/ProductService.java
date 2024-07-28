@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.ProductNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.RecordNotFoundException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.ProductMapper;
@@ -42,20 +43,20 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 
-    public ProductDto addProduct(String name, double price, int stock) {
-        if (name == null || name.trim().isEmpty() || price <= 0) {
+    public ProductDto addProduct(ProductRequestDto productRequestDto) {
+        if (productRequestDto.getName() == null || productRequestDto.getName().trim().isEmpty() || productRequestDto.getPrice() <= 0) {
             throw new IllegalArgumentException("Product name and price are required.");
         }
 
-        List<Product> products = productRepository.findByNameIgnoreCase(name);
+        List<Product> products = productRepository.findByNameIgnoreCase(productRequestDto.getName());
         if (!products.isEmpty()) {
             throw new IllegalArgumentException("Product with this name already exists.");
         }
 
         Product product = new Product();
-        product.setName(name);
-        product.setPrice(price);
-        product.setStock(stock);
+        product.setName(productRequestDto.getName());
+        product.setPrice(productRequestDto.getPrice());
+        product.setStock(productRequestDto.getStock());
 
         Product newProduct = productRepository.save(product);
 
@@ -63,12 +64,12 @@ public class ProductService {
     }
 
 
-    public ProductDto updateProduct(Long productId, String name, double price) {
+    public ProductDto updateProduct(Long productId, ProductRequestDto productRequestDto) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        product.setName(name);
-        product.setPrice(price);
+        product.setName(productRequestDto.getName());
+        product.setPrice(productRequestDto.getPrice());
 
         Product savedProduct = productRepository.save(product);
 
