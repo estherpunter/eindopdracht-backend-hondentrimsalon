@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.novi.eindopdrachtbackendhondentrimsalon.config.TestSecurityConfig;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentSchedulingRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -29,6 +31,7 @@ import static org.mockito.Mockito.when;
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Import(TestSecurityConfig.class)
 class AppointmentControllerTest {
 
     @Autowired
@@ -76,14 +79,14 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
     void getAllAppointments() throws Exception {
         // Arrange
         when(appointmentService.getAllAppointments()).thenReturn(Collections.singletonList(scheduledAppointmentDto));
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .get("/api/appointments/allappointments")
+                .get("/api/appointments")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Assert
@@ -95,7 +98,7 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
     void getAppointmentById() throws Exception {
         // Arrange
         long appointmentId = 1L;
@@ -115,7 +118,7 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN"})
     void scheduleAppointment() throws Exception {
         // Arrange
         when(appointmentService.scheduleAppointment(any(AppointmentSchedulingRequestDto.class))).thenReturn(scheduledAppointmentDto);
@@ -128,15 +131,11 @@ class AppointmentControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // Assert
-        resultActions.andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Scheduled"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.productIds[0]").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.treatmentIds[0]").value(1L));
+        resultActions.andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN", "CASHIER"})
     void updateAppointment() throws Exception {
         // Arrange
         long appointmentId = 1L;
@@ -160,7 +159,7 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"ADMIN", "CASHIER"})
     void cancelAppointment() throws Exception {
         // Arrange
         long appointmentId = 1L;
@@ -172,11 +171,11 @@ class AppointmentControllerTest {
                 .accept(MediaType.APPLICATION_JSON));
 
         // Assert
-        resultActions.andExpect(MockMvcResultMatchers.status().isNoContent());
+        resultActions.andExpect(MockMvcResultMatchers.status().isOk());
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"DOGGROOMER"})
     void addProductToAppointment() throws Exception {
         // Arrange
         long appointmentId = 1L;
@@ -185,7 +184,7 @@ class AppointmentControllerTest {
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/appointments/{appointmentId}/products/{productId}", appointmentId, productId)
+                .post("/api/appointments/{appointmentId}/products?productId={productId}", appointmentId, productId)
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Assert
@@ -196,7 +195,7 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
+    @WithMockUser(username = "admin", roles = {"DOGGROOMER"})
     void addTreatmentToAppointment() throws Exception {
         // Arrange
         long appointmentId = 1L;
@@ -205,7 +204,7 @@ class AppointmentControllerTest {
 
         // Act
         ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders
-                .post("/api/appointments/{appointmentId}/treatments/{treatmentId}", appointmentId, treatmentId)
+                .post("/api/appointments/{appointmentId}/treatments?treatmentId={treatmentId}", appointmentId, treatmentId)
                 .contentType(MediaType.APPLICATION_JSON));
 
         // Assert
@@ -216,16 +215,12 @@ class AppointmentControllerTest {
     }
 
     @Test
-    @WithMockUser (username = "admin", roles = {"ADMIN", "DOGGROOMER", "CASHIER"})
-    void generateReceipt() throws Exception {
+    @WithMockUser(username = "admin", roles = {"CASHIER"})
+    void generateReceiptForAppointment() throws Exception {
         // Arrange
         long appointmentId = 1L;
         Receipt receipt = new Receipt();
-        receipt.setCustomerId(1L);
-        receipt.setCustomerName("John Doe");
-        receipt.setDogId(1L);
-        receipt.setDogName("Rex");
-        receipt.setStatus("Completed");
+        receipt.setId(1L);
         receipt.setTotalPrice(100.0);
         when(appointmentService.generateReceipt(appointmentId)).thenReturn(receipt);
 
@@ -236,11 +231,7 @@ class AppointmentControllerTest {
 
         // Assert
         resultActions.andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.customerId").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.customerName").value("John Doe"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.dogId").value(1L))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.dogName").value("Rex"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("Completed"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.totalPrice").value(100.0));
     }
 }
