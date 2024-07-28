@@ -44,7 +44,6 @@ public class User {
     }
 
     public void setRoles(Set<Role> roles) {
-
     }
 
     public void addRole(Role role) {
@@ -54,7 +53,5 @@ public class User {
     public void removeRole(Role role) {
         this.roles.remove(role);
     }
-
-
 }
 

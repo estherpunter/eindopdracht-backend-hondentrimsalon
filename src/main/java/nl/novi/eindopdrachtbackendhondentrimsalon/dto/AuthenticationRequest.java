@@ -9,11 +9,10 @@ public class AuthenticationRequest {
     private String username;
 
     @NotBlank
-    @Size(min=6, max=30)
+    @Size(min = 6, max = 30)
     private String password;
 
     public AuthenticationRequest() {
-
     }
 
     public AuthenticationRequest(String username, String password) {

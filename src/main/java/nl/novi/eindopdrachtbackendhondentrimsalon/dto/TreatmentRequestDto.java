@@ -2,22 +2,16 @@ package nl.novi.eindopdrachtbackendhondentrimsalon.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-public class TreatmentDto {
+public class TreatmentRequestDto {
+
+    @NotBlank
+    @Size(min = 1, max = 100)
+    private String treatmentName;
 
     @NotNull
-    private Long id;
-    @NotBlank
-    private String treatmentName;
     private double price;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getTreatmentName() {
         return treatmentName;

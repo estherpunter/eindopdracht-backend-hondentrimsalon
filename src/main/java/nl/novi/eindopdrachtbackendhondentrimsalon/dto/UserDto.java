@@ -8,8 +8,10 @@ public class UserDto {
 
     @NotBlank
     public String username;
+
     @NotBlank
     public String password;
+
     public Set<RoleDto> roles;
 
     public String getUsername() {
@@ -35,5 +37,4 @@ public class UserDto {
     public void setRoles(Set<RoleDto> roles) {
         this.roles = roles;
     }
-
 }

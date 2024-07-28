@@ -10,5 +10,4 @@ import java.util.List;
 public interface TreatmentRepository extends JpaRepository<Treatment, Long> {
 
     List<Treatment> findByNameIgnoreCase(String name);
-
 }

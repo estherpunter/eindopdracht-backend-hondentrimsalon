@@ -1,5 +1,6 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.UserService;
@@ -34,9 +35,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUser(@RequestParam("username") String username,
-                                           @RequestParam("password") String password) {
-        String newUsername = userService.createUser(username, password);
+    public ResponseEntity<Void> createUser(@RequestBody AuthenticationRequest authenticationRequest) {
+        String newUsername = userService.createUser(authenticationRequest);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -48,7 +48,8 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<UserDto> updateUserPassword (@PathVariable("username") String username, @RequestBody Map<String, String> passwordUpdate) {
+    public ResponseEntity<UserDto> updateUserPassword(@PathVariable("username") String username,
+                                                      @RequestBody Map<String, String> passwordUpdate) {
         if (!passwordUpdate.containsKey("password")) {
             throw new IllegalArgumentException("Request body must contain a password field");
         }
@@ -70,15 +71,16 @@ public class UserController {
     }
 
     @PostMapping("/{username}/roles")
-    public ResponseEntity<List<RoleDto>> addUserRole(@PathVariable("username") String username, @RequestParam("role") String role) {
+    public ResponseEntity<List<RoleDto>> addUserRole(@PathVariable("username") String username,
+                                                     @RequestParam("role") String role) {
         List<RoleDto> updatedRoles = userService.addUserRole(username, role);
         return ResponseEntity.ok(updatedRoles);
     }
 
     @DeleteMapping("/{username}/roles/{role}")
-    public ResponseEntity<UserDto> deleteUserRole(@PathVariable("username") String username, @PathVariable("role") String role) {
+    public ResponseEntity<UserDto> deleteUserRole(@PathVariable("username") String username,
+                                                  @PathVariable("role") String role) {
         UserDto updatedUserDto = userService.deleteUserRole(username, role);
         return ResponseEntity.ok(updatedUserDto);
     }
-
 }

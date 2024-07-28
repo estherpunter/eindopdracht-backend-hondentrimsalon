@@ -8,7 +8,6 @@ public class TreatmentNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public TreatmentNotFoundException(Long treatmentId) {
-        super("Cannot find treatment with Id:" + treatmentId);
+        super("Treatment with id " + treatmentId + " not found.");
     }
-
 }

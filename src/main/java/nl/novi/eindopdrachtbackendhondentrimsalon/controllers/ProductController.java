@@ -1,6 +1,7 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ProductRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,16 +36,14 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDto>> findProductByName(@RequestParam String name) {
-        List<ProductDto> products = productService.findProductByName(name);
+    public ResponseEntity<List<ProductDto>> findProductByName(@RequestParam String productName) {
+        List<ProductDto> products = productService.findProductByName(productName);
         return ResponseEntity.ok(products);
     }
 
     @PostMapping
-    public ResponseEntity<Void> addProduct(@RequestParam("name") String name,
-                                                 @RequestParam("price") double price,
-                                                 @RequestParam("stock") int stock) {
-        ProductDto newProductDto = productService.addProduct(name, price, stock);
+    public ResponseEntity<Void> addProduct(@RequestBody ProductRequestDto productRequestDto) {
+        ProductDto newProductDto = productService.addProduct(productRequestDto);
 
         Long productId = newProductDto.getId();
         URI location = ServletUriComponentsBuilder
@@ -58,9 +57,8 @@ public class ProductController {
 
     @PutMapping("/{productId}")
     public ResponseEntity<ProductDto> updateProduct(@PathVariable Long productId,
-                                                    @RequestParam("name") String name,
-                                                    @RequestParam("price") double price) {
-        ProductDto productDto = productService.updateProduct(productId, name, price);
+                                                    @RequestBody ProductRequestDto productRequestDto) {
+        ProductDto productDto = productService.updateProduct(productId, productRequestDto);
         return ResponseEntity.ok(productDto);
     }
 

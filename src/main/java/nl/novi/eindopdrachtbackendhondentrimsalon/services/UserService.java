@@ -1,6 +1,8 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.constants.UserRole;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AuthenticationRequest;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.RoleDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UserDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.InvalidRoleException;
@@ -35,6 +37,7 @@ public class UserService {
 
     public List<UserDto> getAllUsers() {
         List<User> users = userRepository.findAll();
+
         return users.stream()
                 .map(userMapper::userToUserDto)
                 .collect(Collectors.toList());
@@ -43,13 +46,21 @@ public class UserService {
     public UserDto getUserByUsername(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return userMapper.userToUserDto(user);
     }
 
-    public String createUser(String username, String password) {
+    public String createUser(AuthenticationRequest authenticationRequest) {
+        if (authenticationRequest.getUsername() == null || authenticationRequest.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("Username is required.");
+        }
+        if (authenticationRequest.getPassword() == null || authenticationRequest.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("Password is required.");
+        }
+
         UserDto userDto = new UserDto();
-        userDto.setUsername(username);
-        userDto.setPassword(password);
+        userDto.setUsername(authenticationRequest.getUsername());
+        userDto.setPassword(authenticationRequest.getPassword());
 
         userDto.setPassword(passwordEncoder.encode(userDto.getPassword()));
 
@@ -66,7 +77,7 @@ public class UserService {
         if (password != null && !password.isEmpty()) {
             userToUpdate.setPassword(passwordEncoder.encode(password));
         } else {
-            throw new IllegalArgumentException("Passowrd cannot be null or empty.");
+            throw new ValidationException("Password cannot be null or empty.");
         }
 
         User updatedUser = userRepository.save(userToUpdate);
@@ -75,12 +86,16 @@ public class UserService {
     }
 
     public void deleteUser(String username) {
+        if (!userRepository.existsById(username)) {
+            throw new UsernameNotFoundException(username);
+        }
         userRepository.deleteById(username);
     }
 
     public List<RoleDto> getUserRoles(String username) {
         User user = userRepository.findById(username)
                 .orElseThrow(() -> new UsernameNotFoundException(username));
+
         return user.getRoles().stream()
                 .map(roleMapper::roleToRoleDto)
                 .collect(Collectors.toList());
@@ -124,6 +139,7 @@ public class UserService {
                     .collect(Collectors.toSet());
             user.setRoles(roles);
         }
+
         return user;
     }
 
@@ -135,7 +151,7 @@ public class UserService {
                     .collect(Collectors.toSet());
             userDto.setRoles(roleDtos);
         }
+
         return userDto;
     }
-
 }

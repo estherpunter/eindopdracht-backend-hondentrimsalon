@@ -48,7 +48,6 @@ public class Receipt {
     private String status;
 
     public Receipt() {
-
     }
 
     public Receipt(Long id, Long customerId, String customerName, Long dogId, String dogName, List<Product> products, List<Treatment> treatments, Appointment appointment, double totalPrice, String status) {
@@ -143,5 +142,4 @@ public class Receipt {
     public void setStatus(String status) {
         this.status = status;
     }
-
 }

@@ -1,8 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.services;
 
+import jakarta.validation.ValidationException;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.ScheduleAppointmentRequest;
-import nl.novi.eindopdrachtbackendhondentrimsalon.dto.UpdateAppointmentDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentScheduleRequestDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.AppointmentRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.exceptions.*;
 import nl.novi.eindopdrachtbackendhondentrimsalon.mappers.AppointmentMapper;
 import nl.novi.eindopdrachtbackendhondentrimsalon.models.*;
@@ -52,12 +53,22 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 
-    public AppointmentDto scheduleAppointment(ScheduleAppointmentRequest request) {
+    public AppointmentDto scheduleAppointment(AppointmentScheduleRequestDto request) {
         Customer customer = customerRepository.findById(request.getCustomerId())
                 .orElseThrow(() -> new CustomerNotFoundException(request.getCustomerId()));
 
         Dog dog = dogRepository.findById(request.getDogId())
                 .orElseThrow(() -> new DogNotFoundException(request.getDogId()));
+
+        if (request.getDate().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Appointment date cannot be in the past.");
+        }
+
+        boolean hasOverlap = appointmentRepository.findById(customer.getId()).stream()
+                .anyMatch(appointment -> appointment.getDate().isEqual(request.getDate()));
+        if (hasOverlap) {
+            throw new ValidationException("Customer already has an appointment at this date and time.");
+        }
 
         Appointment appointment = new Appointment();
         appointment.setDate(request.getDate());
@@ -72,12 +83,16 @@ public class AppointmentService {
         return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
     }
 
-    public AppointmentDto updateAppointment(Long appointmentId, UpdateAppointmentDto updateAppointmentDto) {
+    public AppointmentDto updateAppointment(Long appointmentId, AppointmentRequestDto appointmentRequestDto) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
-        appointment.setDate(updateAppointmentDto.getDate());
-        appointment.setStatus(updateAppointmentDto.getStatus());
+        if (appointmentRequestDto.getDate().isBefore(LocalDateTime.now())) {
+            throw new ValidationException("Appointment date cannot be in the past.");
+        }
+
+        appointment.setDate(appointmentRequestDto.getDate());
+        appointment.setStatus(appointmentRequestDto.getStatus());
 
         Appointment updatedAppointment = appointmentRepository.save(appointment);
 
@@ -117,6 +132,10 @@ public class AppointmentService {
     }
 
     public AppointmentDto addCustomTreatmentToAppointment(Long appointmentId, double customPrice) {
+        if (customPrice <= 0) {
+            throw new ValidationException("Custom treatment price must be positive.");
+        }
+
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException(appointmentId));
 
@@ -166,8 +185,8 @@ public class AppointmentService {
             for (Treatment treatment : treatments) {
                 totalPrice += treatment.getPrice();
             }
+
             return totalPrice;
         }
-
     }
 }

@@ -1,8 +1,9 @@
 package nl.novi.eindopdrachtbackendhondentrimsalon.controllers;
 
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerDto;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.CustomerRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogDto;
-import nl.novi.eindopdrachtbackendhondentrimsalon.models.Dog;
+import nl.novi.eindopdrachtbackendhondentrimsalon.dto.DogRequestDto;
 import nl.novi.eindopdrachtbackendhondentrimsalon.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,9 +43,8 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> addCustomer(@RequestParam("customerName") String customerName,
-                                                   @RequestParam("phoneNumber") String phoneNumber) {
-        CustomerDto newCustomerDto = customerService.addCustomer(customerName, phoneNumber);
+    public ResponseEntity<Void> addCustomer(@RequestBody CustomerRequestDto customerRequestDto) {
+        CustomerDto newCustomerDto = customerService.addCustomer(customerRequestDto);
 
         Long customerId = newCustomerDto.getId();
         URI location = ServletUriComponentsBuilder
@@ -56,15 +56,12 @@ public class CustomerController {
         return ResponseEntity.created(location).build();
     }
 
-
     @PutMapping("/{customerId}")
     public ResponseEntity<CustomerDto> updateCustomer(@PathVariable Long customerId,
-                                                      @RequestParam("customerName") String customerName,
-                                                      @RequestParam("phoneNumber") String phoneNumber) {
-        CustomerDto updatedCustomer = customerService.updateCustomer(customerId, customerName, phoneNumber);
+                                                      @RequestBody CustomerRequestDto customerRequestDto) {
+        CustomerDto updatedCustomer = customerService.updateCustomer(customerId, customerRequestDto);
         return ResponseEntity.ok(updatedCustomer);
     }
-
 
     @DeleteMapping("/{customerId}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long customerId) {
@@ -72,13 +69,10 @@ public class CustomerController {
         return ResponseEntity.ok().build();
     }
 
-
     @PostMapping("/{customerId}/dogs")
     public ResponseEntity<CustomerDto> addDogToCustomer(@PathVariable Long customerId,
-                                                        @RequestParam("dogName") String dogName,
-                                                        @RequestParam("breed") String breed,
-                                                        @RequestParam("age") int age) {
-        CustomerDto updatedCustomer = customerService.addDogToCustomer(customerId, dogName, breed, age);
+                                                        @RequestBody DogRequestDto dogRequestDto) {
+        CustomerDto updatedCustomer = customerService.addDogToCustomer(customerId, dogRequestDto);
         return ResponseEntity.ok(updatedCustomer);
     }
 
@@ -88,5 +82,4 @@ public class CustomerController {
         customerService.removeDogFromCustomer(customerId, dogId);
         return ResponseEntity.ok().build();
     }
-
 }

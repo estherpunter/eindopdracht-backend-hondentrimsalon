@@ -20,7 +20,6 @@ public class Treatment {
     private Set<Appointment> appointments;
 
     public Treatment() {
-
     }
 
     public Treatment(String name, double price) {

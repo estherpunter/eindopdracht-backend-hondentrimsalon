@@ -9,7 +9,6 @@ import java.io.Serializable;
 @Table(name = "roles")
 public class Role implements Serializable {
 
-
     @Id
     @Column(nullable = false)
     private String username;
@@ -19,7 +18,6 @@ public class Role implements Serializable {
     private String role;
 
     public Role() {
-
     }
 
     public Role(String username, String role) {

@@ -39,14 +39,13 @@ public class Appointment {
             name = "appointment_treatments",
             joinColumns = @JoinColumn(name = "appointment_id"),
             inverseJoinColumns = @JoinColumn(name = "treatment_id")
-    ) 
+    )
     private List<Treatment> treatments = new ArrayList<>();
 
     @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Receipt receipt;
 
     public Appointment() {
-
     }
 
     public Appointment(Long id, Customer customer, Dog dog, LocalDateTime date, String status, List<Product> products, List<Treatment> treatments, Receipt receipt) {
@@ -123,5 +122,4 @@ public class Appointment {
     public void setReceipt(Receipt receipt) {
         this.receipt = receipt;
     }
-
 }

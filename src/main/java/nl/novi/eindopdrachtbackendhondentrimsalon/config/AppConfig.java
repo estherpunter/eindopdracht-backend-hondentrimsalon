@@ -8,7 +8,6 @@ import org.springframework.context.annotation.ComponentScan;
 @Configuration
 @ComponentScan(basePackages = "nl.novi.eindopdrachtbackendhondentrimsalon.mappers")
 public class AppConfig {
-
     @Bean
     public AppointmentMapper appointmentMapper() {
         return AppointmentMapper.INSTANCE;
@@ -43,6 +42,4 @@ public class AppConfig {
     public UserMapper userMapper() {
         return UserMapper.INSTANCE;
     }
-
-
 }

@@ -8,7 +8,7 @@ public class DogNotFoundException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     public DogNotFoundException(Long dogId) {
-        super("Cannot find dog " + dogId);
+        super("Dog with id " + dogId + " not found.");
     }
 }
 

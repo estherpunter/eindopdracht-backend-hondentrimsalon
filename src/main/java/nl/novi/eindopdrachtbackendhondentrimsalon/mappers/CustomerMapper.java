@@ -26,5 +26,4 @@ public interface CustomerMapper {
     }
 
     List<CustomerDto> customersToCustomerDtos(List<Customer> customers);
-
 }
